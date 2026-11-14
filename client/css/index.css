@@ -33,8 +33,8 @@ body {
     inset: 0;
     background:
         linear-gradient(#100b1240, #100b1240),
-        url("../imagenes/Marte.jpg") center / cover no-repeat;
-    opacity: 0;
+        url("../imagenes/espacio.jpg") center / cover no-repeat;
+    opacity: 1;
     transition: opacity 1s ease;
 }
 
@@ -46,6 +46,9 @@ body {
 }
 
 .fondo.marte::before {
+    background:
+        linear-gradient(#100b1240, #100b1240),
+        url("../imagenes/Marte.jpeg") center / cover no-repeat;
     opacity: 1;
 }
 
@@ -59,7 +62,7 @@ body {
 .fondo.luna::before {
     background:
         linear-gradient(#080b1340, #080b1340),
-        url("../imagenes/luna.jpg") center / cover no-repeat;
+        url("../imagenes/luna.jpeg") center / cover no-repeat;
     opacity: 1;
 }
 
@@ -73,7 +76,7 @@ body {
 .fondo.tierra::before {
     background:
         linear-gradient(#05091440, #05091440),
-        url("../imagenes/Tierra.jpg") center / cover no-repeat;
+        url("../imagenes/Tierra.jpeg") center / cover no-repeat;
     opacity: 1;
 }
 
