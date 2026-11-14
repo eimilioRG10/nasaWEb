@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juegos · Abandonados pero no olvidados</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Página de JUEGOS: "¿Dónde quedó?" y "Ordena la línea del tiempo".
+       Necesita js/datos.js y js/comun.js dentro de la carpeta client. -->
+  <style>
+    /* ===== Versión A: "Espacio de juguete" — mapa grande + panel lateral ===== */
+    :root {
+      --cielo: #16183A;
+      --tinta: #16183A;
+      --crema: #FFF7E8;
+      --rosa: #FF6FA5;
+      --menta: #3FD3A5;
+      --amarillo: #FFC93C;
+      --azul: #4DA8FF;
+      --morado: #8C6BFF;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: 'Fredoka', sans-serif; color: var(--crema);
+      background-color: var(--cielo);
+      background-image:
+        radial-gradient(#FFFFFF 1.2px, transparent 1.6px),
+        radial-gradient(#FFD9F0 1px, transparent 1.4px);
+      background-size: 110px 110px, 170px 170px;
+      background-position: 20px 30px, 80px 90px;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, p { margin: 0; }
+    :focus-visible { outline: 4px solid var(--amarillo); outline-offset: 3px; }
+    .ic { width: 1.3em; height: 1.3em; flex-shrink: 0; }
+
+    /* ---------- Botón "gomita" (brillante, rebota) ---------- */
+    .gomita {
+      --color: var(--rosa); --sombra: #C2457A;
+      position: relative;
+      min-height: 60px; padding: 0 26px;
+      border: 0; border-radius: 999px;
+      background: var(--color); color: var(--tinta);
+      font: 700 22px 'Fredoka', sans-serif;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      box-shadow: inset 0 -7px 0 rgba(0,0,0,.18), 0 7px 0 var(--sombra);
+      cursor: pointer; text-decoration: none;
+      transition: transform .15s cubic-bezier(.3,1.8,.5,1);
+    }
+    .gomita::after { /* brillo de dulce */
+      content: ""; position: absolute; top: 7px; left: 18px; right: 40%; height: 10px;
+      border-radius: 10px; background: rgba(255,255,255,.55); pointer-events: none;
+    }
+    .gomita:hover { transform: translateY(-3px) scale(1.04); }
+    .gomita:active { transform: translateY(5px) scale(.95, .9); box-shadow: inset 0 -4px 0 rgba(0,0,0,.18), 0 2px 0 var(--sombra); }
+    .gomita[hidden] { display: none; }
+    .gomita:disabled { opacity: .35; cursor: default; transform: none; }
+    .gomita.menta { --color: var(--menta); --sombra: #22A27C; }
+    .gomita.amarilla { --color: var(--amarillo); --sombra: #D19A12; }
+    .gomita.azul { --color: var(--azul); --sombra: #2E78C7; }
+    .gomita.morada { --color: var(--morado); --sombra: #5E43C2; color: #FFFFFF; }
+    .gomita.redonda { width: 60px; padding: 0; }
+    .gomita.redonda::after { left: 14px; right: 14px; }
+
+    /* ---------- Barra de arriba ---------- */
+    .barra { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 22px; flex-wrap: wrap; }
+    .barra h1 { font-size: 30px; }
+    .barra .derecha { display: flex; gap: 12px; align-items: center; }
+    .chip-estrellas { display: inline-flex; align-items: center; gap: 8px; background: var(--crema); color: var(--tinta); border-radius: 999px; padding: 8px 16px; font-weight: 700; font-size: 20px; }
+    .chip-estrellas svg { width: 28px; height: 28px; }
+
+    /* ---------- Mapa ---------- */
+    .mapa { position: relative; height: calc(100vh - 190px); min-height: 520px; margin: 0 16px; }
+    .ruta { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .planeta {
+      position: absolute; transform: translate(-50%, -50%);
+      border-radius: 50%; border: 0;
+      display: flex; align-items: flex-end; justify-content: center;
+      font: 700 20px 'Fredoka', sans-serif; color: var(--crema);
+      padding-bottom: 0; pointer-events: none;
+    }
+    .planeta span { position: absolute; bottom: -34px; white-space: nowrap; background: rgba(22,24,58,.8); padding: 2px 12px; border-radius: 999px; }
+    .tierra { width: 130px; height: 130px; background: radial-gradient(circle at 35% 35%, #7CC77A 0 22%, transparent 23%), radial-gradient(circle at 65% 65%, #7CC77A 0 18%, transparent 19%), #4DA8FF; box-shadow: inset -14px -14px 0 rgba(0,0,0,.18); }
+    .luna { width: 110px; height: 110px; background: radial-gradient(circle at 35% 40%, #CFCABC 0 12%, transparent 13%), radial-gradient(circle at 65% 62%, #CFCABC 0 15%, transparent 16%), #ECE8DD; box-shadow: inset -12px -12px 0 rgba(0,0,0,.15); }
+    .marte { width: 170px; height: 170px; background: radial-gradient(circle at 60% 60%, #C9623A 0 12%, transparent 13%), linear-gradient(#F08A5D 0 40%, #E07A4D 40% 48%, #F08A5D 48%); box-shadow: inset -18px -18px 0 rgba(0,0,0,.18); }
+    .lejos { width: 150px; height: 150px; border-radius: 30px; background: transparent; border: 4px dashed #8C6BFF; }
+
+    .robot-pin {
+      position: absolute; transform: translate(-50%, -50%);
+      width: 64px; height: 64px; border-radius: 50%;
+      border: 4px solid var(--crema); background: var(--morado);
+      cursor: pointer; padding: 6px;
+      box-shadow: 0 5px 0 rgba(0,0,0,.35);
+      transition: transform .2s cubic-bezier(.3,1.8,.5,1), opacity .3s;
+      animation: latido 2.4s ease-in-out infinite;
+    }
+    .robot-pin svg { width: 100%; height: 100%; }
+    .robot-pin:hover { transform: translate(-50%, -50%) scale(1.18); }
+    .robot-pin.ganado { background: var(--amarillo); }
+    .robot-pin.activo { border-color: var(--amarillo); box-shadow: 0 0 0 6px rgba(255,201,60,.45), 0 5px 0 rgba(0,0,0,.35); }
+    .robot-pin.escondido { opacity: .12; pointer-events: none; }
+    .robot-pin .nombre-pin { position: absolute; top: 66px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 14px; font-weight: 600; color: var(--crema); background: rgba(22,24,58,.85); padding: 1px 8px; border-radius: 8px; }
+    @keyframes latido { 50% { box-shadow: 0 0 0 8px rgba(140,107,255,.25), 0 5px 0 rgba(0,0,0,.35); } }
+
+    /* ---------- Línea de tiempo ---------- */
+    .tiempo {
+      margin: 10px 16px 16px; padding: 14px 22px;
+      background: var(--crema); color: var(--tinta); border-radius: 26px;
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    }
+    .tiempo label { font-weight: 700; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+    .tiempo input { flex: 1; min-width: 200px; accent-color: var(--morado); height: 30px; }
+    .anio-grande { font-size: 30px; font-weight: 700; background: var(--morado); color: #FFFFFF; padding: 2px 16px; border-radius: 14px; min-width: 100px; text-align: center; }
+
+    /* ---------- Panel lateral ---------- */
+    .panel {
+      position: fixed; top: 0; right: 0; bottom: 0; width: 400px; max-width: 100%;
+      background: var(--crema); color: var(--tinta);
+      border-radius: 34px 0 0 34px; padding: 22px;
+      display: flex; flex-direction: column; gap: 14px;
+      transform: translateX(105%); transition: transform .45s cubic-bezier(.3,1.4,.5,1);
+      z-index: 20; overflow-y: auto;
+      box-shadow: -10px 0 0 rgba(0,0,0,.25);
+    }
+    .panel.abierto { transform: none; }
+    .panel .cabeza { display: flex; justify-content: space-between; align-items: center; }
+    .panel .foto { height: 170px; border-radius: 26px; display: flex; align-items: center; justify-content: center; }
+    .panel .foto svg { width: 65%; height: 85%; }
+    .panel h2 { font-size: 32px; line-height: 1.05; }
+    .estado { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 17px; }
+    .estado i { width: 16px; height: 16px; border-radius: 50%; border: 3px solid var(--tinta); }
+    .pestanas { display: flex; gap: 10px; }
+    .pestanas .gomita { flex: 1; min-height: 54px; font-size: 19px; padding: 0 12px; }
+    .pestanas .gomita[aria-selected="false"] { --color: #E9E3F7; --sombra: #C8BFE3; }
+    .texto-panel { font-size: 22px; line-height: 1.5; min-height: 140px; }
+    .fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .opciones { display: flex; flex-direction: column; gap: 14px; }
+    .opciones .gomita { justify-content: flex-start; font-size: 20px; }
+    .bien { --color: var(--menta) !important; --sombra: #22A27C !important; }
+    .mal { --color: #FFB4A8 !important; --sombra: #D97C6E !important; }
+    .mensaje { font-size: 20px; font-weight: 700; min-height: 28px; }
+
+    .pista-inicial {
+      position: absolute; left: 16px; top: 8px; max-width: 360px;
+      background: var(--crema); color: var(--tinta); border-radius: 24px; padding: 14px 18px;
+      display: flex; gap: 12px; align-items: center; z-index: 2;
+    }
+    .pista-inicial svg.argo { width: 70px; height: 84px; flex-shrink: 0; }
+    .pista-inicial p { font-size: 18px; line-height: 1.35; }
+
+    @media (max-width: 700px) {
+      .panel { top: auto; width: 100%; height: 78vh; border-radius: 34px 34px 0 0; transform: translateY(105%); }
+      .mapa { height: 560px; }
+      .marte { width: 120px; height: 120px; } .tierra { width: 90px; height: 90px; } .luna { width: 80px; height: 80px; } .lejos { width: 100px; height: 100px; }
+      .robot-pin { width: 52px; height: 52px; }
+      .robot-pin .nombre-pin { display: none; }
+      .pista-inicial { position: static; margin-bottom: 10px; max-width: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+    /* =========================================================
+       JUEGOS
+       ========================================================= */
+    .juegos {
+      position: relative; min-height: 100vh;
+      background-color: var(--cielo);
+      background-image: radial-gradient(#FFFFFF 1.2px, transparent 1.6px), radial-gradient(#FFD9F0 1px, transparent 1.4px);
+      background-size: 110px 110px, 170px 170px;
+      overflow-y: auto; padding: 20px 22px 60px;
+      display: none;
+    }
+    .juegos.abierto { display: block; animation: entra .35s cubic-bezier(.3,1.5,.5,1); }
+    @keyframes entra { from { opacity: 0; transform: scale(.96); } }
+    .juegos .cabeza { max-width: 1100px; margin: 0 auto 22px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .juegos h2 { font-size: 44px; }
+    .juegos .zona { max-width: 1100px; margin: 0 auto; }
+
+    /* Tarjetas para elegir juego */
+    .lista-juegos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+    .tarjeta-juego {
+      background: var(--crema); color: var(--tinta); border-radius: 34px; padding: 22px;
+      display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 10px 0 rgba(0,0,0,.3);
+      transition: transform .2s cubic-bezier(.3,1.6,.5,1);
+    }
+    .tarjeta-juego:hover { transform: translateY(-6px) rotate(-1deg); }
+    .tarjeta-juego .arte { height: 170px; border-radius: 24px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+    .tarjeta-juego h3 { font-size: 30px; }
+    .tarjeta-juego p { font-size: 19px; line-height: 1.4; }
+    .mini-planeta { border-radius: 50%; }
+
+    /* Caja blanca de cada juego */
+    .caja-juego { background: var(--crema); color: var(--tinta); border-radius: 34px; padding: 26px; display: flex; flex-direction: column; gap: 20px; }
+    .caja-juego .instruccion { font-size: 24px; font-weight: 600; text-align: center; }
+    .marcador { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 20px; font-weight: 600; }
+    .barra-progreso { flex: 1; min-width: 160px; height: 16px; border-radius: 8px; background: #E9E3F7; overflow: hidden; }
+    .barra-progreso div { height: 100%; background: var(--menta); border-radius: 8px; transition: width .4s; }
+    .aviso { font-size: 24px; font-weight: 700; text-align: center; min-height: 34px; }
+
+    /* Juego 1: ¿Dónde quedó? */
+    .robot-actual { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .robot-actual .foto { width: 230px; height: 190px; border-radius: 30px; background: #E9E3F7; display: flex; align-items: center; justify-content: center; }
+    .robot-actual .foto svg { width: 80%; height: 80%; }
+    .robot-actual h3 { font-size: 36px; }
+    .destinos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .destino {
+      border: 0; cursor: pointer; border-radius: 30px; padding: 16px 10px 18px;
+      background: #FFFFFF; color: var(--tinta);
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      font: 700 24px 'Fredoka', sans-serif;
+      box-shadow: 0 8px 0 #C8BFE3;
+      transition: transform .15s cubic-bezier(.3,1.8,.5,1);
+    }
+    .destino .mini-planeta { width: 96px; height: 96px; }
+    .destino:hover { transform: translateY(-4px) scale(1.03); }
+    .destino:active { transform: translateY(4px); box-shadow: 0 3px 0 #C8BFE3; }
+    .destino.bien { background: #C9F5E6; box-shadow: 0 8px 0 #22A27C; }
+    .destino.mal { animation: sacudir .4s; background: #FFD9D2; }
+    @keyframes sacudir { 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+
+    /* Juego 2: Ordena la línea del tiempo */
+    .linea-tiempo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; position: relative; }
+    .hueco {
+      min-height: 170px; border-radius: 24px; border: 4px dashed #B9AEDB; background: #F4F0FC;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      font-size: 18px; font-weight: 600; color: #6B5E8E; padding: 8px; text-align: center;
+      cursor: pointer; font-family: 'Fredoka', sans-serif;
+    }
+    .hueco .numero { width: 40px; height: 40px; border-radius: 50%; background: #B9AEDB; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .hueco.lleno { border-style: solid; border-color: var(--morado); background: #FFFFFF; color: var(--tinta); }
+    .hueco.bien { border-color: #22A27C; background: #C9F5E6; }
+    .hueco.mal { border-color: #D97C6E; background: #FFD9D2; }
+    .hueco svg { width: 90px; height: 70px; }
+    .hueco .anio-revelado { font-size: 22px; font-weight: 700; }
+    .flechas-tiempo { display: flex; justify-content: space-between; font-size: 18px; font-weight: 600; color: #6B5E8E; }
+    .bandeja { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; min-height: 150px; padding: 14px; border-radius: 26px; background: #EFEAFB; }
+    .ficha-robot {
+      border: 0; cursor: pointer; width: 150px; padding: 12px 8px; border-radius: 22px;
+      background: #FFFFFF; color: var(--tinta); box-shadow: 0 6px 0 #C8BFE3;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font: 700 17px 'Fredoka', sans-serif;
+      transition: transform .15s cubic-bezier(.3,1.8,.5,1);
+    }
+    .ficha-robot svg { width: 90px; height: 70px; }
+    .ficha-robot:hover { transform: translateY(-4px) rotate(-2deg); }
+    .ficha-robot.elegida { outline: 5px solid var(--amarillo); transform: scale(1.06); }
+    .fila-botones { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* Pantalla de "¡Ganaste!" */
+    .final-juego { display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; padding: 20px 0; }
+    .final-juego svg.argo { width: 160px; height: 190px; animation: baile 1s ease-in-out infinite; }
+    .final-juego h3 { font-size: 42px; }
+    .final-juego p { font-size: 24px; }
+    @keyframes baile { 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+
+    @media (max-width: 700px) {
+      .destinos { grid-template-columns: 1fr; }
+      .destino { flex-direction: row; justify-content: flex-start; padding: 12px 18px; }
+      .destino .mini-planeta { width: 60px; height: 60px; }
+      .linea-tiempo { grid-template-columns: 1fr; }
+      .hueco { min-height: 90px; flex-direction: row; }
+      .flechas-tiempo { display: none; }
+    }
+    </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="ic-mando" viewBox="0 0 24 24">
+      <path d="M6 8h12a4 4 0 0 1 4 4v1a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-1a4 4 0 0 1 4-4z" fill="currentColor"/>
+      <path d="M7 10v4M5 12h4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="16" cy="11" r="1.2" fill="#fff"/><circle cx="18" cy="13" r="1.2" fill="#fff"/>
+    </symbol>
+  </svg>
+  <main class="juegos abierto" id="juegos" aria-label="Juegos">
+    <div class="cabeza">
+      <h2 id="titulo-juegos">Juegos</h2>
+      <div class="fila-botones">
+        <button class="gomita azul" id="volver-lista" hidden><svg class="ic" aria-hidden="true"><use href="#ic-atras"/></svg>Otros juegos</button>
+        <a class="gomita amarilla" href="index.html"><svg class="ic" aria-hidden="true"><use href="#ic-casa"/></svg>Volver al inicio</a>
+      </div>
+    </div>
+    <div class="zona" id="zona-juegos"></div>
+  </main>
+
+
+  <script src="js/datos.js"></script>
+  <script src="js/comun.js"></script>
+  <script>
+    /* =========================================================
+       JUEGOS
+       ========================================================= */
+    const pantallaJuegos = document.getElementById("juegos");
+    const zona = document.getElementById("zona-juegos");
+    const botonVolverLista = document.getElementById("volver-lista");
+    const PLANETAS_MINI = {
+      luna:  `<span class="mini-planeta" style="background:radial-gradient(circle at 35% 40%,#CFCABC 0 14%,transparent 15%),radial-gradient(circle at 65% 65%,#CFCABC 0 16%,transparent 17%),#ECE8DD"></span>`,
+      marte: `<span class="mini-planeta" style="background:radial-gradient(circle at 60% 60%,#C9623A 0 14%,transparent 15%),#F08A5D"></span>`,
+      lejos: `<span class="mini-planeta" style="background:radial-gradient(circle at 50% 50%,#FFC93C 0 16%,transparent 17%),#5B4BB5"></span>`
+    };
+    const revolver = lista => [...lista].sort(() => Math.random() - .5);
+
+    botonVolverLista.onclick = () => verListaJuegos();
+
+    // ----- Lista de juegos -----
+    function verListaJuegos() {
+      callar();
+      botonVolverLista.hidden = true;
+      document.getElementById("titulo-juegos").textContent = "Juegos";
+      zona.innerHTML = `
+        <div class="lista-juegos">
+          <article class="tarjeta-juego">
+            <div class="arte" style="background:#E9E3F7">${PLANETAS_MINI.luna}${PLANETAS_MINI.marte}${PLANETAS_MINI.lejos}</div>
+            <h3>¿Dónde quedó?</h3>
+            <p>Te enseño un robot y tú dices si se quedó en la Luna, en Marte o muy lejos en el espacio.</p>
+            <button class="gomita" id="jugar-donde"><svg class="ic" aria-hidden="true"><use href="#ic-play"/></svg>¡Jugar!</button>
+          </article>
+          <article class="tarjeta-juego">
+            <div class="arte" style="background:#FFF0C2;font-size:26px;font-weight:700;color:#16183A">1967 → 1977 → 2004 → 2021</div>
+            <h3>Ordena la línea del tiempo</h3>
+            <p>Acomoda los robots del más viejo al más nuevo. ¿Sabes quién salió primero?</p>
+            <button class="gomita amarilla" id="jugar-orden"><svg class="ic" aria-hidden="true"><use href="#ic-play"/></svg>¡Jugar!</button>
+          </article>
+        </div>`;
+      // tamaño de los planetitas de la tarjeta
+      zona.querySelectorAll(".tarjeta-juego .arte .mini-planeta").forEach(p => { p.style.width = "70px"; p.style.height = "70px"; p.style.display = "block"; });
+      document.getElementById("jugar-donde").onclick = juegoDonde;
+      document.getElementById("jugar-orden").onclick = juegoOrden;
+    }
+
+    // ----- Juego 1: ¿Dónde quedó? -----
+    function juegoDonde() {
+      botonVolverLista.hidden = false;
+      document.getElementById("titulo-juegos").textContent = "¿Dónde quedó?";
+      const ronda = revolver(EXPLORADORES);
+      let turno = 0, aciertosPrimera = 0, fallo = false;
+
+      function pintarTurno() {
+        const e = ronda[turno];
+        fallo = false;
+        zona.innerHTML = `
+          <div class="caja-juego">
+            <div class="marcador">
+              <span>Robot ${turno + 1} de ${ronda.length}</span>
+              <div class="barra-progreso" aria-hidden="true"><div style="width:${turno / ronda.length * 100}%"></div></div>
+              <button class="gomita redonda amarilla" id="voz-donde" aria-label="Escuchar">${icono("bocina")}</button>
+            </div>
+            <div class="robot-actual">
+              <div class="foto">${dibujoRobot(e)}</div>
+              <h3>${e.nombre}</h3>
+            </div>
+            <p class="instruccion">¿Dónde se quedó ${e.nombre}?</p>
+            <div class="destinos">
+              ${["luna", "marte", "lejos"].map(l => `<button class="destino" data-lugar="${l}">${PLANETAS_MINI[l]}${LUGARES[l].nombre}</button>`).join("")}
+            </div>
+            <p class="aviso" id="aviso" aria-live="polite"></p>
+          </div>`;
+        document.getElementById("voz-donde").onclick = () => hablar(`¿Dónde se quedó ${e.nombre}? ¿En la Luna, en Marte o muy lejos?`);
+        zona.querySelectorAll(".destino").forEach(b => b.onclick = () => {
+          const aviso = document.getElementById("aviso");
+          if (b.dataset.lugar === e.lugar) {
+            b.classList.add("bien");
+            zona.querySelectorAll(".destino").forEach(x => x.disabled = true);
+            if (!fallo) aciertosPrimera++;
+            aviso.textContent = `¡Sí! ${e.nombre} está en ${LUGARES[e.lugar].nombre === "Muy lejos" ? "el espacio, muy lejos" : LUGARES[e.lugar].nombre}.`;
+            hablar(aviso.textContent);
+            setTimeout(() => { turno++; turno < ronda.length ? pintarTurno() : finalDonde(); }, 1500);
+          } else {
+            fallo = true;
+            b.classList.remove("mal"); void b.offsetWidth; b.classList.add("mal");
+            aviso.textContent = "¡Casi! Intenta otra vez.";
+            hablar(aviso.textContent);
+          }
+        });
+      }
+      function finalDonde() {
+        lluviaDeEstrellas();
+        const texto = `Acertaste ${aciertosPrimera} de ${ronda.length} a la primera.`;
+        zona.innerHTML = `
+          <div class="caja-juego final-juego">
+            <svg class="argo" viewBox="0 0 200 240" aria-hidden="true"><use href="#argo"/></svg>
+            <h3>¡Encontraste a todos!</h3>
+            <p>${texto}</p>
+            <div class="fila-botones">
+              <button class="gomita" id="otra-vez">Jugar otra vez</button>
+              <button class="gomita azul" id="a-lista">Otros juegos</button>
+            </div>
+          </div>`;
+        hablar("¡Encontraste a todos! " + texto);
+        document.getElementById("otra-vez").onclick = juegoDonde;
+        document.getElementById("a-lista").onclick = verListaJuegos;
+      }
+      pintarTurno();
+    }
+
+    // ----- Juego 2: Ordena la línea del tiempo -----
+    function juegoOrden() {
+      botonVolverLista.hidden = false;
+      document.getElementById("titulo-juegos").textContent = "Ordena la línea del tiempo";
+      // 5 robots con años distintos
+      const porAnio = {};
+      revolver(EXPLORADORES).forEach(e => { if (!porAnio[e.anio]) porAnio[e.anio] = e; });
+      const elegidos = revolver(Object.values(porAnio)).slice(0, 5);
+      const correcto = [...elegidos].sort((a, b) => a.anio - b.anio);
+      const huecos = [null, null, null, null, null];
+      let elegido = null;   // robot tocado en la bandeja
+      let revisado = false;
+
+      function pintar() {
+        const enBandeja = elegidos.filter(e => !huecos.includes(e));
+        zona.innerHTML = `
+          <div class="caja-juego">
+            <p class="instruccion">Toca un robot y luego toca un hueco. Del más viejo (1) al más nuevo (5).</p>
+            <div class="flechas-tiempo" aria-hidden="true"><span>← Más viejo</span><span>Más nuevo →</span></div>
+            <div class="linea-tiempo">
+              ${huecos.map((e, i) => {
+                let clase = e ? "lleno" : "";
+                if (revisado && e) clase += e === correcto[i] ? " bien" : " mal";
+                return `<button class="hueco ${clase}" data-h="${i}" aria-label="Hueco ${i + 1}${e ? ": " + e.nombre : ", vacío"}">
+                  ${e ? `<svg viewBox="0 0 120 100" aria-hidden="true"><use href="#dib-${e.dibujo}"/></svg>${e.nombre}${revisado ? `<span class="anio-revelado">${e.anio}</span>` : ""}` : `<span class="numero">${i + 1}</span>Vacío`}
+                </button>`;
+              }).join("")}
+            </div>
+            <div class="bandeja" aria-label="Robots por acomodar">
+              ${enBandeja.length ? enBandeja.map(e => `<button class="ficha-robot ${elegido === e ? "elegida" : ""}" data-id="${e.id}"><svg viewBox="0 0 120 100" aria-hidden="true"><use href="#dib-${e.dibujo}"/></svg>${e.nombre}</button>`).join("")
+                : `<p class="instruccion" style="align-self:center">¡Ya acomodaste todos! Revisa tu respuesta.</p>`}
+            </div>
+            <p class="aviso" id="aviso" aria-live="polite"></p>
+            <div class="fila-botones">
+              <button class="gomita menta" id="revisar" ${enBandeja.length ? "disabled" : ""}>Revisar</button>
+              <button class="gomita azul" id="pista">Pista</button>
+            </div>
+          </div>`;
+
+        zona.querySelectorAll(".ficha-robot").forEach(b => b.onclick = () => {
+          const e = elegidos.find(x => x.id === b.dataset.id);
+          elegido = elegido === e ? null : e;
+          revisado = false;
+          pintar();
+        });
+        zona.querySelectorAll(".hueco").forEach(b => b.onclick = () => {
+          const i = Number(b.dataset.h);
+          revisado = false;
+          if (elegido) {                       // poner el robot elegido en el hueco
+            huecos[i] = elegido; elegido = null;
+          } else if (huecos[i]) {              // tocar un hueco lleno lo regresa a la bandeja
+            huecos[i] = null;
+          }
+          pintar();
+        });
+        document.getElementById("pista").onclick = () => {
+          const primero = correcto[0];
+          const aviso = document.getElementById("aviso");
+          aviso.textContent = `Pista: el más viejo de todos es ${primero.nombre}.`;
+          hablar(aviso.textContent);
+        };
+        document.getElementById("revisar").onclick = () => {
+          revisado = true;
+          const bien = huecos.filter((e, i) => e === correcto[i]).length;
+          pintar();
+          const aviso = document.getElementById("aviso");
+          if (bien === 5) {
+            lluviaDeEstrellas();
+            aviso.textContent = "¡Perfecto! Los acomodaste todos en orden.";
+            zona.querySelector(".fila-botones").innerHTML = `<button class="gomita" id="otra-vez">Jugar otra vez</button><button class="gomita azul" id="a-lista">Otros juegos</button>`;
+            document.getElementById("otra-vez").onclick = juegoOrden;
+            document.getElementById("a-lista").onclick = verListaJuegos;
+          } else {
+            aviso.textContent = `Tienes ${bien} de 5 en su lugar. Toca los rojos para moverlos.`;
+          }
+          hablar(aviso.textContent);
+        };
+      }
+      pintar();
+    }
+
+
+    verListaJuegos();
+  </script>
+</body>
+</html>
