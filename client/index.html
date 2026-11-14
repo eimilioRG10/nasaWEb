@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NASA | Rastros de la Humanidad</title>
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+
+<div class="fondo" id="fondo"></div>
+
+<header>
+    <div class="logo">NASA <span>/</span> ARCHIVE</div>
+
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#explorar">Explorar</a>
+        <a href="#objetos">Objetos</a>
+        <a href="#contacto">Acerca de</a>
+    </nav>
+</header>
+
+<!-- PORTADA -->
+
+<section class="hero" id="inicio">
+
+    <div class="hero-content">
+
+        <div class="etiqueta">
+            EXPLORANDO NUESTRAS HUELLAS
+        </div>
+
+        <h1>
+            NO TODO LO QUE
+            LLEVAMOS AL
+            ESPACIO REGRESA.
+        </h1>
+
+        <p>
+            Descubre los objetos, máquinas y rastros
+            que la humanidad ha dejado en otros mundos.
+            Cada objeto cuenta una historia de exploración.
+        </p>
+
+        <a href="#objetos" class="boton">
+            COMENZAR EXPLORACIÓN →
+        </a>
+
+    </div>
+
+</section>
+
+<!-- OBJETOS -->
+
+<section class="seccion" id="objetos">
+
+    <h2 class="titulo-seccion">
+        Rastros de la humanidad
+    </h2>
+
+    <p class="descripcion">
+        Selecciona un destino y descubre qué hemos dejado allí.
+    </p>
+
+    <div class="tarjetas">
+
+        <div class="tarjeta"
+             data-scene="luna"
+             data-title="La Luna"
+             data-description="Las misiones Apolo dejaron equipos científicos, vehículos, herramientas y componentes de sus módulos lunares sobre la superficie de nuestro satélite.">
+
+            <div class="icono">🌕</div>
+
+            <h3>La Luna</h3>
+
+            <p>
+                Herramientas, módulos y vehículos
+                de las misiones Apolo.
+            </p>
+
+            <button>EXPLORAR DESTINO →</button>
+
+        </div>
+
+        <div class="tarjeta"
+             data-scene="marte"
+             data-title="Marte"
+             data-description="En Marte permanecen vehículos de exploración, módulos de aterrizaje y otros componentes de misiones robóticas enviadas desde la Tierra.">
+
+            <div class="icono">🔴</div>
+
+            <h3>Marte</h3>
+
+            <p>
+                Rovers, módulos y tecnología
+                de exploración.
+            </p>
+
+            <button>EXPLORAR DESTINO →</button>
+
+        </div>
+
+        <div class="tarjeta"
+             data-scene="tierra"
+             data-title="Órbita terrestre"
+             data-description="Alrededor de nuestro planeta existen satélites fuera de servicio y fragmentos de objetos espaciales conocidos como basura espacial.">
+
+            <div class="icono">🌎</div>
+
+            <h3>La Tierra</h3>
+
+            <p>
+                Satélites fuera de servicio
+                y basura espacial.
+            </p>
+
+            <button>EXPLORAR DESTINO →</button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- MODAL -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-contenido">
+
+        <span class="cerrar" id="cerrar">&times;</span>
+
+        <h2 id="modal-titulo"></h2>
+
+        <p id="modal-texto"></p>
+
+        <button class="boton" id="volver">
+            REGRESAR
+        </button>
+
+    </div>
+
+</div>
+
+<footer id="contacto">
+
+    <p>NASA ARCHIVE | Rastros de la humanidad en el espacio</p>
+    <p class="footer-subtitulo">
+        Proyecto educativo de exploración espacial
+    </p>
+
+</footer>
+
+<script>
+
+    const fondo = document.getElementById("fondo");
+
+    const tarjetas = document.querySelectorAll(".tarjeta");
+
+    const modal = document.getElementById("modal");
+
+    const titulo = document.getElementById("modal-titulo");
+
+    const texto = document.getElementById("modal-texto");
+
+    tarjetas.forEach(tarjeta => {
+
+        tarjeta.addEventListener("mouseenter", () => {
+
+            fondo.className = "fondo " + tarjeta.dataset.scene;
+
+        });
+
+        tarjeta.addEventListener("mouseleave", () => {
+
+            fondo.className = "fondo";
+
+        });
+
+        tarjeta.addEventListener("click", () => {
+
+            titulo.textContent = tarjeta.dataset.title;
+
+            texto.textContent = tarjeta.dataset.description;
+
+            modal.style.display = "flex";
+
+        });
+
+    });
+
+    document.getElementById("cerrar").onclick = () => {
+        modal.style.display = "none";
+    };
+
+    document.getElementById("volver").onclick = () => {
+        modal.style.display = "none";
+    };
+
+    modal.addEventListener("click", (e) => {
+
+        if(e.target === modal) {
+            modal.style.display = "none";
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
