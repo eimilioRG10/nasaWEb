@@ -65,6 +65,23 @@
     </p>
 
     <div class="tarjetas">
+                <div class="tarjeta"
+            data-scene="luna"
+            data-title="Juegos"
+            data-description="Juega y aprende sobre los robots"
+            data-link="juegos.html">
+
+            <div class="icono">🎮</div>
+
+            <h3>Juegos</h3>
+
+            <p>
+                ¿Dónde quedó cada robot?
+                Ordena la línea del tiempo.
+            </p>
+
+            <button>¡A JUGAR! →</button>
+        </div>
 
         <div class="tarjeta"
              data-scene="luna"
@@ -180,6 +197,10 @@
         });
 
         tarjeta.addEventListener("click", () => {
+                    if (tarjeta.dataset.link) {
+                window.location.href = tarjeta.dataset.link;
+                return;
+            }
 
             titulo.textContent = tarjeta.dataset.title;
 
