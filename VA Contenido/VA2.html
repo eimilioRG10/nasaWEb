@@ -1,0 +1,2304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abandonados pero no olvidados — Archivo Documental NSSDCA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* =====================================================================
+           1. PALETA EDITORIAL SOBRIA Y MODO NOCTURNO
+           ===================================================================== */
+        :root {
+            --bg-page: #FFFFFF;
+            --bg-surface: #F4F5F7;
+            --bg-card: #FFFFFF;
+            --bg-header: #0B0D10;
+            --text-primary: #0B0D10;
+            --text-secondary: #4B5563;
+            --border-subtle: #D1D5DB;
+            --accent-blue: #105BD8;
+            --accent-red: #FC3D21;
+            --badge-bg: #E5E7EB;
+        }
+
+        body.night-mode {
+            --bg-page: #0D1117;
+            --bg-surface: #161B22;
+            --bg-card: #161B22;
+            --bg-header: #010409;
+            --text-primary: #E6EDF3;
+            --text-secondary: #8B949E;
+            --border-subtle: #30363D;
+            --accent-blue: #58A6FF;
+            --accent-red: #FC3D21;
+            --badge-bg: #21262D;
+        }
+
+        /* =====================================================================
+           2. REGLA ESTRICTA DE TIPOGRAFÍA Y LEGIBILIDAD:
+              Arial 12pt (16px), Interlineado 1.5, Alineación Justificada
+           ===================================================================== */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        .editorial-text {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .surface-panel {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        .card-panel {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+        }
+
+        .card-panel:hover {
+            border-color: var(--text-secondary);
+        }
+
+        /* Botón circular rojo editorial */
+        .circle-arrow-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 9999px;
+            background-color: var(--accent-red);
+            color: #FFFFFF;
+            flex-shrink: 0;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .group:hover .circle-arrow-btn,
+        .circle-arrow-btn:hover {
+            transform: translateX(3px);
+            opacity: 0.92;
+        }
+
+        /* Pestañas principales con subrayado grueso */
+        .main-tab-btn {
+            padding: 14px 4px;
+            border-bottom: 3px solid transparent;
+            font-weight: bold;
+            font-size: 11pt;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .main-tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .main-tab-btn.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent-red);
+        }
+
+        .tab-screen {
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .tab-screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tablas de especificaciones técnicas NSSDCA */
+        .spec-table th {
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            font-weight: bold;
+            text-align: left;
+            padding: 10px 14px;
+            border: 1px solid var(--border-subtle);
+            width: 35%;
+            vertical-align: top;
+            font-size: 12pt;
+            line-height: 1.5;
+        }
+
+        .spec-table td {
+            padding: 10px 14px;
+            border: 1px solid var(--border-subtle);
+            text-align: justify;
+            vertical-align: top;
+            font-size: 12pt;
+            line-height: 1.5;
+        }
+
+        /* Visor deslizable (Fotografía Oficial <-> Diagrama 2D) */
+        .carousel-track {
+            display: flex;
+            width: 200%;
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            touch-action: pan-y;
+            user-select: none;
+        }
+
+        .carousel-slide {
+            width: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Escáner de Ingeniería 2D estilo Blueprint */
+        .blueprint-grid {
+            background-color: #0B101B;
+            background-image:
+                linear-gradient(to right, rgba(56, 189, 248, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #E2E8F0;
+        }
+
+        .pin-btn {
+            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .pin-btn:hover {
+            transform: translate(-50%, -50%) scale(1.12);
+        }
+
+        .pin-btn.active {
+            background-color: #FACC15 !important;
+            color: #0B101B !important;
+            box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.35);
+            transform: translate(-50%, -50%) scale(1.18);
+        }
+
+        .meta-label {
+            font-size: 10pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- =====================================================================
+         1. FRANJA SUPERIOR DE CUMPLIMIENTO NORMATIVO (DISCLAIMER OFICIAL)
+         ===================================================================== -->
+    <div class="border-b border-neutral-800 px-4 py-2 text-neutral-300" style="background-color: #161B22;">
+        <div class="max-w-7xl mx-auto">
+            <p class="text-xs leading-normal text-justify">
+                <strong class="text-white">Aviso Institucional:</strong> Proyecto educativo independiente. La NASA no respalda a ninguna entidad ajena al gobierno de EE. UU. y no se responsabiliza de la información contenida en sitios web ajenos al gobierno de EE. UU. Datos técnicos y parámetros orbitales obtenidos del dominio público a través del Archivo Coordinado de Datos de Ciencias Espaciales de la NASA (NSSDCA).
+            </p>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         2. BARRA DE NAVEGACIÓN PRINCIPAL OSCURA (#0B0D10)
+         ===================================================================== -->
+    <header class="sticky top-0 z-40 border-b border-neutral-800 text-white" style="background-color: var(--bg-header);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            
+            <!-- Izquierda: Identificador y Buscador Técnico -->
+            <div class="flex items-center gap-4 flex-1">
+                <span class="hidden lg:inline-block font-bold text-xs uppercase tracking-widest text-neutral-300 whitespace-nowrap">
+                    ARCHIVO NSSDCA
+                </span>
+                <div class="relative w-full max-w-xs">
+                    <input 
+                        type="text" 
+                        id="globalSearchInput" 
+                        oninput="handleGlobalSearch()" 
+                        placeholder="Buscar misión, rover o ID NSSDCA..." 
+                        class="w-full bg-neutral-900 border border-neutral-700 rounded px-3 py-1.5 pl-8 text-xs text-white placeholder-neutral-400 focus:outline-none focus:border-sky-500"
+                    >
+                    <svg class="w-3.5 h-3.5 text-neutral-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Centro: Emblema Geométrico Técnico Propio (Evita uso del logo oficial NASA) -->
+            <div class="flex items-center justify-center shrink-0">
+                <button type="button" onclick="switchTab('catalogo')" class="flex items-center gap-2.5 cursor-pointer group focus:outline-none" title="Volver al inicio del catálogo">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center border border-neutral-600 bg-neutral-900 group-hover:border-sky-400 transition-colors">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="8" stroke="#58A6FF" stroke-width="1.75"/>
+                            <ellipse cx="12" cy="12" rx="11" ry="3.8" transform="rotate(-24 12 12)" stroke="#FC3D21" stroke-width="1.75"/>
+                            <circle cx="12" cy="12" r="2.2" fill="#FFFFFF"/>
+                        </svg>
+                    </div>
+                    <span class="hidden sm:inline font-bold text-xs uppercase tracking-widest text-white">
+                        EXPEDIENTE ESPACIAL
+                    </span>
+                </button>
+            </div>
+
+            <!-- Derecha: Botón de Modo Nocturno -->
+            <div class="flex items-center justify-end gap-3 flex-1">
+                <button 
+                    type="button" 
+                    id="nightModeBtn" 
+                    onclick="toggleNightMode()" 
+                    class="flex items-center gap-2 px-3 py-1.5 rounded border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 text-xs font-bold text-neutral-200 cursor-pointer transition-colors"
+                    aria-pressed="false"
+                >
+                    <span id="nightModeIcon">🌙</span>
+                    <span id="nightModeText">Modo Nocturno</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- =====================================================================
+         3. SECCIÓN HERO EDITORIAL DE ALTO CONTRASTE
+         ===================================================================== -->
+    <section class="relative overflow-hidden border-b border-neutral-800 text-white" style="background-color: #0B0D10;">
+        <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Aldrin_Apollo_11_original.jpg/1280px-Aldrin_Apollo_11_original.jpg" 
+            onerror="this.style.display='none'" 
+            alt="Superficie lunar durante el programa Apolo" 
+            class="absolute inset-0 w-full h-full object-cover opacity-30 object-center"
+        >
+        <div class="absolute inset-0 bg-gradient-to-r from-[#0B0D10] via-[#0B0D10]/90 to-[#0B0D10]/55"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+            <div class="max-w-3xl space-y-4">
+                <div class="flex items-center gap-2">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full" style="background-color: #FC3D21;"></span>
+                    <span class="text-xs font-bold uppercase tracking-widest text-neutral-300">
+                        REPOSITORIO DOCUMENTAL · LUNA, MARTE Y ESPACIO PROFUNDO
+                    </span>
+                </div>
+
+                <h1 class="font-bold tracking-tight text-white" style="font-size: 28pt; line-height: 1.15;">
+                    Abandonados pero no olvidados
+                </h1>
+
+                <p class="font-bold text-neutral-200" style="font-size: 13pt; line-height: 1.4;">
+                    (información acerca del hardware abandonado en el espacio por la NASA)
+                </p>
+
+                <p class="editorial-text text-neutral-300 pt-1">
+                    Desde la década de 1960, sondas de reconocimiento, módulos de aterrizaje, rovers autónomos y observatorios orbitales han concluido sus misiones científicas en la Luna, Marte, asteroides y el espacio interestelar. Este archivo documenta la ingeniería de 16 dispositivos históricos y el conocimiento científico que aportaron a la humanidad, respaldado por registros públicos del NSSDCA.
+                </p>
+
+                <div class="pt-2 flex flex-wrap items-center gap-6">
+                    <button type="button" onclick="switchTab('catalogo')" class="group inline-flex items-center gap-3 font-bold text-sm text-white cursor-pointer">
+                        <span>Explorar Fichas Técnicas NSSDCA</span>
+                        <span class="circle-arrow-btn">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path d="M5 12h14M13 6l6 6-6 6"></path>
+                            </svg>
+                        </span>
+                    </button>
+
+                    <button type="button" onclick="switchTab('mapa')" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-sky-400 hover:underline cursor-pointer">
+                        <span>Ver Posición en el Sistema Solar →</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         4. BARRA DE NAVEGACIÓN POR PESTAÑAS INDEPENDIENTES (5 APARTADOS)
+         ===================================================================== -->
+    <nav class="border-b sticky top-16 z-30" style="background-color: var(--bg-page); border-color: var(--border-subtle);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-6 sm:gap-8 overflow-x-auto">
+            <button type="button" id="tab-btn-catalogo" onclick="switchTab('catalogo')" class="main-tab-btn active">
+                1. Catálogo de Fichas Técnicas NSSDCA
+            </button>
+            <button type="button" id="tab-btn-mapa" onclick="switchTab('mapa')" class="main-tab-btn">
+                2. Mapa del Sistema Solar
+            </button>
+            <button type="button" id="tab-btn-simulador" onclick="switchTab('simulador')" class="main-tab-btn">
+                3. Simulador de Entorno y Conservación
+            </button>
+            <button type="button" id="tab-btn-foro" onclick="switchTab('foro')" class="main-tab-btn">
+                4. Foro de Discusión Científica
+            </button>
+            <button type="button" id="tab-btn-citas" onclick="switchTab('citas')" class="main-tab-btn">
+                5. Citas Verificadas NSSDCA y Glosario
+            </button>
+        </div>
+    </nav>
+
+    <!-- =====================================================================
+         5. CONTENEDOR PRINCIPAL DE PESTAÑAS (CADA APARTADO SE MUESTRA AISLADO)
+         ===================================================================== -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 min-h-[65vh]">
+
+        <!-- =================================================================
+             PESTAÑA 1: CATÁLOGO DE FICHAS TÉCNICAS NSSDCA
+             ================================================================= -->
+        <section id="screen-catalogo" class="tab-screen active space-y-8">
+            
+            <!-- Cabecera y Controles de Vista / Filtro -->
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b" style="border-color: var(--border-subtle);">
+                <div class="max-w-3xl space-y-2">
+                    <span class="meta-label">INVENTARIO DE HARDWARE EXTRATERRESTRE · 16 EXPEDIENTES</span>
+                    <h2 class="font-bold" style="font-size: 20pt; line-height: 1.25;">
+                        Catálogo de Artefactos Científicos en la Luna, Marte y Espacio Profundo
+                    </h2>
+                    <p class="editorial-text" style="color: var(--text-secondary);">
+                        Seleccione cualquier expediente para inspeccionar su fotografía oficial de archivo, deslizar hacia su diagrama de ingeniería 2D interactivo y consultar sus parámetros orbitales y descubrimientos verificados.
+                    </p>
+                </div>
+
+                <!-- Selector Dual de Interfaz: Editorial NASA vs Hilos Reddit -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+                    <div class="inline-flex rounded border p-1" style="background-color: var(--bg-surface); border-color: var(--border-subtle);">
+                        <button 
+                            type="button" 
+                            id="viewEditorialBtn" 
+                            onclick="setCatalogView('editorial')" 
+                            class="px-3 py-1.5 rounded text-xs font-bold cursor-pointer transition-colors text-white"
+                            style="background-color: #105BD8;"
+                        >
+                            Vista Editorial NASA
+                        </button>
+                        <button 
+                            type="button" 
+                            id="viewRedditBtn" 
+                            onclick="setCatalogView('reddit')" 
+                            class="px-3 py-1.5 rounded text-xs font-bold cursor-pointer transition-colors"
+                            style="color: var(--text-primary);"
+                        >
+                            Vista Hilos Técnicos (Reddit)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros por Destino Celeste -->
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-2" id="destinationFilters">
+                    <button type="button" onclick="filterByDestination('all')" data-dest="all" class="dest-filter-btn px-3.5 py-1.5 rounded text-xs font-bold border cursor-pointer text-white" style="background-color: #0B0D10; border-color: #0B0D10;">
+                        Todos los Destinos (16)
+                    </button>
+                    <button type="button" onclick="filterByDestination('Luna')" data-dest="Luna" class="dest-filter-btn px-3.5 py-1.5 rounded text-xs font-bold border cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                        La Luna (4)
+                    </button>
+                    <button type="button" onclick="filterByDestination('Marte')" data-dest="Marte" class="dest-filter-btn px-3.5 py-1.5 rounded text-xs font-bold border cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                        Marte (8)
+                    </button>
+                    <button type="button" onclick="filterByDestination('Espacio Profundo')" data-dest="Espacio Profundo" class="dest-filter-btn px-3.5 py-1.5 rounded text-xs font-bold border cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                        Asteroides y Espacio Profundo (4)
+                    </button>
+                </div>
+
+                <span id="resultsCounter" class="meta-label">
+                    MOSTRANDO 16 DE 16 ARTEFACTOS
+                </span>
+            </div>
+
+            <!-- Contenedor Dinámico del Catálogo -->
+            <div id="catalogContainer"></div>
+        </section>
+
+        <!-- =================================================================
+             PESTAÑA 2: MAPA INTERACTIVO DEL SISTEMA SOLAR
+             ================================================================= -->
+        <section id="screen-mapa" class="tab-screen space-y-8">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-6 border-b" style="border-color: var(--border-subtle);">
+                <div class="max-w-3xl space-y-2">
+                    <span class="meta-label">CARTOGRAFÍA ASTROMÉTRICA Y UBICACIÓN DE HARDWARE</span>
+                    <h2 class="font-bold" style="font-size: 20pt; line-height: 1.25;">
+                        Mapa Interactivo del Sistema Solar y Cuerpos Explorados
+                    </h2>
+                    <p class="editorial-text" style="color: var(--text-secondary);">
+                        Visualización esquemática en tiempo real simulado de las órbitas planetarias y los emplazamientos donde permanecen los 16 dispositivos documentados. Seleccione un sector o pulse sobre cualquier marcador para inspeccionar su expediente técnico.
+                    </p>
+                </div>
+
+                <!-- Controles de Velocidad de Simulación -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="meta-label mr-1">TIEMPO ORBITAL:</span>
+                    <button type="button" onclick="setMapSpeed(1)" id="speed-1" class="px-3 py-1.5 rounded text-xs font-bold border cursor-pointer text-white" style="background-color: #105BD8; border-color: #105BD8;">
+                        1x Real
+                    </button>
+                    <button type="button" onclick="setMapSpeed(1000)" id="speed-1000" class="px-3 py-1.5 rounded text-xs font-bold border cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                        1000x Acelerado
+                    </button>
+                    <button type="button" onclick="setMapSpeed(0)" id="speed-0" class="px-3 py-1.5 rounded text-xs font-bold border cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                        Pausa
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selector de Sector del Mapa -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="setMapSector('solar')" id="sector-solar" class="px-4 py-2 rounded text-xs font-bold border cursor-pointer text-white" style="background-color: #0B0D10; border-color: #0B0D10;">
+                    Vista General: Sistema Solar Interior y Exterior
+                </button>
+                <button type="button" onclick="setMapSector('luna')" id="sector-luna" class="px-4 py-2 rounded text-xs font-bold border cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                    Sector Luna (Sitios Apolo y Surveyor)
+                </button>
+                <button type="button" onclick="setMapSector('marte')" id="sector-marte" class="px-4 py-2 rounded text-xs font-bold border cursor-pointer" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                    Sector Marte (Rovers y Módulos Estacionarios)
+                </button>
+            </div>
+
+            <!-- Lienzo Interactivo + Panel de Telemetría -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 rounded border overflow-hidden relative" style="background-color: #070B12; border-color: var(--border-subtle);">
+                    <div class="px-4 py-2.5 border-b border-neutral-800 flex items-center justify-between text-xs text-neutral-300">
+                        <span id="mapSectorTitle" class="font-bold uppercase tracking-wider">SISTEMA SOLAR · ÓRBITAS HELIOCÉNTRICAS E INTERESTELARES</span>
+                        <span id="mapEpochDisplay" class="font-mono text-sky-400">ÉPOCA J2000+</span>
+                    </div>
+                    <div class="w-full relative" style="height: 440px;">
+                        <canvas id="solarMapCanvas" class="w-full h-full block cursor-pointer"></canvas>
+                    </div>
+                    <div class="px-4 py-2 border-t border-neutral-800 text-xs text-neutral-400 flex flex-wrap justify-between gap-2">
+                        <span>Haga clic sobre un nodo luminoso para consultar la telemetría del artefacto.</span>
+                        <span>Escala logarítmica esquemática (UA / km)</span>
+                    </div>
+                </div>
+
+                <!-- Panel Lateral de Telemetría del Objeto Seleccionado -->
+                <div class="card-panel rounded p-5 flex flex-col justify-between space-y-5">
+                    <div id="mapSelectedDetails" class="space-y-4">
+                        <span class="meta-label">TELEMETRÍA NSSDCA SELECCIONADA</span>
+                        <h3 id="mapObjName" class="font-bold" style="font-size: 15pt; line-height: 1.3;">
+                            Sondas Pioneer 10 y Pioneer 11
+                        </h3>
+                        <div class="space-y-2 text-xs border-y py-3" style="border-color: var(--border-subtle);">
+                            <div class="flex justify-between">
+                                <span style="color: var(--text-secondary);">ID NSSDCA:</span>
+                                <span id="mapObjId" class="font-bold">1972-012A / 1973-019A</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: var(--text-secondary);">Región / Cuerpo:</span>
+                                <span id="mapObjBody" class="font-bold">Espacio Interestelar (>135 UA)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span style="color: var(--text-secondary);">Estado Operativo:</span>
+                                <span id="mapObjStatus" class="font-bold text-amber-500">Sin señal · Trayectoria de escape</span>
+                            </div>
+                        </div>
+                        <p id="mapObjDesc" class="editorial-text">
+                            Primeras naves en atravesar el cinturón de asteroides y obtener imágenes directas de Júpiter y Saturno. Tras agotar sus generadores termoeléctricos de radioisótopos, continúan alejándose silenciosamente hacia el espacio interestelar.
+                        </p>
+                    </div>
+
+                    <button 
+                        type="button" 
+                        id="mapOpenModalBtn" 
+                        onclick="openModal('pioneer')" 
+                        class="w-full py-2.5 px-4 rounded font-bold text-xs uppercase tracking-wider text-white flex items-center justify-between cursor-pointer"
+                        style="background-color: #105BD8;"
+                    >
+                        <span>Abrir Ficha Técnica Completa</span>
+                        <span>→</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             PESTAÑA 3: SIMULADOR DE ENTORNO PLANETARIO Y CONSERVACIÓN
+             ================================================================= -->
+        <section id="screen-simulador" class="tab-screen space-y-8">
+            <div class="pb-6 border-b space-y-2" style="border-color: var(--border-subtle);">
+                <span class="meta-label">MODELADO FÍSICO DE MATERIALES AEROESPACIALES</span>
+                <h2 class="font-bold" style="font-size: 20pt; line-height: 1.25;">
+                    Simulador de Entorno Planetario y Conservación de Hardware
+                </h2>
+                <p class="editorial-text max-w-4xl" style="color: var(--text-secondary);">
+                    A diferencia de los satélites en órbita terrestre baja que reingresan por arrastre atmosférico, los artefactos posados en la Luna, Marte o asteroides permanecen expuestos a condiciones físicas extremas. Configure el entorno planetario y el tiempo transcurrido para evaluar el estado estructural de los materiales.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Controles del Simulador -->
+                <div class="lg:col-span-5 surface-panel rounded p-6 space-y-5">
+                    <h3 class="font-bold" style="font-size: 14pt;">Parámetros Ambientales</h3>
+
+                    <div class="space-y-1.5">
+                        <label for="simEnvSelect" class="block text-xs font-bold uppercase tracking-wider">
+                            1. Entorno Planetario de Destino
+                        </label>
+                        <select id="simEnvSelect" onchange="updateEnvironmentSimulation()" class="w-full p-2.5 rounded border text-sm font-bold" style="background-color: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">
+                            <option value="luna">Superficie Lunar (Vacío extremo, ±130 °C, micrometeoritos)</option>
+                            <option value="marte">Superficie Marciana (Atmósfera CO₂, tormentas de polvo)</option>
+                            <option value="ceres">Órbita de Ceres / Asteroide 433 Eros (Microgravedad)</option>
+                            <option value="interestelar">Espacio Interestelar (Radiación galáctica, ~3 Kelvin)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs font-bold">
+                            <label for="simYearsRange">2. Tiempo de Exposición (Años)</label>
+                            <span id="simYearsVal" class="text-sky-600">55 años</span>
+                        </div>
+                        <input type="range" id="simYearsRange" min="1" max="500" value="55" oninput="updateEnvironmentSimulation()" class="w-full accent-blue-600 cursor-pointer">
+                        <div class="flex justify-between text-xs" style="color: var(--text-secondary);">
+                            <span>1 año</span>
+                            <span>250 años</span>
+                            <span>500 años</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between text-xs font-bold">
+                            <label for="simShieldRange">3. Blindaje Térmico (Kapton / Aluminio)</label>
+                            <span id="simShieldVal" class="text-sky-600">Estándar (MLI multicapa)</span>
+                        </div>
+                        <input type="range" id="simShieldRange" min="1" max="3" value="2" oninput="updateEnvironmentSimulation()" class="w-full accent-blue-600 cursor-pointer">
+                        <div class="flex justify-between text-xs" style="color: var(--text-secondary);">
+                            <span>Ligero</span>
+                            <span>Estándar</span>
+                            <span>Reforzado RTG</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultados Científicos del Simulador -->
+                <div class="lg:col-span-7 card-panel rounded p-6 space-y-6">
+                    <div class="flex items-center justify-between border-b pb-4" style="border-color: var(--border-subtle);">
+                        <div>
+                            <span class="meta-label">DIAGNÓSTICO DE INGENIERÍA</span>
+                            <h3 id="simResultTitle" class="font-bold" style="font-size: 15pt;">
+                                Conservación en Superficie Lunar (55 años)
+                            </h3>
+                        </div>
+                        <span id="simStatusBadge" class="px-3 py-1 rounded text-xs font-bold uppercase text-white" style="background-color: #105BD8;">
+                            INTEGRIDAD ALTA
+                        </span>
+                    </div>
+
+                    <!-- Indicadores Cuantitativos -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="surface-panel rounded p-4">
+                            <span class="meta-label block">DEGRADACIÓN EXTERNA</span>
+                            <span id="simDegradationMetric" class="font-bold block mt-1" style="font-size: 16pt;">14%</span>
+                            <span class="text-xs" style="color: var(--text-secondary);">Erosión por regolito / UV</span>
+                        </div>
+                        <div class="surface-panel rounded p-4">
+                            <span class="meta-label block">ESTADO ENERGÉTICO</span>
+                            <span id="simPowerMetric" class="font-bold block mt-1" style="font-size: 16pt;">Inactivo (0 W)</span>
+                            <span class="text-xs" style="color: var(--text-secondary);">Baterías descargadas</span>
+                        </div>
+                        <div class="surface-panel rounded p-4">
+                            <span class="meta-label block">PRESERVACIÓN ESTIMADA</span>
+                            <span id="simLifespanMetric" class="font-bold block mt-1" style="font-size: 16pt;">> 100,000 años</span>
+                            <span class="text-xs" style="color: var(--text-secondary);">Sin erosión atmosférica</span>
+                        </div>
+                    </div>
+
+                    <!-- Análisis Físico Justificado -->
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-sm uppercase tracking-wider">Análisis Físico del Entorno</h4>
+                        <p id="simAnalysisText" class="editorial-text">
+                            En la Luna, la ausencia de atmósfera elimina la oxidación química y la erosión eólica. Sin embargo, los ciclos térmicos extremos entre el día y la noche lunar (+127 °C a -173 °C) provocan fatiga mecánica en las láminas aislantes de Kapton y polímeros, mientras que el flujo constante de micrometeoritos pulimenta lentamente las superficies metálicas externas. Los retrorreflectores láser pasivos (LRRR) continúan operando sin energía eléctrica.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             PESTAÑA 4: FORO DE DISCUSIÓN CIENTÍFICA Y PATRIMONIAL (ESTILO REDDIT)
+             ================================================================= -->
+        <section id="screen-foro" class="tab-screen space-y-8">
+            <div class="pb-6 border-b space-y-2" style="border-color: var(--border-subtle);">
+                <span class="meta-label">DEBATE ACADÉMICO Y ÉTICA AEROESPACIAL</span>
+                <h2 class="font-bold" style="font-size: 20pt; line-height: 1.25;">
+                    Foro de Discusión: ¿Patrimonio Científico o Residuos Extraterrestres?
+                </h2>
+                <p class="editorial-text max-w-4xl" style="color: var(--text-secondary);">
+                    Espacio estructurado para analizar el estatus histórico, ambiental y jurídico de los vehículos y sondas que permanecen en otros cuerpos celestes tras finalizar sus misiones.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Columna Principal de Hilos -->
+                <div class="lg:col-span-8 space-y-4">
+                    <!-- Filtros de Postura -->
+                    <div class="flex flex-wrap items-center gap-2 pb-2">
+                        <button type="button" onclick="filterForum('all')" class="forum-filter-btn px-3 py-1.5 rounded text-xs font-bold border cursor-pointer text-white" data-tag="all" style="background-color: #0B0D10; border-color: #0B0D10;">
+                            Todas las Aportaciones
+                        </button>
+                        <button type="button" onclick="filterForum('Patrimonio Histórico')" class="forum-filter-btn px-3 py-1.5 rounded text-xs font-bold border cursor-pointer" data-tag="Patrimonio Histórico" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                            Patrimonio Histórico
+                        </button>
+                        <button type="button" onclick="filterForum('Protección Planetaria')" class="forum-filter-btn px-3 py-1.5 rounded text-xs font-bold border cursor-pointer" data-tag="Protección Planetaria" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                            Protección Planetaria
+                        </button>
+                        <button type="button" onclick="filterForum('Marco Legal 1967')" class="forum-filter-btn px-3 py-1.5 rounded text-xs font-bold border cursor-pointer" data-tag="Marco Legal 1967" style="background-color: var(--bg-surface); border-color: var(--border-subtle); color: var(--text-primary);">
+                            Marco Legal 1967
+                        </button>
+                    </div>
+
+                    <div id="forumThreadsList" class="space-y-4"></div>
+                </div>
+
+                <!-- Columna Lateral: Publicar Nueva Aportación -->
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="surface-panel rounded p-5 space-y-4">
+                        <h3 class="font-bold" style="font-size: 14pt;">Publicar Argumento</h3>
+                        <form id="forumForm" onsubmit="submitForumPost(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-bold mb-1">Autor / Institución</label>
+                                <input type="text" id="postAuthor" required placeholder="Ej. Dra. M. Torres / Estudiante Ing." class="w-full p-2 rounded border text-xs" style="background-color: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1">Enfoque del Análisis</label>
+                                <select id="postTag" class="w-full p-2 rounded border text-xs font-bold" style="background-color: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">
+                                    <option value="Patrimonio Histórico">Patrimonio Histórico</option>
+                                    <option value="Protección Planetaria">Protección Planetaria</option>
+                                    <option value="Marco Legal 1967">Marco Legal 1967</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1">Título de la Intervención</label>
+                                <input type="text" id="postTitle" required placeholder="Tesis principal..." class="w-full p-2 rounded border text-xs" style="background-color: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold mb-1">Argumentación Documentada</label>
+                                <textarea id="postBody" rows="4" required placeholder="Desarrolle su postura con base en criterios científicos o históricos..." class="w-full p-2 rounded border text-xs" style="background-color: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-2.5 px-4 rounded font-bold text-xs uppercase tracking-wider text-white cursor-pointer" style="background-color: #105BD8;">
+                                Publicar en el Foro
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             PESTAÑA 5: CITAS VERIFICADAS NSSDCA Y GLOSARIO AEROESPACIAL
+             ================================================================= -->
+        <section id="screen-citas" class="tab-screen space-y-10">
+            <div class="pb-6 border-b space-y-2" style="border-color: var(--border-subtle);">
+                <span class="meta-label">TRAZABILIDAD DOCUMENTAL Y TERMINOLOGÍA TÉCNICA</span>
+                <h2 class="font-bold" style="font-size: 20pt; line-height: 1.25;">
+                    Citas Verificadas NSSDCA y Glosario Aeroespacial en Contexto
+                </h2>
+                <p class="editorial-text max-w-4xl" style="color: var(--text-secondary);">
+                    Referencias primarias del Archivo Coordinado de Datos de Ciencias Espaciales de la NASA (NSSDCA) y definiciones técnicas utilizadas en los expedientes de ingeniería.
+                </p>
+            </div>
+
+            <!-- Bloque 1: Citas Documentales Verificadas -->
+            <div class="space-y-4">
+                <h3 class="font-bold" style="font-size: 15pt;">1. Fuentes Primarias y Catálogos Públicos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="card-panel rounded p-5 space-y-2">
+                        <span class="meta-label text-sky-600">CATÁLOGO MAESTRO NSSDCA</span>
+                        <h4 class="font-bold">NASA Space Science Data Coordinated Archive (NSSDCA)</h4>
+                        <p class="editorial-text">
+                            Repositorio oficial de dominio público administrado por el Centro de Vuelo Espacial Goddard de la NASA. Provee los identificadores internacionales COSPAR/NSSDCA, fechas de lanzamiento, masas en seco, coordenadas de alunizaje o amartizaje y estado operativo de todas las naves espaciales.
+                        </p>
+                        <p class="text-xs font-mono pt-1" style="color: var(--text-secondary);">
+                            Referencia: https://nssdc.gsfc.nasa.gov/nmc/
+                        </p>
+                    </div>
+
+                    <div class="card-panel rounded p-5 space-y-2">
+                        <span class="meta-label text-sky-600">PROTECCIÓN Y PATRIMONIO LUNAR</span>
+                        <h4 class="font-bold">NASA Recommendations to Space-Faring Entities (2011)</h4>
+                        <p class="editorial-text">
+                            Directrices técnicas elaboradas por la NASA para preservar el valor histórico y científico de los artefactos estadounidenses en la superficie lunar (sitios Apolo, Surveyor y Ranger), estableciendo zonas de exclusión contra abrasión por polvo propulsado.
+                        </p>
+                        <p class="text-xs font-mono pt-1" style="color: var(--text-secondary);">
+                            Referencia: NASA Historical & Scientific Lunar Heritage Guidelines
+                        </p>
+                    </div>
+
+                    <div class="card-panel rounded p-5 space-y-2">
+                        <span class="meta-label text-sky-600">DERECHO ESPACIAL INTERNACIONAL</span>
+                        <h4 class="font-bold">Tratado sobre los Principios que deben regir las actividades de los Estados en la Exploración del Espacio Ultraterrestre (1967)</h4>
+                        <p class="editorial-text">
+                            Artículo VIII: El Estado de registro retiene la jurisdicción y el control sobre todo objeto lanzado al espacio ultraterrestre o posado sobre un cuerpo celeste, sin que su propiedad se vea afectada por su presencia en la Luna o Marte.
+                        </p>
+                        <p class="text-xs font-mono pt-1" style="color: var(--text-secondary);">
+                            Referencia: Resolución 2222 (XXI) de la Asamblea General de las Naciones Unidas
+                        </p>
+                    </div>
+
+                    <div class="card-panel rounded p-5 space-y-2">
+                        <span class="meta-label text-sky-600">EXPERIMENTOS LUNARES ACTIVOS</span>
+                        <h4 class="font-bold">Lunar Laser Ranging Retroreflector Array (LRRR)</h4>
+                        <p class="editorial-text">
+                            Conjuntos ópticos pasivos desplegados por las misiones Apolo 11, 14 y 15 que continúan reflejando pulsos láser desde observatorios terrestres para medir con precisión milimétrica la distancia Tierra-Luna y comprobar la relatividad general.
+                        </p>
+                        <p class="text-xs font-mono pt-1" style="color: var(--text-secondary);">
+                            Referencia: NSSDCA Experiment ID 1969-059C-01 / 1971-063C-08
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bloque 2: Glosario Aeroespacial Interactivo -->
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <h3 class="font-bold" style="font-size: 15pt;">2. Glosario Aeroespacial en Contexto</h3>
+                    <input 
+                        type="text" 
+                        id="glossarySearch" 
+                        oninput="renderGlossary()" 
+                        placeholder="Filtrar término técnico (ej. RTG, COSPAR, ALSEP)..." 
+                        class="p-2 rounded border text-xs w-full sm:w-72"
+                        style="background-color: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);"
+                    >
+                </div>
+                <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =====================================================================
+         6. PIE DE PÁGINA INSTITUCIONAL NEGRO (#0B0D10)
+         ===================================================================== -->
+    <footer class="border-t border-neutral-800 text-neutral-300 mt-12" style="background-color: #0B0D10;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="space-y-3">
+                    <h4 class="font-bold text-white text-sm uppercase tracking-wider">
+                        Abandonados pero no olvidados
+                    </h4>
+                    <p class="editorial-text text-neutral-400" style="font-size: 11pt;">
+                        Archivo documental y educativo dedicado a la ingeniería y los hallazgos científicos de las misiones de la NASA que permanecen en la Luna, Marte, asteroides y el espacio profundo.
+                    </p>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="font-bold text-white text-sm uppercase tracking-wider">
+                        Secciones del Archivo
+                    </h4>
+                    <ul class="space-y-1.5 text-xs">
+                        <li><button type="button" onclick="switchTab('catalogo')" class="hover:text-white cursor-pointer">Catálogo de Fichas Técnicas NSSDCA</button></li>
+                        <li><button type="button" onclick="switchTab('mapa')" class="hover:text-white cursor-pointer">Mapa Interactivo del Sistema Solar</button></li>
+                        <li><button type="button" onclick="switchTab('simulador')" class="hover:text-white cursor-pointer">Simulador de Entorno y Conservación</button></li>
+                        <li><button type="button" onclick="switchTab('foro')" class="hover:text-white cursor-pointer">Foro de Discusión Científica</button></li>
+                        <li><button type="button" onclick="switchTab('citas')" class="hover:text-white cursor-pointer">Citas Verificadas NSSDCA y Glosario</button></li>
+                    </ul>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="font-bold text-white text-sm uppercase tracking-wider">
+                        Cumplimiento de Datos Abiertos
+                    </h4>
+                    <p class="editorial-text text-neutral-400" style="font-size: 11pt;">
+                        Aviso Institucional: Proyecto educativo independiente. La NASA no respalda a ninguna entidad ajena al gobierno de EE. UU. y no se responsabiliza de la información contenida en sitios web ajenos al gobierno de EE. UU. Datos técnicos y parámetros orbitales obtenidos del dominio público a través del Archivo Coordinado de Datos de Ciencias Espaciales de la NASA (NSSDCA).
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-neutral-800 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
+                <span>Tipografía: Arial 12pt · Interlineado 1.5 · Alineación Justificada</span>
+                <span>Fuente de Parámetros: NSSDCA Public Domain Archive</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =====================================================================
+         7. MODAL DE FICHA TÉCNICA CON VISOR DESLIZABLE (FOTO OFICIAL + ESCÁNER 2D)
+         ===================================================================== -->
+    <div id="artifactModal" class="fixed inset-0 z-50 hidden overflow-y-auto p-3 sm:p-6 flex items-start justify-center" style="background-color: rgba(11, 13, 16, 0.88);" onclick="handleModalBackdropClick(event)">
+        <div class="card-panel rounded-lg max-w-4xl w-full my-4 overflow-hidden shadow-2xl border" style="border-color: var(--border-subtle);" onclick="event.stopPropagation()">
+            
+            <!-- Barra Superior del Modal -->
+            <div class="px-5 sm:px-6 py-4 text-white flex items-center justify-between gap-4 border-b border-neutral-800" style="background-color: #0B0D10;">
+                <div>
+                    <span id="modalCosparBadge" class="text-xs font-bold uppercase tracking-widest text-sky-400 block">
+                        NSSDCA ID: 1969-059C
+                    </span>
+                    <h3 id="modalTitle" class="font-bold text-white" style="font-size: 16pt; line-height: 1.25;">
+                        Etapa de Descenso del Módulo Lunar Eagle
+                    </h3>
+                </div>
+                <button type="button" onclick="closeModal()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-xs font-bold text-white cursor-pointer">
+                    Cerrar ✕
+                </button>
+            </div>
+
+            <!-- Cuerpo del Modal -->
+            <div class="p-5 sm:p-6 space-y-6">
+                
+                <!-- Controles del Visor Deslizable -->
+                <div class="space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="inline-flex rounded border p-1" style="background-color: var(--bg-surface); border-color: var(--border-subtle);">
+                            <button type="button" id="slideBtn0" onclick="goToSlide(0)" class="px-3 py-1 rounded text-xs font-bold cursor-pointer text-white" style="background-color: #105BD8;">
+                                1. Fotografía Oficial de Archivo
+                            </button>
+                            <button type="button" id="slideBtn1" onclick="goToSlide(1)" class="px-3 py-1 rounded text-xs font-bold cursor-pointer" style="color: var(--text-primary);">
+                                2. Escáner de Ingeniería 2D
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs hidden sm:inline" style="color: var(--text-secondary);">Deslice la imagen o use las flechas:</span>
+                            <button type="button" onclick="goToSlide(0)" class="w-8 h-8 rounded border flex items-center justify-center font-bold cursor-pointer" style="border-color: var(--border-subtle); background-color: var(--bg-surface);" title="Vista anterior">‹</button>
+                            <button type="button" onclick="goToSlide(1)" class="w-8 h-8 rounded border flex items-center justify-center font-bold cursor-pointer" style="border-color: var(--border-subtle); background-color: var(--bg-surface);" title="Siguiente vista">›</button>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor Carrusel Deslizable -->
+                    <div id="carouselViewport" class="relative overflow-hidden rounded border" style="border-color: var(--border-subtle);">
+                        <div id="carouselTrack" class="carousel-track">
+                            
+                            <!-- DIAPOSITIVA 1: FOTOGRAFÍA OFICIAL DE ARCHIVO CON RESPALDO SVG GARANTIZADO -->
+                            <div class="carousel-slide bg-neutral-950 flex flex-col justify-between">
+                                <div class="relative w-full h-72 sm:h-80 bg-black flex items-center justify-center overflow-hidden">
+                                    <img 
+                                        id="modalOfficialImg" 
+                                        src="" 
+                                        alt="Fotografía oficial de archivo" 
+                                        class="w-full h-full object-contain pointer-events-none"
+                                    >
+                                    <button type="button" onclick="goToSlide(1)" class="absolute bottom-3 right-3 px-3 py-1.5 rounded text-xs font-bold text-white shadow cursor-pointer" style="background-color: rgba(16, 91, 216, 0.92);">
+                                        Deslizar a Diagrama 2D →
+                                    </button>
+                                </div>
+                                <div class="px-4 py-2.5 bg-neutral-900 border-t border-neutral-800 text-xs text-neutral-300 flex justify-between items-center gap-2">
+                                    <span id="modalPhotoCaption">Archivo histórico de dominio público NASA / NSSDCA.</span>
+                                    <span class="text-neutral-400 shrink-0">Vista 1 de 2</span>
+                                </div>
+                            </div>
+
+                            <!-- DIAPOSITIVA 2: ESCÁNER DE INGENIERÍA 2D INTERACTIVO -->
+                            <div class="carousel-slide blueprint-grid flex flex-col justify-between">
+                                <div class="px-4 py-2 border-b border-sky-900/60 flex items-center justify-between text-xs">
+                                    <span class="font-bold uppercase tracking-wider text-sky-400">
+                                        ESQUEMA DE INGENIERÍA 2D · PULSE LOS PUNTOS NUMERADOS
+                                    </span>
+                                    <span id="modalPinCounter" class="font-mono text-amber-300">SUBSISTEMA 1/3</span>
+                                </div>
+
+                                <!-- Lienzo SVG Vectorial + Pines Interactivos -->
+                                <div class="relative w-full h-56 sm:h-60 flex items-center justify-center" id="blueprintCanvasArea">
+                                    <div id="blueprintSvgContainer" class="w-full h-full flex items-center justify-center p-4"></div>
+                                    <div id="blueprintPinsContainer" class="absolute inset-0"></div>
+                                </div>
+
+                                <!-- Caja Explicativa del Subsistema Activo -->
+                                <div class="p-3.5 bg-slate-950/90 border-t border-sky-900/60 space-y-1.5">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span id="pinTitle" class="font-bold text-xs uppercase tracking-wider text-amber-300">
+                                            [1] Subsistema Principal
+                                        </span>
+                                        <div class="flex gap-1.5">
+                                            <button type="button" onclick="selectPin(0)" id="pinTab0" class="w-6 h-6 rounded text-xs font-bold bg-amber-400 text-slate-950 cursor-pointer">1</button>
+                                            <button type="button" onclick="selectPin(1)" id="pinTab1" class="w-6 h-6 rounded text-xs font-bold bg-slate-800 text-slate-200 cursor-pointer">2</button>
+                                            <button type="button" onclick="selectPin(2)" id="pinTab2" class="w-6 h-6 rounded text-xs font-bold bg-slate-800 text-slate-200 cursor-pointer">3</button>
+                                        </div>
+                                    </div>
+                                    <p id="pinDesc" class="editorial-text text-slate-200" style="font-size: 11.5pt;">
+                                        Descripción técnica del componente seleccionado.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Narrativa Científica: Ingeniería y Hallazgos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="surface-panel rounded p-4 space-y-2">
+                        <h4 class="font-bold text-sm uppercase tracking-wider" style="color: var(--accent-blue);">
+                            Propósito e Ingeniería del Hardware
+                        </h4>
+                        <p id="modalEngineeringText" class="editorial-text"></p>
+                    </div>
+
+                    <div class="surface-panel rounded p-4 space-y-2">
+                        <h4 class="font-bold text-sm uppercase tracking-wider" style="color: var(--accent-red);">
+                            Hallazgos Científicos y Legado
+                        </h4>
+                        <p id="modalScienceText" class="editorial-text"></p>
+                    </div>
+                </div>
+
+                <!-- Tabla de Especificaciones Técnicas Oficiales NSSDCA -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-sm uppercase tracking-wider">
+                        Parámetros Oficiales del Archivo NSSDCA
+                    </h4>
+                    <table class="w-full border-collapse spec-table">
+                        <tbody>
+                            <tr>
+                                <th>Identificador NSSDCA / COSPAR</th>
+                                <td id="specId"></td>
+                            </tr>
+                            <tr>
+                                <th>Fecha de Lanzamiento</th>
+                                <td id="specLaunch"></td>
+                            </tr>
+                            <tr>
+                                <th>Masa en Seco / Configuración</th>
+                                <td id="specMass"></td>
+                            </tr>
+                            <tr>
+                                <th>Ubicación Exacta / Coordenadas</th>
+                                <td id="specLocation"></td>
+                            </tr>
+                            <tr>
+                                <th>Estado Operativo Actual</th>
+                                <td id="specStatus"></td>
+                            </tr>
+                            <tr>
+                                <th>Fuente Documental Verificada</th>
+                                <td id="specSource"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         8. LÓGICA JAVASCRIPT E INVENTARIO COMPLETO DE 16 ARTEFACTOS NSSDCA
+         ===================================================================== -->
+    <script>
+        /* ---------------------------------------------------------------------
+           A. GENERADOR DE RESPALDO VECTORIAL SVG PARA IMÁGENES (NUNCA ROTO)
+           --------------------------------------------------------------------- */
+        function getFallbackSvgDataUri(title, cospar, category) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+                <rect width="800" height="450" fill="#0B101B"/>
+                <g stroke="#1E293B" stroke-width="1">
+                    <line x1="0" y1="75" x2="800" y2="75"/><line x1="0" y1="150" x2="800" y2="150"/>
+                    <line x1="0" y1="225" x2="800" y2="225"/><line x1="0" y1="300" x2="800" y2="300"/>
+                    <line x1="0" y1="375" x2="800" y2="375"/><line x1="160" y1="0" x2="160" y2="450"/>
+                    <line x1="320" y1="0" x2="320" y2="450"/><line x1="480" y1="0" x2="480" y2="450"/>
+                    <line x1="640" y1="0" x2="640" y2="450"/>
+                </g>
+                <circle cx="400" cy="210" r="95" fill="none" stroke="#38BDF8" stroke-width="2" stroke-dasharray="6 4"/>
+                <ellipse cx="400" cy="210" rx="145" ry="42" transform="rotate(-18 400 210)" fill="none" stroke="#FC3D21" stroke-width="2"/>
+                <rect x="365" y="175" width="70" height="70" rx="8" fill="#1E293B" stroke="#FACC15" stroke-width="2.5"/>
+                <circle cx="400" cy="210" r="14" fill="#38BDF8"/>
+                <text x="400" y="355" fill="#F8FAFC" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle">${title}</text>
+                <text x="400" y="385" fill="#94A3B8" font-family="Arial, sans-serif" font-size="14" text-anchor="middle">ARCHIVO NSSDCA · ID: ${cospar} · ${category.toUpperCase()}</text>
+            </svg>`;
+            return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+        }
+
+        /* ---------------------------------------------------------------------
+           B. BASE DE DATOS DOCUMENTAL DE LOS 16 ARTEFACTOS OFICIALES NSSDCA
+           --------------------------------------------------------------------- */
+        const ARTIFACTS = [
+            // ======================== LA LUNA (4) ========================
+            {
+                id: 'eagle',
+                destination: 'Luna',
+                categoryLabel: 'SUPERFICIE LUNAR · APOLO 11',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Etapa de Descenso del Módulo Lunar Eagle',
+                cospar: '1969-059C',
+                launchDate: '16 de julio de 1969',
+                mass: '2,033 kg (masa en seco sin propelente)',
+                location: 'Mar de la Tranquilidad, La Luna (0°40′26.69″ N, 23°28′22.69″ E)',
+                status: 'Inactivo · Monumento histórico estacionario',
+                source: 'NSSDCA Master Catalog ID: 1969-059C (Apollo 11 Lunar Module)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Aldrin_Apollo_11_original.jpg/800px-Aldrin_Apollo_11_original.jpg',
+                photoCaption: 'Etapa de descenso del LM-5 Eagle en el Mar de la Tranquilidad (Fotografía AS11-40-5903).',
+                engineering: 'La etapa de descenso del Módulo Lunar LM-5 fue diseñada con una estructura octogonal de aleación de aluminio recubierta por láminas aislantes de Kapton aluminizado para soportar el vacío y las temperaturas extremas del entorno lunar. Albergaba el motor de descenso regulable DPS, cuatro tanques de propelente hipergólico y cuatro patas telescópicas con paneles alveolares de absorción de impacto, sirviendo como plataforma rígida de lanzamiento para el retorno de la etapa de ascenso.',
+                science: 'Permitió el primer alunizaje tripulado de la historia el 20 de julio de 1969 y facilitó la recolección de 21.55 kilogramos de muestras basálticas y regolito lunar. El análisis isotópico de estas rocas demostró que la Luna tiene una antigüedad aproximada de 4,500 millones de años y comparte un origen geoquímico común con el manto terrestre.',
+                diagramType: 'lander',
+                pins: [
+                    { x: 50, y: 38, title: '[1] Plataforma de Interfaz y Anclaje Pirosécnico', desc: 'Anillo estructural superior donde se acopló la etapa de ascenso; contiene los pernos explosivos que liberaron la cabina de retorno.' },
+                    { x: 50, y: 58, title: '[2] Motor de Descenso Regulable (DPS)', desc: 'Primer motor espacial de empuje variable (4.7 kN a 45 kN) que permitió frenar desde la órbita lunar y maniobrar horizontalmente sobre el terreno.' },
+                    { x: 26, y: 76, title: '[3] Tren de Aterrizaje y Escalera de Acceso', desc: 'Patas con cartuchos deformables de aluminio y placa conmemorativa fijada en el puntal delantero.' }
+                ]
+            },
+            {
+                id: 'lrv1',
+                destination: 'Luna',
+                categoryLabel: 'SUPERFICIE LUNAR · APOLO 15',
+                readTime: '3 MIN DE LECTURA',
+                title: 'Vehículo Lunar Explorador LRV-1',
+                cospar: '1971-063D',
+                launchDate: '26 de julio de 1971',
+                mass: '210 kg en Tierra (35 kg equivalentes en gravedad lunar)',
+                location: 'Hadley-Apennine, La Luna (26°07′55.99″ N, 3°38′01.90″ E)',
+                status: 'Inactivo · Estacionado a 90 m al este del LM Falcon',
+                source: 'NSSDCA Master Catalog ID: 1971-063D (Apollo 15 Lunar Roving Vehicle)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Ap15-rover.jpg/800px-Ap15-rover.jpg',
+                photoCaption: 'Vehículo Lunar Explorador LRV-1 estacionado en la región Hadley-Apennine (Fotografía AS15-88-11901).',
+                engineering: 'Primer vehículo eléctrico tripulado diseñado para operar fuera de la Tierra. Construido con un chasis plegable de aluminio 2219, contaba con tracción independiente en las cuatro ruedas mediante motores eléctricos de 0.18 kW cada uno, neumáticos de malla de alambre de zinc con bandas de titanio y dos baterías de hidróxido de potasio y plata de 36 voltios no recargables.',
+                science: 'Amplió el radio de exploración geológica de los astronautas de unos pocos cientos de metros a 27.9 kilómetros recorridos en tres travesías. Gracias a su movilidad se recolectó la célebre "Roca del Génesis" (muestra 15415), una anortosita de 4,100 millones de años que confirmó la existencia de una corteza primordial fundida en la Luna joven.',
+                diagramType: 'rover',
+                pins: [
+                    { x: 64, y: 36, title: '[1] Antena Parabólica de Alta Ganancia', desc: 'Transmitió televisión en color en tiempo real hacia la Tierra mientras el vehículo permanecía estacionado en cada estación geológica.' },
+                    { x: 46, y: 54, title: '[2] Consola de Navegación por Estima', desc: 'Calculaba continuamente el rumbo y la distancia respecto al Módulo Lunar mediante un giroscopio direccional y odómetros en las ruedas.' },
+                    { x: 30, y: 74, title: '[3] Ruedas de Malla de Alambre de Zinc', desc: 'Diseño elástico sin aire comprimido con bandas de rodadura de titanio en espiga para evitar el hundimiento en el regolito fino.' }
+                ]
+            },
+            {
+                id: 'alsep',
+                destination: 'Luna',
+                categoryLabel: 'GEOFÍSICA LUNAR · APOLO 11/14/15',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Paquetes Científicos ALSEP y Retrorreflectores LRRR',
+                cospar: '1969-059C-01',
+                launchDate: '16 de julio de 1969 (y misiones posteriores hasta 1972)',
+                mass: '150 kg por estación geofísica completa',
+                location: 'Múltiples sitios ecuatoriales y de latitud media en la cara visible de la Luna',
+                status: 'Estación central apagada (1977) · Retrorreflectores LRRR activos',
+                source: 'NSSDCA Experiment ID: 1969-059C-01 / 1971-063C-08',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Apollo_11_Lunar_Laser_Ranging_Experiment.jpg/800px-Apollo_11_Lunar_Laser_Ranging_Experiment.jpg',
+                photoCaption: 'Conjunto retrorreflector láser LRRR y sismómetro pasivo desplegados en la superficie lunar.',
+                engineering: 'Los paquetes ALSEP (Apollo Lunar Surface Experiments Package) integraban sismómetros pasivos, magnetómetros, espectrómetros de viento solar y detectores de iones alimentados por un generador termoeléctrico de radioisótopos SNAP-27. Junto a ellos se instalaron los paneles ópticos LRRR compuestos por matrices de prismas de esquina de sílice fundida.',
+                science: 'La red sísmica registró más de 12,000 eventos sísmicos lunares hasta septiembre de 1977, revelando la estructura interna de la corteza y el manto lunar. Por su parte, los retrorreflectores LRRR siguen siendo el único experimento del programa Apolo activo hoy en día: permiten medir que la Luna se aleja de la Tierra a razón de 3.8 centímetros por año.',
+                diagramType: 'station',
+                pins: [
+                    { x: 34, y: 46, title: '[1] Matriz Óptica de Prismas LRRR', desc: '100 espejos de esquina de cuarzo que devuelven pulsos láser directamente hacia los telescopios terrestres sin requerir electricidad.' },
+                    { x: 56, y: 56, title: '[2] Sismómetro Pasivo de Tres Ejes', desc: 'Instrumento protegido por una falda térmica capaz de detectar vibraciones superficiales de apenas medio diámetro atómico.' },
+                    { x: 74, y: 66, title: '[3] Generador Termoeléctrico SNAP-27', desc: 'Convirtió el calor de desintegración de plutonio-238 en 75 vatios de electricidad continua durante ocho años.' }
+                ]
+            },
+            {
+                id: 'surveyor3',
+                destination: 'Luna',
+                categoryLabel: 'RECONOCIMIENTO ROBÓTICO · 1967',
+                readTime: '3 MIN DE LECTURA',
+                title: 'Sonda Robótica Surveyor 3',
+                cospar: '1967-035A',
+                launchDate: '17 de abril de 1967',
+                mass: '296 kg (masa tras el alunizaje)',
+                location: 'Oceanus Procellarum, La Luna (3°00′54″ S, 23°25′05″ O)',
+                status: 'Inactiva · Visitada por la tripulación del Apolo 12 en 1969',
+                source: 'NSSDCA Master Catalog ID: 1967-035A (Surveyor 3)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Alan_Bean_with_Surveyor_3.jpg/800px-Alan_Bean_with_Surveyor_3.jpg',
+                photoCaption: 'El astronauta Alan Bean examina la sonda Surveyor 3 durante la misión Apolo 12 en noviembre de 1969.',
+                engineering: 'Sonda robótica no tripulada de estructura tubular de aluminio de tres patas equipada con tres motores vernier de combustible líquido, radar Doppler de altitud, cámara de televisión vidicón con espejo orientable y una pala mecánica extensible accionada por motores eléctricos para excavar zanjas en el suelo lunar.',
+                science: 'Demostró que el regolito lunar tenía la resistencia mecánica suficiente para soportar el peso de una nave tripulada sin hundirse, validando el diseño del Módulo Lunar Apolo. Treinta y un meses después, los astronautas del Apolo 12 recuperaron su cámara para estudiar los efectos de la exposición prolongada al vacío espacial sobre materiales terrestres.',
+                diagramType: 'probe',
+                pins: [
+                    { x: 50, y: 30, title: '[1] Panel Solar y Antena Planar', desc: 'Mástil superior orientado hacia el Sol para suministrar 85 vatios a los sistemas de telemetría y cámaras.' },
+                    { x: 66, y: 54, title: '[2] Pala Excavadora de Mecánica de Suelos', desc: 'Brazo articulado que excavó cuatro zanjas de hasta 18 cm de profundidad para medir la cohesión del regolito.' },
+                    { x: 34, y: 74, title: '[3] Tren Tripoide con Amortiguadores', desc: 'Estructura diseñada para absorber el impacto vertical de alunizaje a 1.5 metros por segundo.' }
+                ]
+            },
+
+            // ======================== MARTE (8) ========================
+            {
+                id: 'sojourner',
+                destination: 'Marte',
+                categoryLabel: 'SUPERFICIE MARCIANA · MARS PATHFINDER',
+                readTime: '3 MIN DE LECTURA',
+                title: 'Rover Sojourner (Mars Pathfinder)',
+                cospar: '1996-068A',
+                launchDate: '4 de diciembre de 1996',
+                mass: '10.6 kg (vehículo de seis ruedas)',
+                location: 'Ares Vallis, Marte (19°08′ N, 33°13′ O)',
+                status: 'Inactivo · Última transmisión el 27 de septiembre de 1997',
+                source: 'NSSDCA Master Catalog ID: 1996-068A (Mars Pathfinder / Sojourner)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Sojourner_on_Mars_PIA01122.jpg/800px-Sojourner_on_Mars_PIA01122.jpg',
+                photoCaption: 'El rover Sojourner analiza la roca "Yogi" mediante su espectrómetro APXS en Ares Vallis.',
+                engineering: 'Primer vehículo móvil en operar sobre otro planeta. Con apenas 65 cm de longitud, incorporaba un sistema de suspensión articulada rocker-bogie de seis ruedas, panel solar superior de arseniuro de galio, sistema de navegación láser para evadir obstáculos de forma autónoma y un espectrómetro de rayos X y partículas alfa (APXS).',
+                science: 'Operó durante 83 soles marcianos (doce veces más que su vida útil prevista de 7 días), recorriendo 100 metros alrededor de la estación base Carl Sagan Memorial Station. Sus análisis químicos de rocas como "Barnacle Bill" y "Yogi" revelaron altos contenidos de sílice similares a la andesita terrestre, evidenciando una compleja historia volcánica e hidrológica.',
+                diagramType: 'rover',
+                pins: [
+                    { x: 50, y: 36, title: '[1] Panel Solar de Arseniuro de Galio', desc: 'Generaba hasta 16 vatios al mediodía marciano para alimentar los motores y el procesador Intel 80C85.' },
+                    { x: 70, y: 58, title: '[2] Espectrómetro APXS Trasero', desc: 'Sensor desplegable que se apoyaba directamente contra las rocas para determinar su composición elemental.' },
+                    { x: 32, y: 74, title: '[3] Suspensión Rocker-Bogie', desc: 'Arquitectura mecánica sin resortes que mantiene las seis ruedas en contacto con el suelo irregular.' }
+                ]
+            },
+            {
+                id: 'spirit',
+                destination: 'Marte',
+                categoryLabel: 'SUPERFICIE MARCIANA · MER-A',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Rover Spirit (Mars Exploration Rover-A)',
+                cospar: '2003-027A',
+                launchDate: '10 de junio de 2003',
+                mass: '185 kg (masa en superficie)',
+                location: 'Cráter Gusev, Marte (14°34′06″ S, 175°28′21″ E)',
+                status: 'Inactivo · Misión concluida tras quedar atrapado en arena blanda (2010)',
+                source: 'NSSDCA Master Catalog ID: 2003-027A (Spirit / MER-A)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/NASA_Mars_Rover.jpg/800px-NASA_Mars_Rover.jpg',
+                photoCaption: 'Representación técnica de campo del rover gemelo Mars Exploration Rover en superficie marciana.',
+                engineering: 'Geólogo robótico alimentado por paneles solares desplegables con un mástil panorámico (Pancam) a 1.5 metros de altura y un brazo robótico de cinco grados de libertad equipado con herramienta de abrasión de rocas (RAT), espectrómetro Mössbauer, espectrómetro APXS e imanes de captura de polvo atmosférico.',
+                science: 'Diseñado para una misión de 90 soles, operó durante más de seis años y recorrió 7.73 kilómetros hasta las colinas Columbia. Descubrió depósitos de sílice casi pura (90%) y carbonatos de magnesio y hierro en el afloramiento "Comanche", pruebas concluyentes de antiguos sistemas hidrotermales y aguas neutras aptas para la vida microbiana.',
+                diagramType: 'rover',
+                pins: [
+                    { x: 42, y: 30, title: '[1] Mástil Pancam y Mini-TES', desc: 'Cámaras estereoscópicas de alta resolución y espectrómetro infrarrojo térmico para identificar minerales a distancia.' },
+                    { x: 72, y: 56, title: '[2] Brazo Robótico IDD con Herramienta RAT', desc: 'Perforaba la corteza meteorizada de las rocas para exponer el interior mineral inalterado.' },
+                    { x: 35, y: 74, title: '[3] Sistema de Tracción de Seis Ruedas', desc: 'Ruedas de 25 cm con actuadores independientes que permitieron al rover avanzar arrastrando su rueda delantera derecha bloqueada.' }
+                ]
+            },
+            {
+                id: 'opportunity',
+                destination: 'Marte',
+                categoryLabel: 'SUPERFICIE MARCIANA · MER-B',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Rover Opportunity (Mars Exploration Rover-B)',
+                cospar: '2003-032A',
+                launchDate: '7 de julio de 2003',
+                mass: '185 kg (masa en superficie)',
+                location: 'Meridiani Planum, Marte (1°56′46″ S, 354°28′24″ E)',
+                status: 'Inactivo · Finalizado tras tormenta de polvo global en junio de 2018',
+                source: 'NSSDCA Master Catalog ID: 2003-032A (Opportunity / MER-B)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/PIA19048-MarsOpportunityRover-20150106.jpg/800px-PIA19048-MarsOpportunityRover-20150106.jpg',
+                photoCaption: 'Panorama capturado por el rover Opportunity en el borde del cráter Endeavour en Marte.',
+                engineering: 'Vehículo gemelo de Spirit que aterrizó mediante bolsas de aire amortiguadoras en el interior de un pequeño cráter de impacto. Contaba con calentadores de radioisótopos (RHU) para proteger sus baterías de ion-litio durante las noches marcianas y paneles solares que fueron limpiados periódicamente por remolinos de viento.',
+                science: 'Estableció el récord histórico de distancia recorrida fuera de la Tierra con 45.16 kilómetros a lo largo de casi 15 años (5,111 soles). Halló concreciones esféricas de hematita ("arándanos marcianos"), sulfatos hidratados y vetas de yeso en el borde del cráter Endeavour, demostrando que agua líquida ácida y neutra fluyó en la superficie de Meridiani Planum.',
+                diagramType: 'rover',
+                pins: [
+                    { x: 50, y: 42, title: '[1] Alas Solares de Triple Unión', desc: 'Celdas fotovoltaicas que sostuvieron las operaciones científicas durante 55 veces la duración nominal de la misión.' },
+                    { x: 40, y: 28, title: '[2] Cámaras de Navegación y Panorámicas', desc: 'Permitieron elaborar modelos digitales de elevación de los cráteres Eagle, Endurance, Victoria y Endeavour.' },
+                    { x: 68, y: 60, title: '[3] Espectrómetro Mössbauer', desc: 'Identificó con precisión minerales portadores de hierro como la jarosita y la hematita.' }
+                ]
+            },
+            {
+                id: 'viking1',
+                destination: 'Marte',
+                categoryLabel: 'SUPERFICIE MARCIANA · VIKING 1',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Módulo de Aterrizaje Viking 1',
+                cospar: '1975-075C',
+                launchDate: '20 de agosto de 1975',
+                mass: '576 kg (masa en superficie)',
+                location: 'Chryse Planitia, Marte (22°28′48″ N, 47°58′01″ O)',
+                status: 'Inactivo · Última comunicación el 11 de noviembre de 1982',
+                source: 'NSSDCA Master Catalog ID: 1975-075C (Viking 1 Lander)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Viking_1_lander_model.jpg/800px-Viking_1_lander_model.jpg',
+                photoCaption: 'Configuración técnica del módulo de aterrizaje Viking 1 con brazo muestreador y generadores RTG.',
+                engineering: 'Primera nave estadounidense en aterrizar con éxito y operar en la superficie de Marte (20 de julio de 1976). Alimentada por dos generadores termoeléctricos de radioisótopos SNAP-19 que garantizaban energía continua independiente de la luz solar, portaba dos cámaras facsímil, estación meteorológica, sismómetro y un laboratorio biológico automatizado.',
+                science: 'Transmitió las primeras fotografías en color desde el suelo marciano y monitoreó la presión atmosférica, temperatura y velocidad del viento durante más de seis años terrestres. Sus experimentos de cromatografía de gases y espectrometría de masas revelaron una química superficial altamente oxidante con presencia de percloratos.',
+                diagramType: 'lander',
+                pins: [
+                    { x: 32, y: 44, title: '[1] Generadores Termoeléctricos SNAP-19', desc: 'Dos unidades de plutonio-238 protegidas por cubiertas térmicas que suministraban 70 vatios continuos.' },
+                    { x: 64, y: 36, title: '[2] Mástil Meteorológico y Antena Banda S', desc: 'Midió diariamente ciclos estacionales de presión atmosférica causados por la sublimación de los casquetes polares.' },
+                    { x: 54, y: 64, title: '[3] Brazo Colector de Muestras Biológicas', desc: 'Depositaba regolito marciano en tolvas internas para incubación con nutrientes marcados con carbono-14.' }
+                ]
+            },
+            {
+                id: 'viking2',
+                destination: 'Marte',
+                categoryLabel: 'SUPERFICIE MARCIANA · VIKING 2',
+                readTime: '3 MIN DE LECTURA',
+                title: 'Módulo de Aterrizaje Viking 2',
+                cospar: '1975-083C',
+                launchDate: '9 de septiembre de 1975',
+                mass: '576 kg (masa en superficie)',
+                location: 'Utopia Planitia, Marte (47°58′01″ N, 225°44′24″ O)',
+                status: 'Inactivo · Baterías agotadas el 11 de abril de 1980',
+                source: 'NSSDCA Master Catalog ID: 1975-083C (Viking 2 Lander)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Viking_2_Lander_frost.jpg/800px-Viking_2_Lander_frost.jpg',
+                photoCaption: 'Escarcha estacional de agua fotografiada por el módulo Viking 2 en Utopia Planitia.',
+                engineering: 'Módulo gemelo de Viking 1 enviado a una latitud septentrional alta (48° N) para estudiar los procesos atmosféricos y superficiales en regiones subpolares. Esterilizado térmicamente antes del lanzamiento mediante horneado a 111 °C durante 40 horas para cumplir estrictos protocolos de protección planetaria.',
+                science: 'Documentó por primera vez la formación de una fina capa de escarcha de agua sobre el suelo marciano durante el invierno boreal y registró un evento sísmico local en noviembre de 1976, proporcionando los primeros datos meteorológicos y geofísicos in situ de las llanuras del norte de Marte.',
+                diagramType: 'lander',
+                pins: [
+                    { x: 46, y: 38, title: '[1] Cámaras Facsímil Estereoscópicas', desc: 'Obtuvieron imágenes de alta nitidez de la escarcha invernal y del campo de rocas basálticas de Utopia Planitia.' },
+                    { x: 50, y: 58, title: '[2] Laboratorio de Biología y GC-MS', desc: 'Analizó la composición molecular de la atmósfera marciana (95.3% CO₂, 2.7% N₂, 1.6% Ar).' },
+                    { x: 28, y: 74, title: '[3] Patas de Aterrizaje con Platos Circulares', desc: 'Equipadas con sensores de temperatura superficial y amortiguadores de panal de aluminio.' }
+                ]
+            },
+            {
+                id: 'phoenix',
+                destination: 'Marte',
+                categoryLabel: 'REGIÓN ÁRTICA MARCIANA · PHOENIX',
+                readTime: '3 MIN DE LECTURA',
+                title: 'Módulo de Aterrizaje Phoenix',
+                cospar: '2007-034A',
+                launchDate: '4 de agosto de 2007',
+                mass: '350 kg (masa en superficie)',
+                location: 'Vastitas Borealis, Marte (68°13′08″ N, 234°15′03″ E)',
+                status: 'Inactivo · Finalizado en noviembre de 2008 tras llegada del invierno polar',
+                source: 'NSSDCA Master Catalog ID: 2007-034A (Phoenix Mars Lander)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Phoenix_landing.jpg/800px-Phoenix_landing.jpg',
+                photoCaption: 'Concepción de ingeniería del módulo Phoenix operando en las llanuras árticas de Vastitas Borealis.',
+                engineering: 'Módulo estacionario de tres patas impulsado por dos paneles solares desplegables circulares ("octogonales") y equipado con un brazo robótico de 2.35 metros de alcance capaz de excavar hasta 50 cm de profundidad, además de un microscopio óptico, laboratorio de química húmeda (MECA) y hornos analizadores de gases (TEGA).',
+                science: 'Confirmó directamente mediante excavación y sublimación térmica la presencia de hielo de agua subterráneo a pocos centímetros bajo el regolito ártico marciano. También detectó carbonato de calcio, suelos ligeramente alcalinos y nieve cayendo desde nubes altas a 4 kilómetros de altitud.',
+                diagramType: 'lander',
+                pins: [
+                    { x: 24, y: 48, title: '[1] Paneles Solares Decagonales', desc: 'Dos alas circulares desplegadas tras el aterrizaje para operar durante el verano ártico marciano.' },
+                    { x: 68, y: 52, title: '[2] Brazo Robótico Excavador de 2.35 m', desc: 'Construido en aleación de aluminio y titanio con escofina motorizada para raspar capas duras de hielo subterráneo.' },
+                    { x: 50, y: 42, title: '[3] Analizador Térmico TEGA y MECA', desc: 'Ocho hornos de un solo uso que calentaron muestras de suelo hasta 1,000 °C para identificar volátiles.' }
+                ]
+            },
+            {
+                id: 'insight',
+                destination: 'Marte',
+                categoryLabel: 'GEOFÍSICA PROFUNDA · INSIGHT',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Módulo Geofísico InSight',
+                cospar: '2018-042A',
+                launchDate: '5 de mayo de 2018',
+                mass: '358 kg (masa en superficie)',
+                location: 'Elysium Planitia, Marte (4°30′09″ N, 135°37′24″ E)',
+                status: 'Inactivo · Misión retirada en diciembre de 2022 por acumulación de polvo solar',
+                source: 'NSSDCA Master Catalog ID: 2018-042A (InSight Mars Lander)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/PIA22743-MarsInSightLander-Selfie-20181206.jpg/800px-PIA22743-MarsInSightLander-Selfie-20181206.jpg',
+                photoCaption: 'Autorretrato del módulo InSight en Elysium Planitia antes de desplegar su sismómetro SEIS.',
+                engineering: 'Primera misión dedicada exclusivamente a estudiar el interior profundo de Marte. Su brazo robótico depositó directamente sobre el suelo el sismómetro de banda ancha SEIS, cubierto por un escudo aerodinámico y térmico en forma de cúpula para aislarlo del viento y los cambios bruscos de temperatura.',
+                science: 'Detectó más de 1,300 sismos marcianos ("martemotos"), incluido un evento de magnitud 4.7 en mayo de 2022 y vibraciones provocadas por impactos de meteoritos. Gracias a las ondas sísmicas, los científicos midieron por primera vez el grosor de la corteza marciana (24 a 72 km) y determinaron que Marte posee un núcleo metálico líquido de unos 1,830 km de radio.',
+                diagramType: 'lander',
+                pins: [
+                    { x: 66, y: 68, title: '[1] Sismómetro SEIS con Escudo Térmico', desc: 'Instrumento desplegado sobre el suelo capaz de detectar desplazamientos del terreno inferiores al ancho de un átomo de hidrógeno.' },
+                    { x: 50, y: 44, title: '[2] Brazo de Despliegue de Instrumentos (IDA)', desc: 'Colocó los instrumentos geofísicos en la superficie y vertió arena sobre el cable umbilical para reducir el ruido térmico.' },
+                    { x: 24, y: 46, title: '[3] Paneles Solares Circulares', desc: 'Suministraron energía durante más de cuatro años terrestres hasta que el polvo acumulado redujo su generación.' }
+                ]
+            },
+            {
+                id: 'ingenuity',
+                destination: 'Marte',
+                categoryLabel: 'AERONÁUTICA PLANETARIA · MARS 2020',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Helicóptero Ingenuity (Mars Helicopter)',
+                cospar: '2020-052A-01',
+                launchDate: '30 de julio de 2020 (desplegado desde Perseverance en abril de 2021)',
+                mass: '1.8 kg (masa total en Marte)',
+                location: 'Campos de Neretva Vallis, Cráter Jezero, Marte (18°26′ N, 77°27′ E)',
+                status: 'Inactivo · Estación meteorológica fija tras daño en pala del rotor en vuelo 72 (enero 2024)',
+                source: 'NSSDCA Master Catalog ID: 2020-052A (Mars 2020 / Ingenuity)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/PIA24647-MarsIngenuityHelicopter-20210507.jpg/800px-PIA24647-MarsIngenuityHelicopter-20210507.jpg',
+                photoCaption: 'El helicóptero Ingenuity sobre la superficie del cráter Jezero fotografiado por el rover Perseverance.',
+                engineering: 'Primera aeronave en realizar un vuelo propulsado y controlado en otro planeta. Para generar sustentación en una atmósfera con apenas el 1% de la densidad terrestre, utiliza dos rotores coaxiales contrarrotativos de fibra de carbono de 1.2 metros de envergadura que giran a 2,537 revoluciones por minuto, alimentados por un panel solar montado sobre el eje.',
+                science: 'Concebido originalmente como una demostración tecnológica de 5 vuelos en 30 días, completó 72 vuelos recorriendo más de 17 kilómetros y alcanzando 24 metros de altitud. Actuó como explorador aéreo adelantado para el rover Perseverance, cartografiando rutas seguras y afloramientos geológicos en el antiguo delta fluvial de Jezero.',
+                diagramType: 'helicopter',
+                pins: [
+                    { x: 50, y: 24, title: '[1] Panel Solar Superior de Carga', desc: 'Recarga las seis baterías de ion-litio internas durante el día marciano para alimentar los motores y calefactores.' },
+                    { x: 74, y: 38, title: '[2] Rotores Coaxiales de Fibra de Carbono', desc: 'Palas ultraligeras de 1.2 m que giran en sentidos opuestos a más de 2,500 rpm en el aire enrarecido de Marte.' },
+                    { x: 50, y: 60, title: '[3] Fuselaje Térmico y Cámaras de Navegación', desc: 'Aloja el procesador Snapdragon 801, altímetro láser, inclinómetro y cámara a color de alta resolución.' }
+                ]
+            },
+
+            // ======================== ASTEROIDES Y ESPACIO PROFUNDO (4) ========================
+            {
+                id: 'dawn',
+                destination: 'Espacio Profundo',
+                categoryLabel: 'CINTURÓN DE ASTEROIDES · PLANETA ENANO CERES',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Sonda Orbital Dawn',
+                cospar: '2007-043A',
+                launchDate: '27 de septiembre de 2007',
+                mass: '747.1 kg (masa en seco)',
+                location: 'Órbita elíptica perpetua alrededor del planeta enano Ceres (35 km × 4,000 km)',
+                status: 'Inactiva · Hidracina agotada el 31 de octubre de 2018; órbita protegida por >20 años',
+                source: 'NSSDCA Master Catalog ID: 2007-043A (Dawn)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Dawn_in_clean_room.jpg/800px-Dawn_in_clean_room.jpg',
+                photoCaption: 'La sonda Dawn durante sus pruebas de integración antes de partir hacia Vesta y Ceres.',
+                engineering: 'Única nave espacial en orbitar dos cuerpos extraterrestres distintos fuera del sistema Tierra-Luna: el protoplaneta Vesta (2011-2012) y el planeta enano Ceres (2015-2018). Fue impulsada por tres motores de iones de xenón de alta eficiencia y alimentada por dos enormes alas solares de 19.7 metros de envergadura.',
+                science: 'Cartografió completamente Vesta y Ceres, revelando que Ceres posee una corteza rica en hielo de agua, sales y minerales hidratados. Descubrió los brillantes depósitos de carbonato de sodio en el cráter Occator, evidenciando actividad criovolcánica reciente y un antiguo océano salino subterráneo.',
+                diagramType: 'deepprobe',
+                pins: [
+                    { x: 20, y: 50, title: '[1] Alas Solares de 19.7 Metros', desc: 'Diseñadas para generar energía suficiente a 3 Unidades Astronómicas del Sol para operar los propulsores iónicos.' },
+                    { x: 50, y: 68, title: '[2] Propulsores de Iones de Xenón NSTAR', desc: 'Proporcionaron un cambio de velocidad total de 11.5 km/s, equivalente al de un cohete lanzador completo.' },
+                    { x: 50, y: 34, title: '[3] Espectrómetro VIR y Detector GRaND', desc: 'Determinaron la mineralogía superficial y la abundancia de hidrógeno (hielo) en Vesta y Ceres.' }
+                ]
+            },
+            {
+                id: 'near',
+                destination: 'Espacio Profundo',
+                categoryLabel: 'ASTEROIDE CERCANO · 433 EROS',
+                readTime: '3 MIN DE LECTURA',
+                title: 'Sonda NEAR Shoemaker',
+                cospar: '1996-008A',
+                launchDate: '17 de febrero de 1996',
+                mass: '487 kg (masa en seco)',
+                location: 'Superficie del asteroide 433 Eros (región Himeros)',
+                status: 'Inactiva · Posada intacta sobre 433 Eros desde el 12 de febrero de 2001',
+                source: 'NSSDCA Master Catalog ID: 1996-008A (NEAR Shoemaker)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/NEAR_Shoemaker_spacecraft.jpg/800px-NEAR_Shoemaker_spacecraft.jpg',
+                photoCaption: 'La sonda NEAR Shoemaker antes de su lanzamiento; realizó el primer aterrizaje controlado en un asteroide.',
+                engineering: 'Primera nave del programa Discovery de la NASA, construida con un cuerpo prismático octogonal, cuatro paneles solares fijos de arseniuro de galio y una antena parabólica fija de 1.5 metros. Aunque no fue diseñada con tren de aterrizaje, los ingenieros ejecutaron una maniobra de descenso controlado al final de su misión orbital.',
+                science: 'Orbitó durante un año completo el asteroide 433 Eros (un cuerpo alargado de 34 km de longitud), tomando más de 160,000 imágenes y midiendo su campo gravitatorio. Tras posarse suavemente en su superficie, su espectrómetro de rayos gamma operó durante dos semanas adicionales midiendo la composición elemental in situ del regolito asteroidal.',
+                diagramType: 'deepprobe',
+                pins: [
+                    { x: 50, y: 28, title: '[1] Antena Parabólica Fija de Banda X', desc: 'Mantuvo el enlace de telemetría con la Red del Espacio Profundo incluso después de posarse sobre la superficie del asteroide.' },
+                    { x: 26, y: 50, title: '[2] Cuatro Paneles Solares Fijos', desc: 'Suministraban 400 vatios a 2.2 UA del Sol sin necesidad de mecanismos móviles de orientación.' },
+                    { x: 50, y: 64, title: '[3] Espectrómetro de Rayos Gamma y Rayos X', desc: 'Permitió confirmar que Eros es un cuerpo primitivo indiferenciado de tipo condrita ordinaria.' }
+                ]
+            },
+            {
+                id: 'kepler',
+                destination: 'Espacio Profundo',
+                categoryLabel: 'ÓRBITA HELIOCÉNTRICA · EXOPLANETAS',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Telescopio Espacial Kepler',
+                cospar: '2009-011A',
+                launchDate: '6 de marzo de 2009',
+                mass: '1,039 kg (masa total)',
+                location: 'Órbita heliocéntrica de arrastre terrestre (período de 372.5 días)',
+                status: 'Inactivo · Retirado el 30 de octubre de 2018 tras agotar combustible de control de actitud',
+                source: 'NSSDCA Master Catalog ID: 2009-011A (Kepler Space Telescope)',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Kepler_Space_Telescope_spacecraft_model_2.png/800px-Kepler_Space_Telescope_spacecraft_model_2.png',
+                photoCaption: 'Configuración orbital del Telescopio Espacial Kepler con su fotómetro de 95 megapíxeles.',
+                engineering: 'Observatorio espacial dotado de un espejo primario de 1.4 metros y un fotómetro de 42 sensores CCD (95 megapíxeles) diseñado para medir variaciones diminutas en el brillo estelar (de apenas 20 partes por millón) mediante el método de tránsito planetario. Colocado en órbita heliocéntrica para evitar las ocultaciones y la luz reflejada de la Tierra.',
+                science: 'Revolucionó la astronomía al observar más de 530,000 estrellas y descubrir más de 2,700 exoplanetas confirmados, demostrando estadísticamente que en nuestra galaxia existen más planetas que estrellas y que los mundos rocosos de tamaño similar a la Tierra en zonas habitables son frecuentes.',
+                diagramType: 'telescope',
+                pins: [
+                    { x: 50, y: 26, title: '[1] Parasol y Apertura Schmidt de 0.95 m', desc: 'Evita que la luz solar directa alcance el espejo primario y degrade la precisión fotométrica.' },
+                    { x: 50, y: 50, title: '[2] Matriz Focal de 42 Sensores CCD', desc: 'Cámara astronómica más grande lanzada al espacio en su época, enfriada pasivamente para reducir el ruido térmico.' },
+                    { x: 30, y: 72, title: '[3] Paneles Solares y Bus de Control de Actitud', desc: 'Mantuvo el telescopio apuntando hacia la constelación de Cisne con una estabilidad de milésimas de segundo de arco.' }
+                ]
+            },
+            {
+                id: 'pioneer',
+                destination: 'Espacio Profundo',
+                categoryLabel: 'TRAYECTORIA INTERESTELAR · PIONEER 10 Y 11',
+                readTime: '4 MIN DE LECTURA',
+                title: 'Sondas Interestelares Pioneer 10 y Pioneer 11',
+                cospar: '1972-012A / 1973-019A',
+                launchDate: '2 de marzo de 1972 (Pioneer 10) / 5 de abril de 1973 (Pioneer 11)',
+                mass: '258 kg cada sonda',
+                location: 'Espacio interestelar (>136 UA en dirección a Tauro y >113 UA en dirección a Escudo)',
+                status: 'Inactivas · Últimas señales recibidas en 2003 (Pioneer 10) y 1995 (Pioneer 11)',
+                source: 'NSSDCA Master Catalog IDs: 1972-012A & 1973-019A',
+                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Pioneer_10_spacecraft.jpg/800px-Pioneer_10_spacecraft.jpg',
+                photoCaption: 'La sonda Pioneer 10 durante su ensamblaje; transporta la placa grabada con el mensaje de la humanidad.',
+                engineering: 'Primeras naves diseñadas para atravesar el cinturón principal de asteroides y alcanzar la velocidad de escape del Sistema Solar mediante asistencia gravitatoria de Júpiter y Saturno. Estabilizadas por rotación (4.8 rpm), portaban una antena parabólica de 2.74 metros y cuatro generadores RTG SNAP-19 montados en mástiles desplegables.',
+                science: 'Pioneer 10 realizó el primer sobrevuelo cercano de Júpiter (1973), cartografiando sus intensos cinturones de radiación y su magnetosfera; Pioneer 11 realizó el primer sobrevuelo de Saturno (1979), descubriendo el anillo F y dos lunas nuevas. Ambas portan la célebre placa de aluminio anodizado en oro con la ubicación del Sol respecto a 14 púlsares.',
+                diagramType: 'deepprobe',
+                pins: [
+                    { x: 50, y: 32, title: '[1] Antena Parabólica de Alta Ganancia (2.74 m)', desc: 'Mantuvo comunicaciones a miles de millones de kilómetros de la Tierra mediante transmisores de banda S de apenas 8 vatios.' },
+                    { x: 22, y: 64, title: '[2] Mástiles con Generadores RTG SNAP-19', desc: 'Separados 3 metros del cuerpo central para evitar que la radiación de los generadores interfiriera con los detectores científicos.' },
+                    { x: 76, y: 64, title: '[3] Magnetómetro de Helio Vectorial', desc: 'Montado en un mástil de 6.6 metros; midió el campo magnético interplanetario hasta los confines de la heliosfera.' }
+                ]
+            }
+        ];
+
+        /* ---------------------------------------------------------------------
+           C. GLOSARIO AEROESPACIAL EN CONTEXTO
+           --------------------------------------------------------------------- */
+        const GLOSSARY_TERMS = [
+            {
+                term: 'NSSDCA (NASA Space Science Data Coordinated Archive)',
+                category: 'Archivo Oficial',
+                definition: 'Archivo permanente de datos científicos espaciales de la NASA ubicado en el Centro de Vuelo Espacial Goddard. Asigna identificadores únicos y preserva los registros oficiales de cada misión lanzada al espacio.'
+            },
+            {
+                term: 'Identificador Internacional COSPAR',
+                category: 'Nomenclatura Orbital',
+                definition: 'Designación estándar asignada por el Comité de Investigaciones Espaciales (por ejemplo, 1969-059C), compuesta por el año de lanzamiento, el número secuencial de lanzamiento en ese año y una letra que identifica cada componente de la carga útil.'
+            },
+            {
+                term: 'RTG (Generador Termoeléctrico de Radioisótopos)',
+                category: 'Propulsión y Energía',
+                definition: 'Fuente de energía eléctrica espacial que convierte el calor liberado por la desintegración radiactiva natural del plutonio-238 en electricidad mediante termopares, permitiendo operar en Marte o en el espacio profundo sin depender de la luz solar.'
+            },
+            {
+                term: 'ALSEP (Apollo Lunar Surface Experiments Package)',
+                category: 'Instrumentación Lunar',
+                definition: 'Conjunto de instrumentos geofísicos autónomos instalados por los astronautas de las misiones Apolo 12, 14, 15, 16 y 17 para monitorear sismos lunares, viento solar, flujo de calor interno y campos magnéticos tras el regreso de la tripulación.'
+            },
+            {
+                term: 'Suspensión Rocker-Bogie',
+                category: 'Ingeniería Robótica',
+                definition: 'Sistema de articulación mecánica de seis ruedas sin resortes desarrollado por el Laboratorio de Propulsión a Chorro (JPL) de la NASA para los rovers Sojourner, Spirit, Opportunity, Curiosity y Perseverance, capaz de superar obstáculos mayores al diámetro de sus ruedas.'
+            },
+            {
+                term: 'Regolito Lunar y Marciano',
+                category: 'Geología Planetaria',
+                definition: 'Capa de material fragmentado, polvo mineral y rocas trituradas por impactos de meteoritos que cubre el lecho rocoso sólido de la Luna, Marte y los asteroides.'
+            },
+            {
+                term: 'Unidad Astronómica (UA)',
+                category: 'Astrometría',
+                definition: 'Unidad de longitud equivalente a la distancia media entre la Tierra y el Sol (aproximadamente 149,597,870.7 kilómetros), utilizada para medir distancias dentro del Sistema Solar.'
+            },
+            {
+                term: 'Tratado del Espacio Ultraterrestre (1967)',
+                category: 'Derecho Espacial',
+                definition: 'Instrumento jurídico fundamental de las Naciones Unidas que establece que el espacio y los cuerpos celestes no son objeto de apropiación nacional y que cada Estado conserva la jurisdicción sobre los objetos que haya lanzado.'
+            }
+        ];
+
+        /* ---------------------------------------------------------------------
+           D. HILOS INICIALES DEL FORO DE DISCUSIÓN
+           --------------------------------------------------------------------- */
+        let FORUM_THREADS = [
+            {
+                id: 1,
+                author: 'Dr. E. Valdés · Historia de la Ciencia',
+                tag: 'Patrimonio Histórico',
+                time: 'Hace 3 horas',
+                votes: 48,
+                userVote: 0,
+                title: 'Los sitios Apolo y Surveyor constituyen yacimientos arqueológicos irrepetibles de la humanidad',
+                body: 'A diferencia de los fragmentos de cohetes en órbita terrestre baja que representan un riesgo operativo para satélites activos, los módulos lunares Apolo, los vehículos LRV y las sondas Surveyor descansan en entornos estáticos sin atmósfera. Preservarlos mediante zonas de exclusión evita que futuras misiones de aterrizaje alteren con chorros de polvo el registro físico del primer contacto humano con otro mundo.'
+            },
+            {
+                id: 2,
+                author: 'Ing. C. Mendoza · Protección Planetaria',
+                tag: 'Protección Planetaria',
+                time: 'Hace 6 horas',
+                votes: 34,
+                userVote: 0,
+                title: 'El caso de la sonda Dawn alrededor de Ceres: ingeniería preventiva contra la contaminación biológica',
+                body: 'Cuando la sonda Dawn agotó su hidracina en octubre de 2018, la NASA no la estrelló contra Ceres sino que la dejó en una órbita estable que garantiza al menos 20 años sin impacto. Este protocolo demuestra que el hardware inactivo en el espacio profundo se gestiona bajo estrictos criterios científicos para proteger cuerpos con potencial astrobiológico.'
+            },
+            {
+                id: 3,
+                author: 'Lic. R. Salgado · Derecho Aeroespacial',
+                tag: 'Marco Legal 1967',
+                time: 'Hace 1 día',
+                votes: 29,
+                userVote: 0,
+                title: 'Vigencia del Artículo VIII del Tratado de 1967 frente a las futuras misiones comerciales lunares',
+                body: 'El marco jurídico vigente establece que la propiedad de un artefacto espacial no expira aunque quede inactivo o pierda comunicación. El verdadero desafío técnico de esta década es armonizar la libertad de exploración científica con el respeto a las zonas de patrimonio histórico documentadas en el catálogo NSSDCA.'
+            }
+        ];
+
+        /* ---------------------------------------------------------------------
+           E. ESTADO DE LA APLICACIÓN Y FUNCIONES DE NAVEGACIÓN
+           --------------------------------------------------------------------- */
+        let currentCatalogView = 'editorial';
+        let currentDestinationFilter = 'all';
+        let currentSearchQuery = '';
+        let currentModalArtifact = null;
+        let currentSlide = 0;
+        let currentPinIndex = 0;
+        let currentForumFilter = 'all';
+
+        // Alternar Modo Nocturno
+        function toggleNightMode() {
+            const body = document.body;
+            const isNight = body.classList.toggle('night-mode');
+            const btn = document.getElementById('nightModeBtn');
+            const icon = document.getElementById('nightModeIcon');
+            const text = document.getElementById('nightModeText');
+
+            btn.setAttribute('aria-pressed', isNight ? 'true' : 'false');
+            if (isNight) {
+                icon.textContent = '☀️';
+                text.textContent = 'Modo Claro';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = 'Modo Nocturno';
+            }
+        }
+
+        // Cambiar entre las 5 pestañas independientes
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-screen').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            const targetScreen = document.getElementById('screen-' + tabId);
+            const targetBtn = document.getElementById('tab-btn-' + tabId);
+            if (targetScreen) targetScreen.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
+
+            if (tabId === 'mapa') {
+                resizeSolarCanvas();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ---------------------------------------------------------------------
+           F. RENDERIZADO DEL CATÁLOGO (VISTA EDITORIAL NASA Y VISTA HILO REDDIT)
+           --------------------------------------------------------------------- */
+        function setCatalogView(viewMode) {
+            currentCatalogView = viewMode;
+            const btnEd = document.getElementById('viewEditorialBtn');
+            const btnRe = document.getElementById('viewRedditBtn');
+
+            if (viewMode === 'editorial') {
+                btnEd.style.backgroundColor = '#105BD8';
+                btnEd.style.color = '#FFFFFF';
+                btnRe.style.backgroundColor = 'transparent';
+                btnRe.style.color = 'var(--text-primary)';
+            } else {
+                btnRe.style.backgroundColor = '#105BD8';
+                btnRe.style.color = '#FFFFFF';
+                btnEd.style.backgroundColor = 'transparent';
+                btnEd.style.color = 'var(--text-primary)';
+            }
+            renderCatalog();
+        }
+
+        function filterByDestination(dest) {
+            currentDestinationFilter = dest;
+            document.querySelectorAll('.dest-filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-dest') === dest) {
+                    btn.style.backgroundColor = '#0B0D10';
+                    btn.style.borderColor = '#0B0D10';
+                    btn.style.color = '#FFFFFF';
+                } else {
+                    btn.style.backgroundColor = 'var(--bg-surface)';
+                    btn.style.borderColor = 'var(--border-subtle)';
+                    btn.style.color = 'var(--text-primary)';
+                }
+            });
+            renderCatalog();
+        }
+
+        function handleGlobalSearch() {
+            currentSearchQuery = document.getElementById('globalSearchInput').value.trim().toLowerCase();
+            if (!document.getElementById('screen-catalogo').classList.contains('active')) {
+                switchTab('catalogo');
+            }
+            renderCatalog();
+        }
+
+        function getFilteredArtifacts() {
+            return ARTIFACTS.filter(item => {
+                const matchDest = currentDestinationFilter === 'all' || item.destination === currentDestinationFilter;
+                const haystack = `${item.title} ${item.cospar} ${item.destination} ${item.location} ${item.engineering} ${item.science}`.toLowerCase();
+                const matchSearch = !currentSearchQuery || haystack.includes(currentSearchQuery);
+                return matchDest && matchSearch;
+            });
+        }
+
+        function renderCatalog() {
+            const container = document.getElementById('catalogContainer');
+            const items = getFilteredArtifacts();
+            document.getElementById('resultsCounter').textContent = `MOSTRANDO ${items.length} DE ${ARTIFACTS.length} ARTEFACTOS`;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="surface-panel rounded p-8 text-center space-y-3">
+                        <p class="font-bold">No se encontraron expedientes que coincidan con su criterio de búsqueda.</p>
+                        <button type="button" onclick="resetFilters()" class="px-4 py-2 rounded text-xs font-bold text-white cursor-pointer" style="background-color: #105BD8;">
+                            Restablecer Filtros
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentCatalogView === 'editorial') {
+                // Cuadrícula Editorial de 3 columnas estilo nasa.gov/es/
+                const cardsHtml = items.map(item => {
+                    const fallback = getFallbackSvgDataUri(item.title, item.cospar, item.destination);
+                    return `
+                        <article onclick="openModal('${item.id}')" class="card-panel rounded overflow-hidden flex flex-col justify-between cursor-pointer group">
+                            <div>
+                                <div class="h-48 w-full bg-neutral-900 overflow-hidden relative border-b" style="border-color: var(--border-subtle);">
+                                    <img 
+                                        src="${item.imageUrl}" 
+                                        onerror="this.onerror=null; this.src='${fallback}';" 
+                                        alt="${item.title}" 
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    >
+                                    <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-xs font-bold text-white" style="background-color: rgba(11, 13, 16, 0.85);">
+                                        NSSDCA ${item.cospar}
+                                    </span>
+                                </div>
+
+                                <div class="p-5 space-y-2.5">
+                                    <div class="meta-label">
+                                        ${item.categoryLabel} · ${item.readTime}
+                                    </div>
+                                    <h3 class="font-bold group-hover:underline" style="font-size: 14pt; line-height: 1.3;">
+                                        ${item.title}
+                                    </h3>
+                                    <p class="editorial-text" style="color: var(--text-secondary);">
+                                        ${item.science}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="px-5 py-3.5 border-t flex items-center justify-between" style="border-color: var(--border-subtle); background-color: var(--bg-surface);">
+                                <span class="text-xs font-bold uppercase tracking-wider">
+                                    Ficha Técnica y Escáner 2D
+                                </span>
+                                <span class="circle-arrow-btn">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path d="M5 12h14M13 6l6 6-6 6"></path>
+                                    </svg>
+                                </span>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+                container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${cardsHtml}</div>`;
+            } else {
+                // Vista Hilos Técnicos Estructurados estilo Reddit
+                const rowsHtml = items.map(item => {
+                    const fallback = getFallbackSvgDataUri(item.title, item.cospar, item.destination);
+                    return `
+                        <article onclick="openModal('${item.id}')" class="card-panel rounded p-4 sm:p-5 flex flex-col sm:flex-row gap-4 items-start cursor-pointer group">
+                            <div class="w-full sm:w-44 h-32 rounded overflow-hidden bg-neutral-900 shrink-0 border" style="border-color: var(--border-subtle);">
+                                <img 
+                                    src="${item.imageUrl}" 
+                                    onerror="this.onerror=null; this.src='${fallback}';" 
+                                    alt="${item.title}" 
+                                    class="w-full h-full object-cover"
+                                >
+                            </div>
+                            <div class="flex-1 space-y-2">
+                                <div class="flex flex-wrap items-center gap-2 text-xs">
+                                    <span class="px-2 py-0.5 rounded font-bold text-white" style="background-color: #105BD8;">
+                                        ${item.destination}
+                                    </span>
+                                    <span class="font-mono font-bold" style="color: var(--text-secondary);">
+                                        ID NSSDCA: ${item.cospar}
+                                    </span>
+                                    <span style="color: var(--text-secondary);">· ${item.launchDate}</span>
+                                </div>
+
+                                <h3 class="font-bold group-hover:underline" style="font-size: 14pt; line-height: 1.3;">
+                                    ${item.title}
+                                </h3>
+
+                                <p class="editorial-text" style="color: var(--text-secondary);">
+                                    ${item.engineering}
+                                </p>
+
+                                <div class="pt-1 flex flex-wrap items-center justify-between gap-2 text-xs font-bold">
+                                    <span style="color: var(--text-secondary);">Ubicación: ${item.location}</span>
+                                    <span class="text-sky-600 group-hover:underline">Abrir Visor Deslizable y Diagrama 2D →</span>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+                container.innerHTML = `<div class="space-y-4">${rowsHtml}</div>`;
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('globalSearchInput').value = '';
+            currentSearchQuery = '';
+            filterByDestination('all');
+        }
+
+        /* ---------------------------------------------------------------------
+           G. MODAL DE FICHA TÉCNICA CON VISOR DESLIZABLE + ESCÁNER 2D
+           --------------------------------------------------------------------- */
+        function getBlueprintSvg(type) {
+            const strokeMain = '#38BDF8';
+            const strokeAccent = '#FACC15';
+            const strokeSub = '#94A3B8';
+
+            if (type === 'rover') {
+                return `<svg viewBox="0 0 360 180" class="w-full h-full max-w-md">
+                    <line x1="20" y1="148" x2="340" y2="148" stroke="#FC3D21" stroke-width="1.5" stroke-dasharray="5 4"/>
+                    <!-- Chasis y paneles -->
+                    <rect x="115" y="74" width="130" height="32" rx="4" fill="#0F172A" stroke="${strokeMain}" stroke-width="2"/>
+                    <line x1="95" y1="74" x2="265" y2="74" stroke="${strokeAccent}" stroke-width="3"/>
+                    <!-- Mástil Pancam -->
+                    <line x1="150" y1="74" x2="150" y2="34" stroke="${strokeMain}" stroke-width="2.5"/>
+                    <rect x="132" y="24" width="36" height="14" rx="2" fill="#0F172A" stroke="${strokeAccent}" stroke-width="2"/>
+                    <!-- Brazo robótico -->
+                    <polyline points="245,86 278,76 292,102" fill="none" stroke="${strokeAccent}" stroke-width="2"/>
+                    <circle cx="292" cy="105" r="5" fill="${strokeAccent}"/>
+                    <!-- Suspensión Rocker-Bogie y ruedas -->
+                    <polyline points="110,132 145,106 180,132 215,106 250,132" fill="none" stroke="${strokeSub}" stroke-width="2"/>
+                    <circle cx="110" cy="134" r="13" fill="#0F172A" stroke="${strokeMain}" stroke-width="2"/>
+                    <circle cx="180" cy="134" r="13" fill="#0F172A" stroke="${strokeMain}" stroke-width="2"/>
+                    <circle cx="250" cy="134" r="13" fill="#0F172A" stroke="${strokeMain}" stroke-width="2"/>
+                </svg>`;
+            }
+            if (type === 'helicopter') {
+                return `<svg viewBox="0 0 360 180" class="w-full h-full max-w-md">
+                    <line x1="40" y1="150" x2="320" y2="150" stroke="#FC3D21" stroke-width="1.5" stroke-dasharray="5 4"/>
+                    <!-- Panel solar superior -->
+                    <rect x="135" y="24" width="90" height="8" rx="2" fill="#1D4ED8" stroke="${strokeAccent}" stroke-width="1.5"/>
+                    <!-- Rotores coaxiales -->
+                    <ellipse cx="180" cy="48" rx="115" ry="7" fill="none" stroke="${strokeMain}" stroke-width="2"/>
+                    <ellipse cx="180" cy="64" rx="115" ry="7" fill="none" stroke="${strokeMain}" stroke-width="2"/>
+                    <line x1="180" y1="32" x2="180" y2="92" stroke="${strokeSub}" stroke-width="2.5"/>
+                    <!-- Fuselaje -->
+                    <rect x="156" y="92" width="48" height="34" rx="5" fill="#0F172A" stroke="${strokeAccent}" stroke-width="2"/>
+                    <circle cx="180" cy="109" r="7" fill="${strokeMain}"/>
+                    <!-- Patas -->
+                    <line x1="160" y1="126" x2="132" y2="150" stroke="${strokeSub}" stroke-width="2"/>
+                    <line x1="200" y1="126" x2="228" y2="150" stroke="${strokeSub}" stroke-width="2"/>
+                </svg>`;
+            }
+            if (type === 'telescope') {
+                return `<svg viewBox="0 0 360 180" class="w-full h-full max-w-md">
+                    <!-- Tubo óptico -->
+                    <polygon points="145,28 215,28 225,128 135,128" fill="#0F172A" stroke="${strokeMain}" stroke-width="2"/>
+                    <line x1="145" y1="28" x2="215" y2="28" stroke="${strokeAccent}" stroke-width="3"/>
+                    <!-- Matriz CCD interna -->
+                    <rect x="155" y="78" width="50" height="24" fill="#1E293B" stroke="${strokeAccent}" stroke-width="1.5"/>
+                    <!-- Paneles solares laterales -->
+                    <rect x="65" y="106" width="70" height="26" fill="#0F172A" stroke="${strokeMain}" stroke-width="1.5"/>
+                    <rect x="225" y="106" width="70" height="26" fill="#0F172A" stroke="${strokeMain}" stroke-width="1.5"/>
+                    <!-- Bus base -->
+                    <rect x="130" y="128" width="100" height="24" rx="3" fill="#0F172A" stroke="${strokeSub}" stroke-width="2"/>
+                </svg>`;
+            }
+            if (type === 'deepprobe') {
+                return `<svg viewBox="0 0 360 180" class="w-full h-full max-w-md">
+                    <!-- Antena parabólica -->
+                    <path d="M 135 46 Q 180 76 225 46" fill="none" stroke="${strokeAccent}" stroke-width="2.5"/>
+                    <line x1="180" y1="61" x2="180" y2="34" stroke="${strokeMain}" stroke-width="2"/>
+                    <!-- Cuerpo sonda -->
+                    <polygon points="152,66 208,66 218,112 142,112" fill="#0F172A" stroke="${strokeMain}" stroke-width="2"/>
+                    <!-- Mástiles laterales / alas -->
+                    <line x1="55" y1="88" x2="146" y2="88" stroke="${strokeSub}" stroke-width="2.5"/>
+                    <line x1="214" y1="88" x2="305" y2="88" stroke="${strokeSub}" stroke-width="2.5"/>
+                    <rect x="55" y="76" width="56" height="24" fill="#0F172A" stroke="${strokeMain}" stroke-width="1.5"/>
+                    <rect x="249" y="76" width="56" height="24" fill="#0F172A" stroke="${strokeMain}" stroke-width="1.5"/>
+                    <!-- Propulsor -->
+                    <polygon points="168,112 192,112 198,136 162,136" fill="#1E293B" stroke="${strokeAccent}" stroke-width="1.5"/>
+                </svg>`;
+            }
+            // Default: lander / station / probe
+            return `<svg viewBox="0 0 360 180" class="w-full h-full max-w-md">
+                <line x1="30" y1="150" x2="330" y2="150" stroke="#FC3D21" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <!-- Mástil / antena -->
+                <line x1="180" y1="24" x2="180" y2="62" stroke="${strokeAccent}" stroke-width="2"/>
+                <circle cx="180" cy="24" r="10" fill="none" stroke="${strokeMain}" stroke-width="2"/>
+                <!-- Cuerpo principal -->
+                <polygon points="130,62 230,62 246,112 114,112" fill="#0F172A" stroke="${strokeMain}" stroke-width="2"/>
+                <rect x="155" y="74" width="50" height="24" fill="#1E293B" stroke="${strokeAccent}" stroke-width="1.5"/>
+                <!-- Tobera / Instrumento central -->
+                <polygon points="164,112 196,112 204,136 156,136" fill="#0F172A" stroke="${strokeSub}" stroke-width="2"/>
+                <!-- Patas de aterrizaje -->
+                <line x1="122" y1="112" x2="94" y2="148" stroke="${strokeMain}" stroke-width="2.5"/>
+                <line x1="238" y1="112" x2="266" y2="148" stroke="${strokeMain}" stroke-width="2.5"/>
+                <ellipse cx="94" cy="149" rx="12" ry="3" fill="${strokeAccent}"/>
+                <ellipse cx="266" cy="149" rx="12" ry="3" fill="${strokeAccent}"/>
+            </svg>`;
+        }
+
+        function openModal(artifactId) {
+            const item = ARTIFACTS.find(a => a.id === artifactId);
+            if (!item) return;
+
+            currentModalArtifact = item;
+            currentSlide = 0;
+            currentPinIndex = 0;
+
+            document.getElementById('modalCosparBadge').textContent = `IDENTIFICADOR NSSDCA / COSPAR: ${item.cospar}`;
+            document.getElementById('modalTitle').textContent = item.title;
+
+            const imgEl = document.getElementById('modalOfficialImg');
+            const fallback = getFallbackSvgDataUri(item.title, item.cospar, item.destination);
+            imgEl.onerror = function() {
+                this.onerror = null;
+                this.src = fallback;
+            };
+            imgEl.src = item.imageUrl;
+            document.getElementById('modalPhotoCaption').textContent = item.photoCaption;
+
+            // Diagrama 2D y pines
+            document.getElementById('blueprintSvgContainer').innerHTML = getBlueprintSvg(item.diagramType);
+            const pinsContainer = document.getElementById('blueprintPinsContainer');
+            pinsContainer.innerHTML = item.pins.map((pin, idx) => `
+                <button 
+                    type="button" 
+                    id="pinMarker${idx}" 
+                    onclick="selectPin(${idx})" 
+                    style="left: ${pin.x}%; top: ${pin.y}%;" 
+                    class="pin-btn absolute -translate-x-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-sky-500 text-slate-950 font-bold text-xs flex items-center justify-center border-2 border-slate-950 cursor-pointer"
+                >
+                    ${idx + 1}
+                </button>
+            `).join('');
+
+            selectPin(0);
+            goToSlide(0);
+
+            // Textos y tabla
+            document.getElementById('modalEngineeringText').textContent = item.engineering;
+            document.getElementById('modalScienceText').textContent = item.science;
+            document.getElementById('specId').textContent = item.cospar;
+            document.getElementById('specLaunch').textContent = item.launchDate;
+            document.getElementById('specMass').textContent = item.mass;
+            document.getElementById('specLocation').textContent = item.location;
+            document.getElementById('specStatus').textContent = item.status;
+            document.getElementById('specSource').textContent = item.source;
+
+            document.getElementById('artifactModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('artifactModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function handleModalBackdropClick(e) {
+            if (e.target.id === 'artifactModal') {
+                closeModal();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            const track = document.getElementById('carouselTrack');
+            track.style.transform = `translateX(-${index * 50}%)`;
+
+            const btn0 = document.getElementById('slideBtn0');
+            const btn1 = document.getElementById('slideBtn1');
+            if (index === 0) {
+                btn0.style.backgroundColor = '#105BD8';
+                btn0.style.color = '#FFFFFF';
+                btn1.style.backgroundColor = 'transparent';
+                btn1.style.color = 'var(--text-primary)';
+            } else {
+                btn1.style.backgroundColor = '#105BD8';
+                btn1.style.color = '#FFFFFF';
+                btn0.style.backgroundColor = 'transparent';
+                btn0.style.color = 'var(--text-primary)';
+            }
+        }
+
+        function selectPin(idx) {
+            if (!currentModalArtifact) return;
+            currentPinIndex = idx;
+            const pin = currentModalArtifact.pins[idx];
+            document.getElementById('pinTitle').textContent = pin.title;
+            document.getElementById('pinDesc').textContent = pin.desc;
+            document.getElementById('modalPinCounter').textContent = `SUBSISTEMA ${idx + 1}/3`;
+
+            [0, 1, 2].forEach(i => {
+                const marker = document.getElementById(`pinMarker${i}`);
+                const tab = document.getElementById(`pinTab${i}`);
+                if (marker) marker.classList.toggle('active', i === idx);
+                if (tab) {
+                    if (i === idx) {
+                        tab.className = 'w-6 h-6 rounded text-xs font-bold bg-amber-400 text-slate-950 cursor-pointer';
+                    } else {
+                        tab.className = 'w-6 h-6 rounded text-xs font-bold bg-slate-800 text-slate-200 cursor-pointer';
+                    }
+                }
+            });
+        }
+
+        // Soporte táctil y arrastre con ratón para deslizar entre Fotografía Oficial y Diagrama 2D
+        (function initCarouselSwipe() {
+            const viewport = document.getElementById('carouselViewport');
+            let startX = 0;
+            let isDragging = false;
+
+            viewport.addEventListener('touchstart', e => {
+                startX = e.touches[0].clientX;
+            }, { passive: true });
+
+            viewport.addEventListener('touchend', e => {
+                const diff = e.changedTouches[0].clientX - startX;
+                if (diff < -45 && currentSlide === 0) goToSlide(1);
+                if (diff > 45 && currentSlide === 1) goToSlide(0);
+            });
+
+            viewport.addEventListener('mousedown', e => {
+                if (e.target.tagName === 'BUTTON') return;
+                startX = e.clientX;
+                isDragging = true;
+            });
+
+            window.addEventListener('mouseup', e => {
+                if (!isDragging) return;
+                isDragging = false;
+                const diff = e.clientX - startX;
+                if (diff < -50 && currentSlide === 0) goToSlide(1);
+                if (diff > 50 && currentSlide === 1) goToSlide(0);
+            });
+        })();
+
+        /* ---------------------------------------------------------------------
+           H. MAPA INTERACTIVO DEL SISTEMA SOLAR (CANVAS ANIMADO)
+           --------------------------------------------------------------------- */
+        let mapSpeed = 1;
+        let mapSector = 'solar';
+        let mapAngleOffset = 0;
+        let mapNodes = [];
+
+        function setMapSpeed(speed) {
+            mapSpeed = speed;
+            [1, 1000, 0].forEach(s => {
+                const btn = document.getElementById(`speed-${s}`);
+                if (s === speed) {
+                    btn.style.backgroundColor = '#105BD8';
+                    btn.style.borderColor = '#105BD8';
+                    btn.style.color = '#FFFFFF';
+                } else {
+                    btn.style.backgroundColor = 'var(--bg-surface)';
+                    btn.style.borderColor = 'var(--border-subtle)';
+                    btn.style.color = 'var(--text-primary)';
+                }
+            });
+        }
+
+        function setMapSector(sector) {
+            mapSector = sector;
+            ['solar', 'luna', 'marte'].forEach(sec => {
+                const btn = document.getElementById(`sector-${sec}`);
+                if (sec === sector) {
+                    btn.style.backgroundColor = '#0B0D10';
+                    btn.style.borderColor = '#0B0D10';
+                    btn.style.color = '#FFFFFF';
+                } else {
+                    btn.style.backgroundColor = 'var(--bg-surface)';
+                    btn.style.borderColor = 'var(--border-subtle)';
+                    btn.style.color = 'var(--text-primary)';
+                }
+            });
+
+            const titles = {
+                solar: 'SISTEMA SOLAR · ÓRBITAS HELIOCÉNTRICAS E INTERESTELARES',
+                luna: 'SECTOR LUNA · SITIOS APOLO Y SURVEYOR (CARA VISIBLE)',
+                marte: 'SECTOR MARTE · ROVERS Y MÓDULOS DE SUPERFICIE'
+            };
+            document.getElementById('mapSectorTitle').textContent = titles[sector];
+        }
+
+        function selectMapNode(artifactId) {
+            const item = ARTIFACTS.find(a => a.id === artifactId);
+            if (!item) return;
+            document.getElementById('mapObjName').textContent = item.title;
+            document.getElementById('mapObjId').textContent = item.cospar;
+            document.getElementById('mapObjBody').textContent = item.destination;
+            document.getElementById('mapObjStatus').textContent = item.status;
+            document.getElementById('mapObjDesc').textContent = item.science;
+            document.getElementById('mapOpenModalBtn').setAttribute('onclick', `openModal('${item.id}')`);
+        }
+
+        function resizeSolarCanvas() {
+            const canvas = document.getElementById('solarMapCanvas');
+            if (!canvas) return;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        function drawSolarMap() {
+            const canvas = document.getElementById('solarMapCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            ctx.clearRect(0, 0, w, h);
+            mapNodes = [];
+
+            if (mapSpeed > 0) {
+                mapAngleOffset += (mapSpeed === 1 ? 0.0015 : 0.025);
+            }
+
+            const epochYear = 2026 + Math.floor(mapAngleOffset * 2);
+            document.getElementById('mapEpochDisplay').textContent = `ÉPOCA SIMULADA: ${epochYear}`;
+
+            if (mapSector === 'solar') {
+                // Sol central
+                ctx.beginPath();
+                ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+                ctx.fillStyle = '#FACC15';
+                ctx.fill();
+
+                const orbits = [
+                    { r: 52, color: '#38BDF8', label: 'Tierra / Luna + Kepler', angle: mapAngleOffset * 1.4, id: 'kepler', markerColor: '#38BDF8' },
+                    { r: 88, color: '#F97316', label: 'Marte (8 artefactos)', angle: mapAngleOffset * 0.85 + 1.1, id: 'opportunity', markerColor: '#FC3D21' },
+                    { r: 126, color: '#A855F7', label: 'Cinturón: Dawn (Ceres) & NEAR', angle: mapAngleOffset * 0.45 + 2.4, id: 'dawn', markerColor: '#C084FC' },
+                    { r: 168, color: '#22C55E', label: 'Pioneer 10 & 11 (>135 UA)', angle: 0.65, id: 'pioneer', markerColor: '#4ADE80', dashed: true }
+                ];
+
+                orbits.forEach(orb => {
+                    ctx.beginPath();
+                    if (orb.dashed) ctx.setLineDash([4, 4]);
+                    else ctx.setLineDash([]);
+                    ctx.arc(cx, cy, orb.r, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    const nx = cx + Math.cos(orb.angle) * orb.r;
+                    const ny = cy + Math.sin(orb.angle) * orb.r;
+
+                    ctx.beginPath();
+                    ctx.arc(nx, ny, 6.5, 0, Math.PI * 2);
+                    ctx.fillStyle = orb.markerColor;
+                    ctx.fill();
+
+                    ctx.fillStyle = '#E2E8F0';
+                    ctx.font = 'bold 11px Arial';
+                    ctx.fillText(orb.label, nx + 10, ny + 4);
+
+                    mapNodes.push({ x: nx, y: ny, r: 14, id: orb.id });
+                });
+            } else if (mapSector === 'luna') {
+                // Disco Lunar
+                const moonR = Math.min(w, h) * 0.36;
+                ctx.beginPath();
+                ctx.arc(cx, cy, moonR, 0, Math.PI * 2);
+                ctx.fillStyle = '#1E293B';
+                ctx.fill();
+                ctx.strokeStyle = '#64748B';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                const lunarSites = [
+                    { dx: 0.32, dy: -0.05, label: 'Apolo 11 (Eagle + LRRR)', id: 'eagle' },
+                    { dx: 0.08, dy: -0.38, label: 'Apolo 15 (LRV-1)', id: 'lrv1' },
+                    { dx: -0.34, dy: 0.08, label: 'Surveyor 3 (Oceanus Procellarum)', id: 'surveyor3' },
+                    { dx: -0.15, dy: -0.12, label: 'Estación Geofísica ALSEP', id: 'alsep' }
+                ];
+
+                lunarSites.forEach(site => {
+                    const sx = cx + site.dx * moonR;
+                    const sy = cy + site.dy * moonR;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = '#FACC15';
+                    ctx.fill();
+
+                    ctx.fillStyle = '#F8FAFC';
+                    ctx.font = 'bold 11px Arial';
+                    ctx.fillText(site.label, sx + 9, sy + 4);
+                    mapNodes.push({ x: sx, y: sy, r: 14, id: site.id });
+                });
+            } else if (mapSector === 'marte') {
+                // Disco Marciano
+                const marsR = Math.min(w, h) * 0.36;
+                ctx.beginPath();
+                ctx.arc(cx, cy, marsR, 0, Math.PI * 2);
+                ctx.fillStyle = '#451A14';
+                ctx.fill();
+                ctx.strokeStyle = '#F97316';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                const marsSites = [
+                    { dx: -0.38, dy: -0.22, label: 'Viking 1 (Chryse Planitia)', id: 'viking1' },
+                    { dx: -0.25, dy: -0.14, label: 'Sojourner (Ares Vallis)', id: 'sojourner' },
+                    { dx: -0.05, dy: 0.04, label: 'Opportunity (Meridiani)', id: 'opportunity' },
+                    { dx: 0.32, dy: -0.26, label: 'Ingenuity (Cráter Jezero)', id: 'ingenuity' },
+                    { dx: 0.45, dy: -0.06, label: 'InSight (Elysium Planitia)', id: 'insight' },
+                    { dx: 0.52, dy: 0.20, label: 'Spirit (Cráter Gusev)', id: 'spirit' },
+                    { dx: -0.12, dy: -0.68, label: 'Phoenix (Vastitas Borealis)', id: 'phoenix' }
+                ];
+
+                marsSites.forEach(site => {
+                    const sx = cx + site.dx * marsR;
+                    const sy = cy + site.dy * marsR;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, 5.5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#38BDF8';
+                    ctx.fill();
+
+                    ctx.fillStyle = '#F8FAFC';
+                    ctx.font = 'bold 11px Arial';
+                    ctx.fillText(site.label, sx + 8, sy + 4);
+                    mapNodes.push({ x: sx, y: sy, r: 13, id: site.id });
+                });
+            }
+
+            requestAnimationFrame(drawSolarMap);
+        }
+
+        document.getElementById('solarMapCanvas').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            for (const node of mapNodes) {
+                const dist = Math.hypot(clickX - node.x, clickY - node.y);
+                if (dist <= node.r) {
+                    selectMapNode(node.id);
+                    break;
+                }
+            }
+        });
+
+        /* ---------------------------------------------------------------------
+           I. SIMULADOR DE ENTORNO PLANETARIO Y CONSERVACIÓN
+           --------------------------------------------------------------------- */
+        function updateEnvironmentSimulation() {
+            const env = document.getElementById('simEnvSelect').value;
+            const years = parseInt(document.getElementById('simYearsRange').value, 10);
+            const shield = parseInt(document.getElementById('simShieldRange').value, 10);
+
+            document.getElementById('simYearsVal').textContent = `${years} años`;
+            const shieldLabels = { 1: 'Ligero', 2: 'Estándar (MLI multicapa)', 3: 'Reforzado RTG' };
+            document.getElementById('simShieldVal').textContent = shieldLabels[shield];
+
+            const shieldFactor = shield === 1 ? 1.35 : (shield === 2 ? 1.0 : 0.72);
+            let envTitle = '';
+            let degPercent = 0;
+            let powerText = '';
+            let lifespanText = '';
+            let analysis = '';
+            let badgeText = '';
+            let badgeColor = '#105BD8';
+
+            if (env === 'luna') {
+                envTitle = `Conservación en Superficie Lunar (${years} años)`;
+                degPercent = Math.min(95, Math.round((years * 0.24) * shieldFactor));
+                powerText = years <= 8 ? 'Activo (SNAP-27)' : 'Inactivo (0 W)';
+                lifespanText = '> 100,000 años';
+                analysis = 'En la Luna, la ausencia de atmósfera elimina la oxidación y la erosión eólica. Sin embargo, los ciclos térmicos extremos (+127 °C a -173 °C) degradan las láminas aislantes de Kapton y polímeros, mientras que el flujo de micrometeoritos erosiona lentamente las capas superficiales. Los retrorreflectores ópticos pasivos (LRRR) permanecen operativos indefinidamente.';
+            } else if (env === 'marte') {
+                envTitle = `Conservación en Superficie Marciana (${years} años)`;
+                degPercent = Math.min(98, Math.round((years * 0.42) * shieldFactor));
+                powerText = years <= 15 ? 'Operación Solar / RTG' : 'Inactivo (Polvo / RTG agotado)';
+                lifespanText = '10,000 - 50,000 años';
+                analysis = 'En Marte, la tenue atmósfera de CO₂ (6 milibares) transporta polvo fino que cubre los paneles solares y somete las estructuras de aluminio a abrasión eólica gradual y ciclos térmicos diarios de hasta 80 °C. No obstante, la baja humedad retarda la corrosión metálica respecto a la Tierra.';
+            } else if (env === 'ceres') {
+                envTitle = `Conservación en Órbita de Ceres / 433 Eros (${years} años)`;
+                degPercent = Math.min(90, Math.round((years * 0.16) * shieldFactor));
+                powerText = years <= 11 ? 'Propulsión Iónica / Solar' : 'Inactivo (0 W)';
+                lifespanText = '> 1,000,000 años';
+                analysis = 'En la órbita de Ceres o sobre la superficie de asteroides sin atmósfera como 433 Eros, los artefactos no sufren arrastre aerodinámico ni erosión eólica. La principal fuente de deterioro es la radiación solar ultravioleta y los impactos esporádicos de partículas interplanetarias.';
+            } else {
+                envTitle = `Conservación en Espacio Interestelar (${years} años)`;
+                degPercent = Math.min(85, Math.round((years * 0.08) * shieldFactor));
+                powerText = years <= 30 ? 'RTG Decreciente' : 'Inactivo (< 3 Kelvin)';
+                lifespanText = '> 100,000,000 años';
+                analysis = 'Más allá de la heliopausia, naves como Pioneer 10 y 11 viajan en un vacío casi perfecto a temperaturas cercanas a 2.7 Kelvin. Sin erosión atmosférica ni ciclos térmicos solares, sus estructuras de aluminio y placas grabadas en oro pueden perdurar millones de años.';
+            }
+
+            if (degPercent < 30) {
+                badgeText = 'INTEGRIDAD ESTRUCTURAL ALTA';
+                badgeColor = '#105BD8';
+            } else if (degPercent < 65) {
+                badgeText = 'DESGASTE TÉRMICO MODERADO';
+                badgeColor = '#D97706';
+            } else {
+                badgeText = 'DEGRADACIÓN SUPERFICIAL ALTA';
+                badgeColor = '#FC3D21';
+            }
+
+            document.getElementById('simResultTitle').textContent = envTitle;
+            document.getElementById('simDegradationMetric').textContent = `${degPercent}%`;
+            document.getElementById('simPowerMetric').textContent = powerText;
+            document.getElementById('simLifespanMetric').textContent = lifespanText;
+            document.getElementById('simAnalysisText').textContent = analysis;
+
+            const badge = document.getElementById('simStatusBadge');
+            badge.textContent = badgeText;
+            badge.style.backgroundColor = badgeColor;
+        }
+
+        /* ---------------------------------------------------------------------
+           J. FORO DE DISCUSIÓN ESTILO REDDIT
+           --------------------------------------------------------------------- */
+        function filterForum(tag) {
+            currentForumFilter = tag;
+            document.querySelectorAll('.forum-filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-tag') === tag) {
+                    btn.style.backgroundColor = '#0B0D10';
+                    btn.style.borderColor = '#0B0D10';
+                    btn.style.color = '#FFFFFF';
+                } else {
+                    btn.style.backgroundColor = 'var(--bg-surface)';
+                    btn.style.borderColor = 'var(--border-subtle)';
+                    btn.style.color = 'var(--text-primary)';
+                }
+            });
+            renderForum();
+        }
+
+        function voteThread(id, delta) {
+            const thread = FORUM_THREADS.find(t => t.id === id);
+            if (!thread) return;
+            if (thread.userVote === delta) {
+                thread.votes -= delta;
+                thread.userVote = 0;
+            } else {
+                thread.votes += (delta - thread.userVote);
+                thread.userVote = delta;
+            }
+            renderForum();
+        }
+
+        function submitForumPost(e) {
+            e.preventDefault();
+            const author = document.getElementById('postAuthor').value.trim();
+            const tag = document.getElementById('postTag').value;
+            const title = document.getElementById('postTitle').value.trim();
+            const body = document.getElementById('postBody').value.trim();
+
+            if (!author || !title || !body) return;
+
+            FORUM_THREADS.unshift({
+                id: Date.now(),
+                author: author,
+                tag: tag,
+                time: 'Justo ahora',
+                votes: 1,
+                userVote: 1,
+                title: title,
+                body: body
+            });
+
+            document.getElementById('forumForm').reset();
+            renderForum();
+        }
+
+        function renderForum() {
+            const container = document.getElementById('forumThreadsList');
+            const filtered = FORUM_THREADS.filter(t => currentForumFilter === 'all' || t.tag === currentForumFilter);
+
+            container.innerHTML = filtered.map(t => `
+                <article class="card-panel rounded p-4 sm:p-5 flex gap-4">
+                    <div class="flex flex-col items-center justify-start gap-1 pt-1 shrink-0">
+                        <button type="button" onclick="voteThread(${t.id}, 1)" class="w-7 h-7 rounded border flex items-center justify-center text-xs font-bold cursor-pointer ${t.userVote === 1 ? 'text-white bg-blue-600 border-blue-600' : ''}" style="${t.userVote !== 1 ? 'border-color: var(--border-subtle);' : ''}">▲</button>
+                        <span class="font-bold text-xs">${t.votes}</span>
+                        <button type="button" onclick="voteThread(${t.id}, -1)" class="w-7 h-7 rounded border flex items-center justify-center text-xs font-bold cursor-pointer ${t.userVote === -1 ? 'text-white bg-red-600 border-red-600' : ''}" style="${t.userVote !== -1 ? 'border-color: var(--border-subtle);' : ''}">▼</button>
+                    </div>
+                    <div class="space-y-2 flex-1">
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            <span class="px-2 py-0.5 rounded font-bold text-white" style="background-color: #105BD8;">${t.tag}</span>
+                            <span class="font-bold">${t.author}</span>
+                            <span style="color: var(--text-secondary);">· ${t.time}</span>
+                        </div>
+                        <h4 class="font-bold" style="font-size: 13.5pt; line-height: 1.3;">${t.title}</h4>
+                        <p class="editorial-text" style="color: var(--text-secondary);">${t.body}</p>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        /* ---------------------------------------------------------------------
+           K. GLOSARIO AEROESPACIAL
+           --------------------------------------------------------------------- */
+        function renderGlossary() {
+            const query = (document.getElementById('glossarySearch')?.value || '').trim().toLowerCase();
+            const container = document.getElementById('glossaryGrid');
+            const filtered = GLOSSARY_TERMS.filter(g => 
+                g.term.toLowerCase().includes(query) || 
+                g.definition.toLowerCase().includes(query) ||
+                g.category.toLowerCase().includes(query)
+            );
+
+            container.innerHTML = filtered.map(g => `
+                <div class="surface-panel rounded p-5 space-y-2">
+                    <span class="meta-label text-sky-600">${g.category}</span>
+                    <h4 class="font-bold" style="font-size: 13pt;">${g.term}</h4>
+                    <p class="editorial-text">${g.definition}</p>
+                </div>
+            `).join('');
+        }
+
+        /* ---------------------------------------------------------------------
+           L. INICIALIZACIÓN AL CARGAR LA VENTANA
+           --------------------------------------------------------------------- */
+        window.onload = function() {
+            renderCatalog();
+            renderForum();
+            renderGlossary();
+            updateEnvironmentSimulation();
+            resizeSolarCanvas();
+            drawSolarMap();
+        };
+
+        window.addEventListener('resize', resizeSolarCanvas);
+    </script>
+</body>
+</html>
