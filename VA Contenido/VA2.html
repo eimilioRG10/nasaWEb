@@ -430,28 +430,25 @@
                     </p>
 
                     <p class="editorial-text text-neutral-200 pt-1">
-                        Registro científico y cartográfico de los vehículos exploradores, módulos de aterrizaje, estaciones geofísicas y sondas orbitales de la NASA que permanecen en la Luna, Marte, asteroides y el espacio interestelar tras completar sus misiones. Seleccione un destino planetario para inspeccionar su mapa cartográfico interactivo, sus coordenadas reales y sus esquemas de ingeniería.
+                        Archivo de misiones históricas de la NASA en la Luna, Marte y el espacio profundo. Explore los datos, imágenes y fichas de 13 misiones seleccionadas a partir de las fuentes oficiales enlazadas.
                     </p>
                 </div>
             </div>
         </section>
 
         <!-- =================================================================
-             4. NAVEGACIÓN POR PESTAÑAS PRINCIPALES (4 APARTADOS SIN RUIDO VISUAL)
+             4. NAVEGACIÓN POR PESTAÑAS PRINCIPALES
              ================================================================= -->
         <nav class="border-b sticky top-16 z-30 backdrop-blur-md" style="background-color: var(--bg-card); border-color: var(--border-subtle);">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-6 sm:gap-8 overflow-x-auto">
                 <button type="button" id="tab-btn-destinos" onclick="switchTab('destinos')" class="main-tab-btn active">
                     1. Exploración por Destino (Mapas Interactivos)
                 </button>
-                <button type="button" id="tab-btn-simulador" onclick="switchTab('simulador')" class="main-tab-btn">
-                    2. Simulador de Entorno y Conservación
-                </button>
                 <button type="button" id="tab-btn-foro" onclick="switchTab('foro')" class="main-tab-btn">
-                    3. Foro de Debate Científico (Estilo Reddit)
+                    2. Foro de Debate Científico (Estilo Reddit)
                 </button>
                 <button type="button" id="tab-btn-citas" onclick="switchTab('citas')" class="main-tab-btn">
-                    4. Citas Verificadas NSSDCA y Glosario
+                    3. Citas Verificadas NSSDCA y Glosario
                 </button>
             </div>
         </nav>
@@ -481,10 +478,10 @@
                         >
                             <div class="sphere-moon shrink-0" aria-hidden="true"></div>
                             <div class="space-y-1.5">
-                                <span class="meta-label text-sky-600">4 EXPEDIENTES NSSDCA</span>
+                                <span class="meta-label text-sky-600">4 MISIONES DOCUMENTADAS</span>
                                 <h2 class="font-bold" style="font-size: 15pt; line-height: 1.2;">La Luna</h2>
                                 <p class="editorial-text" style="font-size: 11pt; color: var(--text-secondary);">
-                                    Mapa selenográfico con sitios Apolo, vehículos LRV, estaciones ALSEP/LRRR y Surveyor 3.
+                                    Misiones Apolo 11, 12 y 15, además del aterrizador Surveyor 3.
                                 </p>
                             </div>
                         </button>
@@ -499,10 +496,10 @@
                         >
                             <div class="sphere-mars shrink-0" aria-hidden="true"></div>
                             <div class="space-y-1.5">
-                                <span class="meta-label text-orange-600">7 EXPEDIENTES NSSDCA</span>
+                                <span class="meta-label text-orange-600">5 MISIONES DOCUMENTADAS</span>
                                 <h2 class="font-bold" style="font-size: 15pt; line-height: 1.2;">Marte</h2>
                                 <p class="editorial-text" style="font-size: 11pt; color: var(--text-secondary);">
-                                    Mapa topográfico con rovers Sojourner, Spirit, Opportunity, Viking 1, Phoenix, InSight e Ingenuity.
+                                    Mars Pathfinder y Sojourner, Spirit y Opportunity, Viking 1, InSight e Ingenuity.
                                 </p>
                             </div>
                         </button>
@@ -521,10 +518,10 @@
                                 <div class="w-2.5 h-2.5 rounded-full bg-amber-300"></div>
                             </div>
                             <div class="space-y-1.5">
-                                <span class="meta-label text-indigo-500">4 EXPEDIENTES NSSDCA</span>
+                                <span class="meta-label text-indigo-500">4 MISIONES DOCUMENTADAS</span>
                                 <h2 class="font-bold" style="font-size: 15pt; line-height: 1.2;">Asteroides y Espacio Profundo</h2>
                                 <p class="editorial-text" style="font-size: 11pt; color: var(--text-secondary);">
-                                    Trayectorias heliocéntricas e interestelares de Dawn (Ceres), NEAR (433 Eros), Kepler y Pioneer 10/11.
+                                    Dawn, NEAR Shoemaker, Pioneer 10 y el telescopio espacial Kepler.
                                 </p>
                             </div>
                         </button>
@@ -629,110 +626,14 @@
                         <h3 id="linkedCardsTitle" class="font-bold" style="font-size: 15pt;">
                             Expedientes Documentados en La Luna
                         </h3>
-                        <span id="linkedCardsCount" class="meta-label">4 ARTEFACTOS EN ESTE DESTINO</span>
+                        <span id="linkedCardsCount" class="meta-label">4 MISIONES EN ESTE DESTINO</span>
                     </div>
                     <div id="linkedCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
                 </div>
             </section>
 
             <!-- =============================================================
-                 PESTAÑA 2: SIMULADOR DE ENTORNO Y CONSERVACIÓN
-                 ============================================================= -->
-            <section id="screen-simulador" class="tab-screen space-y-8">
-                <div class="pb-6 border-b space-y-2" style="border-color: var(--border-subtle);">
-                    <span class="meta-label">ANÁLISIS FÍSICO DE MATERIALES EXTRATERRESTRES</span>
-                    <h2 class="font-bold" style="font-size: 20pt; line-height: 1.25;">
-                        Simulador de Entorno Planetario y Conservación de Hardware
-                    </h2>
-                    <p class="editorial-text max-w-4xl" style="color: var(--text-secondary);">
-                        Evalúe cómo afectan la radiación ultravioleta, los ciclos térmicos extremos, el polvo electrostático y los micrometeoritos a las estructuras de aluminio, fibra de carbono y aislamiento multicapa Kapton según el cuerpo celeste donde reposan.
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <div class="lg:col-span-5 surface-panel rounded-lg p-6 space-y-5">
-                        <h3 class="font-bold" style="font-size: 14pt;">Variables del Entorno</h3>
-
-                        <div class="space-y-1.5">
-                            <label for="simEnvSelect" class="block text-xs font-bold uppercase tracking-wider">
-                                1. Cuerpo Celeste / Región
-                            </label>
-                            <select id="simEnvSelect" onchange="updateEnvironmentSimulation()" class="w-full p-2.5 rounded border text-xs font-bold" style="background-color: var(--bg-card); border-color: var(--border-subtle); color: var(--text-primary);">
-                                <option value="luna">La Luna (Vacío extremo, ciclos +127 °C a -173 °C, polvo abrasivo)</option>
-                                <option value="marte">Marte (Atmósfera tenue CO₂, tormentas de polvo, radiación UV)</option>
-                                <option value="ceres">Ceres / Asteroide 433 Eros (Microgravedad, vacío interplanetario)</option>
-                                <option value="interestelar">Espacio Interestelar (Rayos cósmicos galácticos, ~2.7 Kelvin)</option>
-                            </select>
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <div class="flex justify-between text-xs font-bold">
-                                <label for="simYearsRange">2. Tiempo de Exposición en el Espacio</label>
-                                <span id="simYearsVal" class="text-sky-600">55 años</span>
-                            </div>
-                            <input type="range" id="simYearsRange" min="1" max="500" value="55" oninput="updateEnvironmentSimulation()" class="w-full accent-blue-600 cursor-pointer">
-                            <div class="flex justify-between text-xs" style="color: var(--text-secondary);">
-                                <span>1 año</span>
-                                <span>250 años</span>
-                                <span>500 años</span>
-                            </div>
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <div class="flex justify-between text-xs font-bold">
-                                <label for="simThermalRange">3. Protección Térmica y Energética</label>
-                                <span id="simThermalVal" class="text-sky-600">Aislamiento Kapton MLI</span>
-                            </div>
-                            <input type="range" id="simThermalRange" min="1" max="3" value="2" oninput="updateEnvironmentSimulation()" class="w-full accent-blue-600 cursor-pointer">
-                            <div class="flex justify-between text-xs" style="color: var(--text-secondary);">
-                                <span>Pasiva básica</span>
-                                <span>Kapton MLI</span>
-                                <span>Calentadores RHU/RTG</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="lg:col-span-7 card-panel rounded-lg p-6 space-y-6">
-                        <div class="flex flex-wrap items-center justify-between gap-2 border-b pb-4" style="border-color: var(--border-subtle);">
-                            <div>
-                                <span class="meta-label">MODELO DE INTEGRIDAD ESTRUCTURAL</span>
-                                <h3 id="simResultTitle" class="font-bold" style="font-size: 15pt;">
-                                    Conservación en Superficie Lunar (55 años)
-                                </h3>
-                            </div>
-                            <span id="simStatusBadge" class="px-3 py-1 rounded text-xs font-bold uppercase text-white" style="background-color: #105BD8;">
-                                INTEGRIDAD ALTA
-                            </span>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div class="surface-panel rounded p-4">
-                                <span class="meta-label block">FATIGA TÉRMICA / POLVO</span>
-                                <span id="simDegradationMetric" class="font-bold block mt-1" style="font-size: 16pt;">14%</span>
-                                <span class="text-xs" style="color: var(--text-secondary);">Degradación superficial</span>
-                            </div>
-                            <div class="surface-panel rounded p-4">
-                                <span class="meta-label block">ENERGÍA DISPONIBLE</span>
-                                <span id="simPowerMetric" class="font-bold block mt-1" style="font-size: 16pt;">0 W (Pasivo)</span>
-                                <span class="text-xs" style="color: var(--text-secondary);">Estado de subsistemas</span>
-                            </div>
-                            <div class="surface-panel rounded p-4">
-                                <span class="meta-label block">PERMANENCIA ESTIMADA</span>
-                                <span id="simLifespanMetric" class="font-bold block mt-1" style="font-size: 16pt;">> 100,000 años</span>
-                                <span class="text-xs" style="color: var(--text-secondary);">Sin erosión atmosférica</span>
-                            </div>
-                        </div>
-
-                        <div class="space-y-2">
-                            <h4 class="font-bold text-xs uppercase tracking-wider">Dictamen Técnico del Entorno</h4>
-                            <p id="simAnalysisText" class="editorial-text"></p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- =============================================================
-                 PESTAÑA 3: FORO DE DEBATE CIENTÍFICO (ESTILO REDDIT)
+                 PESTAÑA 2: FORO DE DEBATE CIENTÍFICO (ESTILO REDDIT)
                  ============================================================= -->
             <section id="screen-foro" class="tab-screen space-y-8">
                 <div class="pb-6 border-b space-y-2" style="border-color: var(--border-subtle);">
@@ -801,7 +702,7 @@
             </section>
 
             <!-- =============================================================
-                 PESTAÑA 4: CITAS VERIFICADAS NSSDCA Y GLOSARIO
+                 PESTAÑA 3: CITAS VERIFICADAS NSSDCA Y GLOSARIO
                  ============================================================= -->
             <section id="screen-citas" class="tab-screen space-y-10">
                 <div class="pb-6 border-b space-y-2" style="border-color: var(--border-subtle);">
@@ -902,9 +803,8 @@
                         </h4>
                         <ul class="space-y-1 text-xs">
                             <li><button type="button" onclick="switchTab('destinos')" class="hover:text-white cursor-pointer">1. Exploración por Destino (Mapas Interactivos)</button></li>
-                            <li><button type="button" onclick="switchTab('simulador')" class="hover:text-white cursor-pointer">2. Simulador de Entorno y Conservación</button></li>
-                            <li><button type="button" onclick="switchTab('foro')" class="hover:text-white cursor-pointer">3. Foro de Debate Científico</button></li>
-                            <li><button type="button" onclick="switchTab('citas')" class="hover:text-white cursor-pointer">4. Citas Verificadas NSSDCA y Glosario</button></li>
+                            <li><button type="button" onclick="switchTab('foro')" class="hover:text-white cursor-pointer">2. Foro de Debate Científico</button></li>
+                            <li><button type="button" onclick="switchTab('citas')" class="hover:text-white cursor-pointer">3. Citas Verificadas NSSDCA y Glosario</button></li>
                         </ul>
                     </div>
 
@@ -1059,11 +959,11 @@
                                 <td id="specLaunch"></td>
                             </tr>
                             <tr>
-                                <th>Masa en Seco</th>
+                                <th>Masa</th>
                                 <td id="specMass"></td>
                             </tr>
                             <tr>
-                                <th>Coordenadas Exactas / Ubicación</th>
+                                <th>Ubicación / coordenadas</th>
                                 <td id="specLocation"></td>
                             </tr>
                             <tr>
@@ -1072,7 +972,7 @@
                             </tr>
                             <tr>
                                 <th>Referencia Documental</th>
-                                <td id="specSource"></td>
+                                <td><a id="specSource" target="_blank" rel="noopener noreferrer"></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -1109,372 +1009,254 @@
         }
 
         /* ---------------------------------------------------------------------
-           B. BASE DE DATOS DE LOS 15 ARTEFACTOS EXACTOS CON COORDENADAS EN MAPAS
+           B. CATÁLOGO DE 13 MISIONES DOCUMENTADAS POR DESTINO
            --------------------------------------------------------------------- */
         const ARTIFACTS = [
-            // ======================== LA LUNA (4) ========================
             {
-                id: 'eagle',
-                destination: 'Luna',
-                siteName: 'Mar de la Tranquilidad',
-                coords: '0°40′26.69″ N, 23°28′22.69″ E',
-                mapX: 66,
-                mapY: 48,
-                title: 'Módulo Lunar Eagle (Apolo 11)',
-                cospar: '1969-059C',
-                launchDate: '16 de julio de 1969',
-                mass: '2,033 kg (etapa de descenso en seco)',
-                status: 'Inactivo · Monumento histórico estacionario',
-                source: 'NSSDCA Master Catalog ID: 1969-059C',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Aldrin_Apollo_11_original.jpg/800px-Aldrin_Apollo_11_original.jpg',
-                photoCaption: 'Etapa de descenso del LM-5 Eagle en el Mar de la Tranquilidad (Fotografía AS11-40-5903).',
-                engineering: 'La etapa de descenso del Módulo Lunar LM-5 posee una estructura octogonal de aleación de aluminio protegida por láminas de Kapton aluminizado. Albergaba el motor regulable DPS, cuatro tanques de propelente hipergólico y cuatro patas telescópicas con amortiguadores alveolares, sirviendo como plataforma rígida para el despegue de la etapa de ascenso.',
-                science: 'Permitió el primer alunizaje tripulado el 20 de julio de 1969 y la recolección de 21.55 kg de muestras basálticas. El análisis isotópico demostró que la Luna tiene una antigüedad de 4,500 millones de años y comparte un origen geoquímico común con la Tierra.',
-                diagramType: 'lander',
-                pins: [
-                    { x: 50, y: 36, title: '[1] Anillo de Interfaz y Perno Pirotécnico', desc: 'Estructura superior donde se acopló la cabina de ascenso; contiene los mecanismos que liberaron el módulo de retorno.' },
-                    { x: 50, y: 58, title: '[2] Motor de Descenso Regulable (DPS)', desc: 'Primer motor espacial de empuje variable que permitió frenar desde la órbita lunar y descender verticalmente.' },
-                    { x: 26, y: 76, title: '[3] Tren de Aterrizaje y Escalera', desc: 'Patas con cartuchos deformables de aluminio y placa conmemorativa instalada en el puntal delantero.' }
+                id: 'apollo11', destination: 'Luna', siteName: 'Mar de la Tranquilidad',
+                coords: '0.67416° N, 23.47314° E', mapX: 66, mapY: 48,
+                title: 'Módulo Lunar Eagle (Apolo 11)', cospar: '1969-059C',
+                launchDate: '16 de julio de 1969; alunizaje: 20 de julio de 1969',
+                mass: '15,103 kg (masa total con propelentes)',
+                status: 'La etapa de descenso permanece en la Luna; se estima que la etapa de ascenso impactó la superficie lunar posteriormente.',
+                source: 'NASA NSSDCA: Apollo 11 Lunar Module / EASEP',
+                sourceUrl: 'https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1969-059C',
+                imageUrl: '../client/imagenes/historias/apollo11.jpg',
+                photoCaption: 'Módulo Lunar Eagle y primeros trabajos científicos tripulados en la superficie lunar.',
+                engineering: 'El módulo Eagle transportó a Neil Armstrong y Buzz Aldrin a la superficie lunar. El conjunto incluía una etapa de descenso y una etapa de ascenso; el paquete EASEP llevaba experimentos científicos que quedaron desplegados en la Luna.',
+                science: 'Alunizó en el Mar de la Tranquilidad el 20 de julio de 1969. Armstrong y Aldrin recogieron 21.55 kg de muestras, desplegaron experimentos y recorrieron unos 250 metros durante su actividad extravehicular.',
+                diagramType: 'lander', pins: [
+                    { x: 50, y: 36, title: '[1] Etapa de ascenso', desc: 'Transportó a la tripulación desde la superficie lunar hasta el módulo de mando.' },
+                    { x: 50, y: 58, title: '[2] Etapa de descenso', desc: 'Alojó el motor de descenso y el equipo usado durante el alunizaje.' },
+                    { x: 26, y: 76, title: '[3] EASEP', desc: 'Paquete de experimentos científicos desplegado sobre el suelo lunar.' }
                 ]
             },
             {
-                id: 'lrv1',
-                destination: 'Luna',
-                siteName: 'Hadley-Apennine',
-                coords: '26°07′55.99″ N, 3°38′01.90″ E',
-                mapX: 53,
-                mapY: 27,
-                title: 'Vehículo Lunar LRV-1 (Apolo 15)',
-                cospar: '1971-063D',
-                launchDate: '26 de julio de 1971',
-                mass: '210 kg en Tierra (35 kg equivalentes en la Luna)',
-                status: 'Inactivo · Estacionado a 90 m al este del LM Falcon',
-                source: 'NSSDCA Master Catalog ID: 1971-063D',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Ap15-rover.jpg/800px-Ap15-rover.jpg',
-                photoCaption: 'Vehículo Lunar Explorador LRV-1 estacionado en Hadley-Apennine (Fotografía AS15-88-11901).',
-                engineering: 'Primer vehículo eléctrico tripulado operado fuera de la Tierra. Construido con chasis plegable de aluminio 2219, tracción independiente en las cuatro ruedas con motores de 0.18 kW y neumáticos elásticos de malla de alambre de zinc con bandas de titanio.',
-                science: 'Amplió el radio de exploración geológica a 27.9 kilómetros recorridos en tres travesías, permitiendo recolectar la "Roca del Génesis" (muestra 15415), una anortosita de 4,100 millones de años que confirmó la existencia de un océano de magma lunar primordial.',
-                diagramType: 'rover',
-                pins: [
-                    { x: 64, y: 36, title: '[1] Antena Parabólica de Alta Ganancia', desc: 'Transmitió señal de televisión en color en tiempo real hacia la Tierra desde cada estación geológica.' },
-                    { x: 46, y: 54, title: '[2] Consola de Navegación por Estima', desc: 'Calculaba el rumbo y distancia respecto al Módulo Lunar mediante un giroscopio direccional y odómetros.' },
-                    { x: 30, y: 74, title: '[3] Ruedas de Malla de Alambre de Zinc', desc: 'Diseño sin aire comprimido con bandas de titanio en espiga para evitar el hundimiento en el regolito.' }
+                id: 'apollo15', destination: 'Luna', siteName: 'Hadley-Apennine, Mare Imbrium',
+                coords: '26.13239° N, 3.63330° E', mapX: 53, mapY: 27,
+                title: 'Módulo Lunar Falcon (Apolo 15)', cospar: '1971-063C',
+                launchDate: '26 de julio de 1971; alunizaje: 30 de julio de 1971',
+                mass: '16,430 kg (masa total con propelentes)',
+                status: 'Etapa de descenso en la Luna; la etapa de ascenso impactó la superficie lunar.',
+                source: 'NASA NSSDCA: Apollo 15 Lunar Module / ALSEP',
+                sourceUrl: 'https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1971-063C',
+                imageUrl: '../client/imagenes/historias/apollo15.jpg',
+                photoCaption: 'Módulo Lunar Falcon, vehículo de alunizaje de la misión Apolo 15.',
+                engineering: 'El módulo Falcon llevó a David Scott y James Irwin a la región Hadley-Apennine. La misión también transportó el primer vehículo lunar (LRV) y un paquete de experimentos ALSEP.',
+                science: 'Scott e Irwin realizaron tres caminatas lunares de 18 horas y 35 minutos en total, recorrieron 27.9 km con el LRV y recolectaron 77.31 kg de rocas y suelo.',
+                diagramType: 'lander', pins: [
+                    { x: 50, y: 36, title: '[1] Etapa de ascenso', desc: 'Permitió a la tripulación despegar desde la Luna y volver a acoplarse al módulo de mando.' },
+                    { x: 50, y: 58, title: '[2] Etapa de descenso', desc: 'Sostuvo el módulo durante el alunizaje en la región de Hadley-Apennine.' },
+                    { x: 26, y: 76, title: '[3] Equipo científico', desc: 'El LRV y ALSEP ampliaron la exploración y las mediciones de la superficie lunar.' }
                 ]
             },
             {
-                id: 'alsep',
-                destination: 'Luna',
-                siteName: 'Fra Mauro / Apolo 11, 14 y 15',
-                coords: '3°38′43.08″ S, 17°28′16.90″ O',
-                mapX: 38,
-                mapY: 54,
-                title: 'Paquete Científico ALSEP / LRRR',
-                cospar: '1969-059C-01',
-                launchDate: '16 de julio de 1969 (y despliegues hasta 1972)',
-                mass: '150 kg por estación geofísica completa',
-                status: 'Estación central apagada (1977) · Retrorreflectores LRRR activos',
-                source: 'NSSDCA Experiment ID: 1969-059C-01 / 1971-063C-08',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Apollo_11_Lunar_Laser_Ranging_Experiment.jpg/800px-Apollo_11_Lunar_Laser_Ranging_Experiment.jpg',
-                photoCaption: 'Matriz óptica retrorreflectora láser LRRR y sismómetro pasivo desplegados en la superficie lunar.',
-                engineering: 'Los conjuntos ALSEP integraban sismómetros pasivos, magnetómetros y espectrómetros alimentados por un generador termoeléctrico SNAP-27. Junto a ellos se instalaron matrices ópticas LRRR de prismas de esquina de sílice fundida.',
-                science: 'Registraron más de 12,000 sismos lunares hasta 1977, revelando la estructura interna de la Luna. Los paneles LRRR siguen activos hoy en día: permiten medir mediante pulsos láser que la Luna se aleja de la Tierra 3.8 cm cada año.',
-                diagramType: 'station',
-                pins: [
-                    { x: 34, y: 46, title: '[1] Matriz Óptica de Prismas LRRR', desc: '100 espejos de esquina de cuarzo que devuelven pulsos láser directamente hacia telescopios terrestres sin electricidad.' },
-                    { x: 56, y: 56, title: '[2] Sismómetro Pasivo de Tres Ejes', desc: 'Protegido por una falda térmica para detectar vibraciones superficiales de apenas medio diámetro atómico.' },
-                    { x: 74, y: 66, title: '[3] Generador Termoeléctrico SNAP-27', desc: 'Convirtió el calor del plutonio-238 en 75 vatios de electricidad continua durante ocho años.' }
+                id: 'apollo12', destination: 'Luna', siteName: 'Oceanus Procellarum',
+                coords: '3.0128° S, 23.4219° O', mapX: 38, mapY: 54,
+                title: 'Módulo Lunar Intrepid (Apolo 12)', cospar: '1969-099C',
+                launchDate: '14 de noviembre de 1969; alunizaje: 19 de noviembre de 1969',
+                mass: '15,235 kg (masa total con propelentes)',
+                status: 'Etapa de descenso en la Luna; la etapa de ascenso fue impactada intencionalmente en la superficie.',
+                source: 'NASA NSSDCA: Apollo 12 Lunar Module / ALSEP',
+                sourceUrl: 'https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1969-099C',
+                imageUrl: '../client/imagenes/historias/apollo12.jpg',
+                photoCaption: 'La tripulación del Apolo 12 visitó Surveyor 3 durante su segunda caminata lunar.',
+                engineering: 'El Intrepid llevó a Charles Conrad y Alan Bean a la Luna y transportó el paquete de experimentos ALSEP. El sitio de alunizaje quedó a unos 180 metros de la sonda Surveyor 3.',
+                science: 'Los astronautas recolectaron 34.35 kg de muestras y recuperaron partes de Surveyor 3 para su análisis en la Tierra. Tras el despegue, la etapa de ascenso impactó la Luna y provocó un sismo artificial registrado por los instrumentos.',
+                diagramType: 'lander', pins: [
+                    { x: 50, y: 36, title: '[1] Etapa de ascenso', desc: 'Llevó a Conrad y Bean de regreso al módulo de mando.' },
+                    { x: 50, y: 58, title: '[2] Etapa de descenso', desc: 'Aterrizó cerca de Surveyor 3, en Oceanus Procellarum.' },
+                    { x: 26, y: 76, title: '[3] ALSEP', desc: 'Experimentos científicos desplegados para continuar midiendo el entorno lunar.' }
                 ]
             },
             {
-                id: 'surveyor3',
-                destination: 'Luna',
-                siteName: 'Océano de las Tormentas',
-                coords: '3°00′54″ S, 23°25′05″ O',
-                mapX: 31,
-                mapY: 53,
-                title: 'Sonda Surveyor 3',
-                cospar: '1967-035A',
-                launchDate: '17 de abril de 1967',
-                mass: '296 kg (masa tras el alunizaje)',
-                status: 'Inactiva · Visitada por la tripulación del Apolo 12 en 1969',
-                source: 'NSSDCA Master Catalog ID: 1967-035A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Alan_Bean_with_Surveyor_3.jpg/800px-Alan_Bean_with_Surveyor_3.jpg',
-                photoCaption: 'El astronauta Alan Bean inspecciona la sonda Surveyor 3 durante la misión Apolo 12 (1969).',
-                engineering: 'Sonda robótica no tripulada de estructura tubular de aluminio de tres patas equipada con motores vernier de combustible líquido, radar Doppler, cámara de televisión y una pala mecánica extensible para excavar el suelo lunar.',
-                science: 'Demostró que el regolito lunar soporta el peso de una nave tripulada sin hundirse, validando el diseño del Módulo Lunar Apolo. Treinta y un meses después, el Apolo 12 recuperó su cámara para estudiar la exposición prolongada al vacío espacial.',
-                diagramType: 'probe',
-                pins: [
-                    { x: 50, y: 30, title: '[1] Panel Solar y Antena Planar', desc: 'Mástil superior orientado hacia el Sol para suministrar 85 vatios a los sistemas de telemetría.' },
-                    { x: 66, y: 54, title: '[2] Pala Excavadora de Mecánica de Suelos', desc: 'Brazo articulado que excavó cuatro zanjas de hasta 18 cm para medir la cohesión del regolito.' },
-                    { x: 34, y: 74, title: '[3] Tren Tripoide con Amortiguadores', desc: 'Estructura diseñada para absorber el impacto vertical de alunizaje a 1.5 metros por segundo.' }
-                ]
-            },
-
-            // ======================== MARTE (7) ========================
-            {
-                id: 'sojourner',
-                destination: 'Marte',
-                siteName: 'Ares Vallis',
-                coords: '19°08′ N, 33°13′ O',
-                mapX: 36,
-                mapY: 38,
-                title: 'Rover Sojourner',
-                cospar: '1996-068A',
-                launchDate: '4 de diciembre de 1996',
-                mass: '10.6 kg (vehículo de seis ruedas)',
-                status: 'Inactivo · Última transmisión el 27 de septiembre de 1997',
-                source: 'NSSDCA Master Catalog ID: 1996-068A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Sojourner_on_Mars_PIA01122.jpg/800px-Sojourner_on_Mars_PIA01122.jpg',
-                photoCaption: 'El rover Sojourner analiza la roca "Yogi" con su espectrómetro APXS en Ares Vallis.',
-                engineering: 'Primer vehículo móvil en operar sobre otro planeta. Con 65 cm de longitud, incorporaba suspensión articulada rocker-bogie de seis ruedas, panel solar de arseniuro de galio, sensores láser de evasión de obstáculos y un espectrómetro APXS.',
-                science: 'Operó durante 83 soles marcianos (doce veces su vida útil nominal de 7 días), recorriendo 100 metros y revelando rocas ricas en sílice similares a la andesita terrestre, evidencia de antiguos procesos volcánicos e hidrológicos.',
-                diagramType: 'rover',
-                pins: [
-                    { x: 50, y: 36, title: '[1] Panel Solar de Arseniuro de Galio', desc: 'Generaba hasta 16 vatios al mediodía marciano para alimentar los motores y el procesador.' },
-                    { x: 70, y: 58, title: '[2] Espectrómetro APXS Trasero', desc: 'Sensor desplegable que se apoyaba contra las rocas para determinar su composición elemental.' },
-                    { x: 32, y: 74, title: '[3] Suspensión Rocker-Bogie', desc: 'Arquitectura mecánica sin resortes que mantiene las seis ruedas en contacto con el terreno irregular.' }
+                id: 'surveyor3', destination: 'Luna', siteName: 'Oceanus Procellarum',
+                coords: 'Aproximadamente 3° S, 23.41° O', mapX: 31, mapY: 53,
+                title: 'Aterrizador Surveyor 3', cospar: '1967-035A',
+                launchDate: '17 de abril de 1967; alunizaje: 20 de abril de 1967',
+                mass: '997.9 kg (masa de la nave)',
+                status: 'Inactivo; último contacto el 4 de mayo de 1967.',
+                source: 'NASA Science: Surveyor 3',
+                sourceUrl: 'https://science.nasa.gov/mission/surveyor-3/',
+                imageUrl: '../client/imagenes/historias/surveyor3.jpg',
+                photoCaption: 'Surveyor 3 fue visitado por la tripulación del Apolo 12 en noviembre de 1969.',
+                engineering: 'Tercer vuelo de la serie Surveyor y segundo aterrizaje suave exitoso de la serie en la Luna. Llevaba una cámara de televisión y un muestreador de superficie capaz de excavar y manipular el suelo lunar.',
+                science: 'Envió 6,326 imágenes y realizó pruebas de excavación y resistencia del suelo. Los resultados ayudaron a confirmar que el terreno podía soportar el módulo lunar Apolo; la tripulación del Apolo 12 recuperó partes de la nave.',
+                diagramType: 'probe', pins: [
+                    { x: 50, y: 30, title: '[1] Cámara de televisión', desc: 'Transmitió imágenes del entorno lunar a la Tierra.' },
+                    { x: 66, y: 54, title: '[2] Muestreador de superficie', desc: 'Excavó zanjas y realizó pruebas mecánicas sobre el suelo lunar.' },
+                    { x: 34, y: 74, title: '[3] Patas de aterrizaje', desc: 'Estructura de soporte de la nave una vez posada en la superficie.' }
                 ]
             },
             {
-                id: 'spirit',
-                destination: 'Marte',
-                siteName: 'Cráter Gusev',
-                coords: '14°34′06″ S, 175°28′21″ E',
-                mapX: 84,
-                mapY: 58,
-                title: 'Rover Spirit',
-                cospar: '2003-027A',
-                launchDate: '10 de junio de 2003',
-                mass: '185 kg (masa en superficie)',
-                status: 'Inactivo · Misión concluida tras quedar atrapado en arena blanda (2010)',
-                source: 'NSSDCA Master Catalog ID: 2003-027A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/NASA_Mars_Rover.jpg/800px-NASA_Mars_Rover.jpg',
-                photoCaption: 'Configuración técnica de campo del rover Mars Exploration Rover en superficie marciana.',
-                engineering: 'Geólogo robótico impulsado por paneles solares desplegables con mástil panorámico Pancam y brazo robótico de cinco grados de libertad equipado con herramienta de abrasión de rocas (RAT) y espectrómetro Mössbauer.',
-                science: 'Recorrió 7.73 kilómetros durante más de seis años terrestres. Descubrió depósitos de sílice casi pura (90%) y carbonatos en las colinas Columbia, pruebas concluyentes de antiguos sistemas hidrotermales aptos para la vida microbiana.',
-                diagramType: 'rover',
-                pins: [
-                    { x: 42, y: 30, title: '[1] Mástil Pancam y Mini-TES', desc: 'Cámaras estereoscópicas de alta resolución y espectrómetro infrarrojo para identificar minerales.' },
-                    { x: 72, y: 56, title: '[2] Brazo Robótico con Herramienta RAT', desc: 'Perforaba la corteza meteorizada de las rocas para exponer el interior mineral inalterado.' },
-                    { x: 35, y: 74, title: '[3] Sistema de Tracción de Seis Ruedas', desc: 'Ruedas de 25 cm con actuadores independientes que permitieron avanzar incluso con una rueda bloqueada.' }
+                id: 'pathfinder', destination: 'Marte', siteName: 'Ares Vallis',
+                coords: '19.13° N, 33.22° O (aprox.)', mapX: 36, mapY: 38,
+                title: 'Mars Pathfinder y rover Sojourner', cospar: '1996-068A',
+                launchDate: '4 de diciembre de 1996; aterrizaje: 4 de julio de 1997',
+                mass: 'Sojourner: 10.6 kg',
+                status: 'Misión finalizada; última transmisión recibida el 27 de septiembre de 1997.',
+                source: 'NASA Science: Mars Pathfinder',
+                sourceUrl: 'https://science.nasa.gov/mission/mars-pathfinder/',
+                imageUrl: '../client/imagenes/historias/pathfinder.jpg',
+                photoCaption: 'El aterrizador Pathfinder y su rover Sojourner exploraron Ares Vallis.',
+                engineering: 'Pathfinder demostró una técnica de aterrizaje con paracaídas y airbags para entregar el rover Sojourner a la superficie marciana. Ambos vehículos llevaban instrumentos para observar la atmósfera, el clima, las rocas y el suelo.',
+                science: 'La misión devolvió más de 16,500 imágenes del aterrizador y 550 del rover, junto con análisis químicos de rocas y suelo. Los datos meteorológicos y geológicos aportaron evidencia de que Marte fue más cálido y húmedo en el pasado.',
+                diagramType: 'rover', pins: [
+                    { x: 50, y: 36, title: '[1] Aterrizador Pathfinder', desc: 'Plataforma científica que tomó imágenes y midió las condiciones del sitio de aterrizaje.' },
+                    { x: 70, y: 58, title: '[2] Rover Sojourner', desc: 'Pequeño vehículo móvil que examinó rocas y suelo en las cercanías del aterrizador.' },
+                    { x: 32, y: 74, title: '[3] Airbags', desc: 'Sistema inflable que amortiguó el impacto durante el aterrizaje en Marte.' }
                 ]
             },
             {
-                id: 'opportunity',
-                destination: 'Marte',
-                siteName: 'Meridiani Planum',
-                coords: '1°56′46″ S, 354°28′24″ E',
-                mapX: 48,
-                mapY: 51,
-                title: 'Rover Opportunity',
-                cospar: '2003-032A',
-                launchDate: '7 de julio de 2003',
-                mass: '185 kg (masa en superficie)',
-                status: 'Inactivo · Finalizado tras tormenta de polvo global en junio de 2018',
-                source: 'NSSDCA Master Catalog ID: 2003-032A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/PIA19048-MarsOpportunityRover-20150106.jpg/800px-PIA19048-MarsOpportunityRover-20150106.jpg',
-                photoCaption: 'Panorama capturado por el rover Opportunity en el borde del cráter Endeavour.',
-                engineering: 'Vehículo gemelo de Spirit dotado de calentadores de radioisótopos (RHU) para proteger sus baterías durante las noches marcianas y paneles solares de triple unión limpiados periódicamente por remolinos de viento.',
-                science: 'Estableció el récord histórico de distancia recorrida fuera de la Tierra con 45.16 kilómetros en casi 15 años. Halló esférulas de hematita, jarosita y vetas de yeso, demostrando que agua líquida fluyó en Meridiani Planum.',
-                diagramType: 'rover',
-                pins: [
-                    { x: 50, y: 42, title: '[1] Alas Solares de Triple Unión', desc: 'Celdas fotovoltaicas que sostuvieron operaciones durante 55 veces la duración nominal de la misión.' },
-                    { x: 40, y: 28, title: '[2] Cámaras de Navegación y Panorámicas', desc: 'Permitieron elaborar modelos digitales de elevación de los cráteres Endurance, Victoria y Endeavour.' },
-                    { x: 68, y: 60, title: '[3] Espectrómetro Mössbauer', desc: 'Identificó con precisión minerales portadores de hierro hidratado como la jarosita.' }
+                id: 'mer', destination: 'Marte', siteName: 'Cráter Gusev y Meridiani Planum',
+                coords: 'Spirit: 14.57° S, 175.47° E; Opportunity: 1.95° S, 354.47° E', mapX: 84, mapY: 58,
+                title: 'Rovers Spirit y Opportunity', cospar: '2003-027A / 2003-032A',
+                launchDate: 'Spirit: 10 de junio de 2003; Opportunity: 7 de julio de 2003',
+                mass: 'Aproximadamente 185 kg cada rover',
+                status: 'Spirit concluyó su misión en 2010; Opportunity dejó de comunicarse el 10 de junio de 2018.',
+                source: 'NASA Science: Mars Exploration Rovers: Spirit and Opportunity',
+                sourceUrl: 'https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/',
+                imageUrl: '../client/imagenes/historias/spirit-opportunity.jpg',
+                photoCaption: 'Los rovers gemelos Spirit y Opportunity investigaron la historia del agua en Marte.',
+                engineering: 'Los dos rovers gemelos fueron enviados a sitios distintos de Marte. Cada uno combinaba cámaras, instrumentos de análisis y movilidad robótica para estudiar rocas y terreno durante una misión prevista inicialmente para durar pocos meses.',
+                science: 'Spirit y Opportunity hallaron minerales y formaciones geológicas que confirmaron la presencia de agua líquida en el pasado. Opportunity recorrió 45.16 km y Spirit 7.7 km antes de finalizar sus operaciones.',
+                diagramType: 'rover', pins: [
+                    { x: 42, y: 30, title: '[1] Cámaras panorámicas', desc: 'Documentaron el terreno y ayudaron a seleccionar objetivos científicos.' },
+                    { x: 72, y: 56, title: '[2] Brazo de instrumentos', desc: 'Permitió examinar de cerca la composición de rocas y suelo.' },
+                    { x: 35, y: 74, title: '[3] Movilidad de seis ruedas', desc: 'Facilitó recorrer los sitios de aterrizaje y explorar afloramientos rocosos.' }
                 ]
             },
             {
-                id: 'viking1',
-                destination: 'Marte',
-                siteName: 'Chryse Planitia',
-                coords: '22°28′48″ N, 47°58′01″ O',
-                mapX: 30,
-                mapY: 36,
-                title: 'Módulo Viking 1',
-                cospar: '1975-075C',
-                launchDate: '20 de agosto de 1975',
-                mass: '576 kg (masa en superficie)',
-                status: 'Inactivo · Última comunicación el 11 de noviembre de 1982',
-                source: 'NSSDCA Master Catalog ID: 1975-075C',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Viking_1_lander_model.jpg/800px-Viking_1_lander_model.jpg',
-                photoCaption: 'Configuración técnica del módulo de aterrizaje Viking 1 con brazo muestreador y generadores RTG.',
-                engineering: 'Primera nave estadounidense en aterrizar con éxito en Marte (20 de julio de 1976). Alimentada por dos generadores termoeléctricos SNAP-19 de plutonio-238, portaba cámaras facsímil, estación meteorológica y laboratorio biológico.',
-                science: 'Transmitió las primeras fotografías en color desde el suelo marciano y registró seis años de datos meteorológicos, revelando ciclos estacionales de presión atmosférica y una química superficial rica en percloratos.',
-                diagramType: 'lander',
-                pins: [
-                    { x: 32, y: 44, title: '[1] Generadores Termoeléctricos SNAP-19', desc: 'Dos unidades de plutonio-238 que suministraban 70 vatios continuos independientes de la luz solar.' },
-                    { x: 64, y: 36, title: '[2] Mástil Meteorológico y Antena Banda S', desc: 'Midió diariamente presión, temperatura y velocidad del viento en Chryse Planitia.' },
-                    { x: 54, y: 64, title: '[3] Brazo Colector de Muestras', desc: 'Depositaba regolito marciano en tolvas internas para análisis químico y biológico.' }
+                id: 'viking1', destination: 'Marte', siteName: 'Chryse Planitia',
+                coords: '22.48° N, 47.94° O', mapX: 30, mapY: 36,
+                title: 'Viking 1', cospar: '1975-075A / 1975-075C',
+                launchDate: '20 de agosto de 1975; aterrizaje: 20 de julio de 1976',
+                mass: '3,527 kg (orbiter y aterrizador)',
+                status: 'El aterrizador dejó de operar en 1982; el orbitador fue apagado en 1980.',
+                source: 'NASA Science: Viking 1',
+                sourceUrl: 'https://science.nasa.gov/mission/viking-1/',
+                imageUrl: '../client/imagenes/historias/viking1.jpg',
+                photoCaption: 'Viking 1 envió las primeras imágenes de la superficie marciana obtenidas por una misión estadounidense.',
+                engineering: 'La misión combinó un orbitador con un aterrizador. El aterrizador llevaba cámaras, estación meteorológica, brazo muestreador y experimentos para analizar el suelo; ambos componentes observaron Marte desde la superficie y la órbita.',
+                science: 'Viking 1 realizó el primer aterrizaje exitoso de la NASA en Marte y obtuvo imágenes de la superficie. Los orbitadores fotografiaron y cartografiaron gran parte del planeta.',
+                diagramType: 'lander', pins: [
+                    { x: 32, y: 44, title: '[1] Aterrizador', desc: 'Descendió en Chryse Planitia y operó experimentos sobre la superficie.' },
+                    { x: 64, y: 36, title: '[2] Cámaras', desc: 'Tomaron imágenes panorámicas del sitio de aterrizaje.' },
+                    { x: 54, y: 64, title: '[3] Brazo muestreador', desc: 'Recogió material del suelo para los experimentos a bordo.' }
                 ]
             },
             {
-                id: 'phoenix',
-                destination: 'Marte',
-                siteName: 'Vastitas Borealis',
-                coords: '68°13′08″ N, 234°15′03″ E',
-                mapX: 72,
-                mapY: 16,
-                title: 'Módulo Phoenix',
-                cospar: '2007-034A',
-                launchDate: '4 de agosto de 2007',
-                mass: '350 kg (masa en superficie)',
-                status: 'Inactivo · Finalizado en noviembre de 2008 tras invierno ártico',
-                source: 'NSSDCA Master Catalog ID: 2007-034A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Phoenix_landing.jpg/800px-Phoenix_landing.jpg',
-                photoCaption: 'Concepción técnica del módulo Phoenix operando en las llanuras árticas de Vastitas Borealis.',
-                engineering: 'Módulo estacionario de tres patas con dos paneles solares decagonales y un brazo robótico excavador de 2.35 metros, acompañado por los hornos analizadores de gases TEGA y el laboratorio de química húmeda MECA.',
-                science: 'Confirmó directamente mediante excavación y sublimación térmica la presencia de hielo de agua subterráneo a pocos centímetros de profundidad en la región ártica marciana, además de detectar precipitación de nieve desde nubes altas.',
-                diagramType: 'lander',
-                pins: [
-                    { x: 24, y: 48, title: '[1] Paneles Solares Decagonales', desc: 'Dos alas circulares desplegadas tras el aterrizaje para operar durante el verano boreal.' },
-                    { x: 68, y: 52, title: '[2] Brazo Robótico Excavador de 2.35 m', desc: 'Equipado con escofina motorizada para raspar capas duras de hielo subterráneo.' },
-                    { x: 50, y: 42, title: '[3] Analizador Térmico TEGA y MECA', desc: 'Ocho hornos de un solo uso que calentaron muestras hasta 1,000 °C para identificar volátiles.' }
-                ]
-            },
-            {
-                id: 'insight',
-                destination: 'Marte',
-                siteName: 'Elysium Planitia',
-                coords: '4°30′09″ N, 135°37′24″ E',
-                mapX: 76,
-                mapY: 47,
-                title: 'Módulo InSight',
-                cospar: '2018-042A',
-                launchDate: '5 de mayo de 2018',
+                id: 'insight', destination: 'Marte', siteName: 'Elysium Planitia',
+                coords: '4.5° N, 135.9° E', mapX: 76, mapY: 47,
+                title: 'Aterrizador InSight', cospar: '2018-042A',
+                launchDate: '5 de mayo de 2018; aterrizaje: 26 de noviembre de 2018',
                 mass: '358 kg (masa en superficie)',
-                status: 'Inactivo · Retirado en diciembre de 2022 por acumulación de polvo',
-                source: 'NSSDCA Master Catalog ID: 2018-042A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/PIA22743-MarsInSightLander-Selfie-20181206.jpg/800px-PIA22743-MarsInSightLander-Selfie-20181206.jpg',
-                photoCaption: 'Autorretrato del módulo InSight en Elysium Planitia antes de desplegar su sismómetro SEIS.',
-                engineering: 'Primera misión dedicada a estudiar el interior profundo de Marte. Su brazo robótico depositó directamente sobre el suelo el sismómetro de banda ancha SEIS, protegido por un escudo térmico y aerodinámico en forma de cúpula.',
-                science: 'Detectó más de 1,300 sismos marcianos ("martemotos"), permitiendo medir el grosor de la corteza (24 a 72 km) y confirmar que Marte posee un núcleo metálico líquido de aproximadamente 1,830 km de radio.',
-                diagramType: 'lander',
-                pins: [
-                    { x: 66, y: 68, title: '[1] Sismómetro SEIS con Escudo Térmico', desc: 'Capaz de detectar desplazamientos del suelo inferiores al ancho de un átomo de hidrógeno.' },
-                    { x: 50, y: 44, title: '[2] Brazo de Despliegue (IDA)', desc: 'Colocó los instrumentos geofísicos en el suelo y cubrió con arena el cable umbilical.' },
-                    { x: 24, y: 46, title: '[3] Paneles Solares Circulares', desc: 'Suministraron energía durante más de cuatro años terrestres hasta ser cubiertos por polvo.' }
+                status: 'Misión finalizada el 15 de diciembre de 2022.',
+                source: 'NASA Science: InSight Lander',
+                sourceUrl: 'https://science.nasa.gov/mission/insight/',
+                imageUrl: '../client/imagenes/historias/insight.jpg',
+                photoCaption: 'InSight desplegó instrumentos geofísicos sobre Elysium Planitia para estudiar el interior de Marte.',
+                engineering: 'Aterrizador geofísico basado en el diseño de Phoenix. Su brazo robótico colocó un sismómetro y una sonda de flujo de calor directamente sobre el suelo marciano.',
+                science: 'La misión estudió la estructura interior de Marte y registró actividad sísmica, datos que ayudan a comprender cómo se formaron los planetas rocosos.',
+                diagramType: 'lander', pins: [
+                    { x: 66, y: 68, title: '[1] Sismómetro SEIS', desc: 'Registró vibraciones sísmicas y otros movimientos de la superficie marciana.' },
+                    { x: 50, y: 44, title: '[2] Brazo de despliegue', desc: 'Colocó instrumentos científicos sobre el suelo.' },
+                    { x: 24, y: 46, title: '[3] Paneles solares', desc: 'Suministraron energía al aterrizador durante su misión.' }
                 ]
             },
             {
-                id: 'ingenuity',
-                destination: 'Marte',
-                siteName: 'Cráter Jezero',
-                coords: '18°26′ N, 77°27′ E',
-                mapX: 64,
-                mapY: 39,
-                title: 'Helicóptero Ingenuity',
-                cospar: '2020-052A-01',
-                launchDate: '30 de julio de 2020 (desplegado en abril de 2021)',
-                mass: '1.8 kg (masa total en Marte)',
-                status: 'Inactivo · Estación meteorológica fija tras vuelo 72 (enero 2024)',
-                source: 'NSSDCA Master Catalog ID: 2020-052A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/PIA24647-MarsIngenuityHelicopter-20210507.jpg/800px-PIA24647-MarsIngenuityHelicopter-20210507.jpg',
-                photoCaption: 'El helicóptero Ingenuity sobre la superficie del cráter Jezero fotografiado por Perseverance.',
-                engineering: 'Primera aeronave en realizar un vuelo propulsado y controlado en otro planeta. Utiliza dos rotores coaxiales contrarrotativos de fibra de carbono de 1.2 m que giran a 2,537 rpm en una atmósfera con el 1% de la densidad terrestre.',
-                science: 'Diseñado para 5 vuelos de prueba, completó 72 vuelos recorriendo más de 17 km en el antiguo delta fluvial de Jezero, actuando como explorador aéreo adelantado para el rover Perseverance.',
-                diagramType: 'helicopter',
-                pins: [
-                    { x: 50, y: 24, title: '[1] Panel Solar Superior de Carga', desc: 'Recarga las seis baterías de ion-litio durante el día marciano para alimentar motores y calefactores.' },
-                    { x: 74, y: 38, title: '[2] Rotores Coaxiales de Fibra de Carbono', desc: 'Palas ultraligeras de 1.2 m que giran en sentidos opuestos a más de 2,500 rpm.' },
-                    { x: 50, y: 60, title: '[3] Fuselaje Térmico y Sensores', desc: 'Aloja el procesador de vuelo, altímetro láser, inclinómetro y cámara a color.' }
+                id: 'ingenuity', destination: 'Marte', siteName: 'Cráter Jezero',
+                coords: '18.44° N, 77.45° E (aprox.)', mapX: 64, mapY: 39,
+                title: 'Helicóptero Mars Ingenuity', cospar: '2020-052A',
+                launchDate: '30 de julio de 2020; primer vuelo: 19 de abril de 2021',
+                mass: '1.8 kg',
+                status: 'Completó 72 vuelos; misión concluida en enero de 2024.',
+                source: 'NASA Science: Ingenuity Mars Helicopter',
+                sourceUrl: 'https://science.nasa.gov/mission/mars-2020-perseverance/ingenuity-mars-helicopter/',
+                imageUrl: '../client/imagenes/historias/ingenuity.jpg',
+                photoCaption: 'Ingenuity realizó el primer vuelo propulsado y controlado en otro planeta.',
+                engineering: 'Demostrador tecnológico transportado a Marte bajo el rover Perseverance. Sus rotores contrarrotatorios fueron diseñados para generar sustentación en la atmósfera marciana, mucho menos densa que la terrestre.',
+                science: 'Ingenuity realizó 72 vuelos entre abril de 2021 y enero de 2024, superando ampliamente el plan inicial de cinco vuelos de prueba y ayudando a demostrar el valor de la exploración aérea.',
+                diagramType: 'helicopter', pins: [
+                    { x: 50, y: 24, title: '[1] Panel solar', desc: 'Recargaba las baterías del helicóptero durante el día marciano.' },
+                    { x: 74, y: 38, title: '[2] Rotores', desc: 'Generaban sustentación para realizar vuelos controlados en la atmósfera de Marte.' },
+                    { x: 50, y: 60, title: '[3] Cuerpo y sensores', desc: 'Alojaban los sistemas de control, navegación y comunicación.' }
                 ]
             },
-
-            // ======================== ASTEROIDES Y ESPACIO PROFUNDO (4) ========================
             {
-                id: 'dawn',
-                destination: 'Espacio Profundo',
-                siteName: 'Planeta Enano Ceres (Cinturón Principal)',
-                coords: 'Órbita elíptica 35 km × 4,000 km sobre Ceres (2.77 UA)',
-                mapX: 54,
-                mapY: 32,
-                title: 'Sonda Dawn',
-                cospar: '2007-043A',
+                id: 'dawn', destination: 'Espacio Profundo', siteName: 'Vesta y planeta enano Ceres',
+                coords: 'Cinturón principal de asteroides', mapX: 54, mapY: 32,
+                title: 'Sonda Dawn', cospar: '2007-043A',
                 launchDate: '27 de septiembre de 2007',
-                mass: '747.1 kg (masa en seco)',
-                status: 'Inactiva · Hidracina agotada en octubre de 2018; órbita estable >20 años',
-                source: 'NSSDCA Master Catalog ID: 2007-043A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Dawn_in_clean_room.jpg/800px-Dawn_in_clean_room.jpg',
-                photoCaption: 'La sonda Dawn durante sus pruebas de integración antes de partir hacia Vesta y Ceres.',
-                engineering: 'Única nave espacial en orbitar dos cuerpos extraterrestres distintos fuera del sistema Tierra-Luna (Vesta y Ceres), impulsada por tres motores de iones de xenón y dos alas solares de 19.7 metros de envergadura.',
-                science: 'Cartografió completamente Vesta y Ceres, descubriendo brillantes depósitos de carbonato de sodio en el cráter Occator que evidencian actividad criovolcánica reciente y un antiguo océano salino subterráneo.',
-                diagramType: 'deepprobe',
-                pins: [
-                    { x: 20, y: 50, title: '[1] Alas Solares de 19.7 Metros', desc: 'Generan potencia suficiente a 3 Unidades Astronómicas del Sol para los propulsores iónicos.' },
-                    { x: 50, y: 68, title: '[2] Propulsores de Iones de Xenón', desc: 'Proporcionaron un cambio de velocidad total de 11.5 km/s mediante ionización electrostática.' },
-                    { x: 50, y: 34, title: '[3] Espectrómetro VIR y Detector GRaND', desc: 'Cartografiaron la mineralogía y la abundancia de hielo de agua en Vesta y Ceres.' }
+                mass: '747 kg (masa en seco)',
+                status: 'Misión finalizada en 2018 tras agotar el combustible de hidracina.',
+                source: 'NASA Science: Dawn',
+                sourceUrl: 'https://science.nasa.gov/mission/dawn/',
+                imageUrl: '../client/imagenes/historias/dawn.jpg',
+                photoCaption: 'Dawn estudió dos cuerpos distintos del cinturón principal: Vesta y Ceres.',
+                engineering: 'Nave orbital impulsada por motores iónicos que visitó sucesivamente Vesta y Ceres, dos cuerpos muy diferentes del cinturón principal de asteroides.',
+                science: 'Las observaciones de Dawn ampliaron el conocimiento de la composición y evolución de Vesta y Ceres, y revelaron que estos mundos conservaron registros de las primeras etapas del sistema solar.',
+                diagramType: 'deepprobe', pins: [
+                    { x: 20, y: 50, title: '[1] Paneles solares', desc: 'Proporcionaban electricidad a la nave y su sistema de propulsión.' },
+                    { x: 50, y: 68, title: '[2] Propulsión iónica', desc: 'Permitió a Dawn cambiar de órbita y visitar dos cuerpos celestes.' },
+                    { x: 50, y: 34, title: '[3] Instrumentos científicos', desc: 'Recogieron datos para estudiar la superficie y composición de Vesta y Ceres.' }
                 ]
             },
             {
-                id: 'near',
-                destination: 'Espacio Profundo',
-                siteName: 'Asteroide 433 Eros (Región Himeros)',
-                coords: 'Superficie de 433 Eros (1.46 UA del Sol)',
-                mapX: 38,
-                mapY: 64,
-                title: 'NEAR Shoemaker',
-                cospar: '1996-008A',
-                launchDate: '17 de febrero de 1996',
-                mass: '487 kg (masa en seco)',
-                status: 'Inactiva · Posada intacta sobre 433 Eros desde febrero de 2001',
-                source: 'NSSDCA Master Catalog ID: 1996-008A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/NEAR_Shoemaker_spacecraft.jpg/800px-NEAR_Shoemaker_spacecraft.jpg',
-                photoCaption: 'La sonda NEAR Shoemaker antes de su lanzamiento; realizó el primer aterrizaje en un asteroide.',
-                engineering: 'Cuerpo prismático octogonal con cuatro paneles solares fijos y antena parabólica de 1.5 m. Aunque carecía de tren de aterrizaje, ejecutó un descenso controlado sobre el asteroide al finalizar su fase orbital.',
-                science: 'Orbitó durante un año el asteroide 433 Eros tomando 160,000 imágenes y tras posarse en su superficie midió con su espectrómetro de rayos gamma la composición primitiva de tipo condrita ordinaria.',
-                diagramType: 'deepprobe',
-                pins: [
-                    { x: 50, y: 28, title: '[1] Antena Parabólica Fija de Banda X', desc: 'Mantuvo el enlace de telemetría con la Tierra incluso después de posarse en el asteroide.' },
-                    { x: 26, y: 50, title: '[2] Cuatro Paneles Solares Fijos', desc: 'Suministraban 400 vatios sin mecanismos móviles de orientación.' },
-                    { x: 50, y: 64, title: '[3] Espectrómetro de Rayos Gamma', desc: 'Determinó in situ las proporciones de hierro, silicio, oxígeno y magnesio del regolito.' }
+                id: 'near', destination: 'Espacio Profundo', siteName: 'Asteroide 433 Eros',
+                coords: 'Superficie de Eros', mapX: 38, mapY: 64,
+                title: 'NEAR Shoemaker', cospar: '1996-008A',
+                launchDate: '17 de febrero de 1996; aterrizaje: 12 de febrero de 2001',
+                mass: '805 kg',
+                status: 'Primer aterrizaje de una nave en un asteroide; último contacto el 28 de febrero de 2001.',
+                source: 'NASA Science: NEAR Shoemaker',
+                sourceUrl: 'https://science.nasa.gov/mission/near-shoemaker/',
+                imageUrl: 'https://assets.science.nasa.gov/dynamicimage/assets/science/psd/solar/2023/07/nearspacecraft.jpg?w=1350&h=1024&fit=clip&crop=faces%2Cfocalpoint',
+                photoCaption: 'Ilustración de la nave NEAR en el asteroide Eros. Crédito: NASA.',
+                engineering: 'La misión Discovery NEAR (Near Earth Asteroid Rendezvous) fue diseñada para sobrevolar Mathilde, orbitar Eros y estudiar sus propiedades. La nave sobrevivió a un aterrizaje no planeado como módulo de descenso.',
+                science: 'NEAR fue la primera nave en orbitar un asteroide y la primera en aterrizar en uno. Tras tocar Eros, continuó enviando datos durante cerca de dos semanas.',
+                diagramType: 'deepprobe', pins: [
+                    { x: 50, y: 28, title: '[1] Antena', desc: 'Mantuvo el enlace de comunicaciones con la Tierra durante la misión.' },
+                    { x: 26, y: 50, title: '[2] Paneles solares', desc: 'Alimentaron la nave durante su viaje y operaciones cerca de Eros.' },
+                    { x: 50, y: 64, title: '[3] Instrumentos científicos', desc: 'Midieron propiedades físicas y composición del asteroide.' }
                 ]
             },
             {
-                id: 'kepler',
-                destination: 'Espacio Profundo',
-                siteName: 'Órbita Heliocéntrica de Arrastre Terrestre',
-                coords: 'Órbita solar 1.01 UA × 1.05 UA (período 372.5 días)',
-                mapX: 28,
-                mapY: 42,
-                title: 'Telescopio Espacial Kepler',
-                cospar: '2009-011A',
+                id: 'pioneer10', destination: 'Espacio Profundo', siteName: 'Sobrevuelo de Júpiter y trayectoria de escape',
+                coords: 'Trayectoria heliocéntrica hacia el espacio interestelar', mapX: 82, mapY: 24,
+                title: 'Sonda Pioneer 10', cospar: '1972-012A',
+                launchDate: '2 de marzo de 1972; sobrevuelo de Júpiter: 4 de diciembre de 1973',
+                mass: '258 kg',
+                status: 'La última señal fue recibida el 23 de enero de 2003.',
+                source: 'NASA Science: Pioneer 10',
+                sourceUrl: 'https://science.nasa.gov/mission/pioneer-10/',
+                imageUrl: '../client/imagenes/historias/pioneer10.jpg',
+                photoCaption: 'Pioneer 10 fue la primera nave en sobrevolar Júpiter y cruzar el cinturón de asteroides.',
+                engineering: 'Sonda de sobrevuelo equipada con instrumentos científicos y generadores termoeléctricos de radioisótopos. Su trayectoria la llevó más allá de los planetas exteriores y hacia el espacio interestelar.',
+                science: 'Pioneer 10 fue la primera misión de la NASA a los planetas exteriores, la primera en sobrevolar Júpiter y la primera nave colocada en una trayectoria de escape del sistema solar.',
+                diagramType: 'deepprobe', pins: [
+                    { x: 50, y: 32, title: '[1] Antena de alta ganancia', desc: 'Enviaba datos científicos a la Tierra desde distancias cada vez mayores.' },
+                    { x: 22, y: 64, title: '[2] Generadores RTG', desc: 'Proporcionaban energía eléctrica durante la misión en el espacio profundo.' },
+                    { x: 76, y: 64, title: '[3] Instrumentos científicos', desc: 'Midieron campos, partículas y radiación durante el viaje y el sobrevuelo de Júpiter.' }
+                ]
+            },
+            {
+                id: 'kepler', destination: 'Espacio Profundo', siteName: 'órbita heliocéntrica; observaciones en Cygnus y K2',
+                coords: 'órbita heliocéntrica alrededor del Sol', mapX: 28, mapY: 42,
+                title: 'Telescopio espacial Kepler / K2', cospar: '2009-011A',
                 launchDate: '6 de marzo de 2009',
-                mass: '1,039 kg (masa total)',
-                status: 'Inactivo · Retirado en octubre de 2018 tras agotar combustible',
-                source: 'NSSDCA Master Catalog ID: 2009-011A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Kepler_Space_Telescope_spacecraft_model_2.png/800px-Kepler_Space_Telescope_spacecraft_model_2.png',
-                photoCaption: 'Configuración orbital del Telescopio Espacial Kepler con su fotómetro de 95 megapíxeles.',
-                engineering: 'Fotómetro espacial con espejo primario de 1.4 metros y 42 sensores CCD (95 megapíxeles) ubicado en órbita heliocéntrica para observar sin interrupciones las disminuciones de brillo estelar causadas por tránsitos planetarios.',
-                science: 'Observó más de 530,000 estrellas y descubrió más de 2,700 exoplanetas confirmados, demostrando que los planetas rocosos de tamaño terrestre son abundantes en nuestra galaxia.',
-                diagramType: 'telescope',
-                pins: [
-                    { x: 50, y: 26, title: '[1] Parasol y Apertura Schmidt de 0.95 m', desc: 'Bloquea la luz solar directa para preservar la precisión fotométrica de 20 partes por millón.' },
-                    { x: 50, y: 50, title: '[2] Matriz Focal de 42 Sensores CCD', desc: 'Cámara astronómica enfriada pasivamente para minimizar el ruido térmico electrónico.' },
-                    { x: 30, y: 72, title: '[3] Paneles Solares y Bus de Actitud', desc: 'Mantuvo el apuntado fijo hacia la constelación de Cisne durante cuatro años continuos.' }
-                ]
-            },
-            {
-                id: 'pioneer',
-                destination: 'Espacio Profundo',
-                siteName: 'Trayectoria de Escape Interestelar',
-                coords: '> 136 UA (Tauro) y > 113 UA (Escudo)',
-                mapX: 82,
-                mapY: 24,
-                title: 'Sondas Pioneer 10 y Pioneer 11',
-                cospar: '1972-012A / 1973-019A',
-                launchDate: '2 de marzo de 1972 / 5 de abril de 1973',
-                mass: '258 kg cada sonda',
-                status: 'Inactivas · Últimas señales en 2003 (Pioneer 10) y 1995 (Pioneer 11)',
-                source: 'NSSDCA Master Catalog IDs: 1972-012A & 1973-019A',
-                imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Pioneer_10_spacecraft.jpg/800px-Pioneer_10_spacecraft.jpg',
-                photoCaption: 'La sonda Pioneer 10 durante su ensamblaje; porta la placa grabada con el mensaje de la humanidad.',
-                engineering: 'Primeras naves en cruzar el cinturón de asteroides y alcanzar velocidad de escape solar mediante asistencia gravitatoria. Estabilizadas por rotación, cuentan con antena parabólica de 2.74 m y cuatro generadores RTG SNAP-19.',
-                science: 'Realizaron los primeros sobrevuelos cercanos de Júpiter (1973) y Saturno (1979), cartografiando sus cinturones de radiación y magnetosferas antes de continuar su viaje silencioso hacia el medio interestelar.',
-                diagramType: 'deepprobe',
-                pins: [
-                    { x: 50, y: 32, title: '[1] Antena Parabólica de 2.74 Metros', desc: 'Permitió recibir señales desde miles de millones de kilómetros con transmisores de apenas 8 vatios.' },
-                    { x: 22, y: 64, title: '[2] Mástiles con Generadores RTG SNAP-19', desc: 'Separados 3 metros del cuerpo central para evitar interferencia radiactiva en los detectores.' },
-                    { x: 76, y: 64, title: '[3] Magnetómetro de Helio Vectorial', desc: 'Montado en un mástil de 6.6 metros; midió el campo magnético hasta los confines de la heliosfera.' }
+                mass: 'No indicada en la ficha NASA consultada.',
+                status: 'Misión finalizada el 30 de octubre de 2018 tras agotar el combustible.',
+                source: 'NASA Science: Kepler / K2',
+                sourceUrl: 'https://science.nasa.gov/mission/kepler/',
+                imageUrl: '../client/imagenes/historias/kepler.jpg',
+                photoCaption: 'Concepto artístico del telescopio espacial Kepler durante la misión extendida K2. Crédito: NASA.',
+                engineering: 'Telescopio espacial diseñado para observar continuamente el brillo de estrellas y detectar pequeñas disminuciones causadas por planetas que pasan frente a ellas.',
+                science: 'Kepler y su misión extendida K2 demostraron que los planetas son abundantes en la galaxia y descubrieron miles de candidatos y exoplanetas confirmados.',
+                diagramType: 'telescope', pins: [
+                    { x: 50, y: 26, title: '[1] Apertura del telescopio', desc: 'Recogía luz estelar para medir cambios de brillo con alta precisión.' },
+                    { x: 50, y: 50, title: '[2] Sensores CCD', desc: 'Registraban el brillo de numerosas estrellas en el campo observado.' },
+                    { x: 30, y: 72, title: '[3] Plataforma espacial', desc: 'Mantuvo el telescopio apuntado durante las campañas de observación.' }
                 ]
             }
         ];
@@ -1655,9 +1437,9 @@
             });
 
             const headers = {
-                'Luna': { sub: 'CARTOGRAFÍA SELENOGRÁFICA · CARA VISIBLE DE LA LUNA', title: 'Ubicaciones Exactas de Hardware en La Luna' },
-                'Marte': { sub: 'CARTOGRAFÍA TOPOGRÁFICA · SUPERFICIE MARCIANA', title: 'Ubicaciones Exactas de Rovers y Módulos en Marte' },
-                'Espacio Profundo': { sub: 'ASTROMETRÍA HELIOCÉNTRICA E INTERESTELAR', title: 'Trayectorias y Cuerpos Menores en el Espacio Profundo' }
+                'Luna': { sub: 'CARTOGRAFÍA SELENOGRÁFICA · CARA VISIBLE DE LA LUNA', title: 'Sitios Históricos de Exploración Lunar' },
+                'Marte': { sub: 'CARTOGRAFÍA TOPOGRÁFICA · SUPERFICIE MARCIANA', title: 'Sitios de Exploración de Misiones Marcianas' },
+                'Espacio Profundo': { sub: 'ASTROMETRÍA HELIOCÉNTRICA E INTERESTELAR', title: 'Misiones en Asteroides y Espacio Profundo' }
             };
 
             document.getElementById('mapHeaderSub').textContent = headers[dest].sub;
@@ -1685,7 +1467,7 @@
 
             // Renderizar tarjetas vinculadas debajo del mapa
             document.getElementById('linkedCardsTitle').textContent = `Expedientes Documentados en ${dest}`;
-            document.getElementById('linkedCardsCount').textContent = `${destArtifacts.length} ARTEFACTOS EN ESTE DESTINO`;
+            document.getElementById('linkedCardsCount').textContent = `${destArtifacts.length} MISIONES EN ESTE DESTINO`;
 
             document.getElementById('linkedCardsGrid').innerHTML = destArtifacts.map(item => {
                 const fallback = getFallbackSvgDataUri(item.title, item.cospar, item.destination);
@@ -1695,6 +1477,7 @@
                             <div class="h-36 w-full bg-black overflow-hidden border-b relative" style="border-color: var(--border-subtle);">
                                 <img 
                                     src="${item.imageUrl}" 
+                                    loading="lazy"
                                     onerror="this.onerror=null; this.src='${fallback}';" 
                                     alt="${item.title}" 
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -1897,7 +1680,9 @@
             document.getElementById('specMass').textContent = item.mass;
             document.getElementById('specLocation').textContent = `${item.siteName} (${item.coords})`;
             document.getElementById('specStatus').textContent = item.status;
-            document.getElementById('specSource').textContent = item.source;
+            const sourceLink = document.getElementById('specSource');
+            sourceLink.href = item.sourceUrl;
+            sourceLink.textContent = item.source;
 
             document.getElementById('artifactModal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -1982,7 +1767,7 @@
         })();
 
         /* ---------------------------------------------------------------------
-           G. PESTAÑAS, MODO NOCTURNO, SIMULADOR, FORO Y GLOSARIO
+           G. PESTAÑAS, MODO NOCTURNO, FORO Y GLOSARIO
            --------------------------------------------------------------------- */
         function toggleNightMode() {
             const isNight = document.body.classList.toggle('night-mode');
@@ -2000,67 +1785,6 @@
             const targetBtn = document.getElementById('tab-btn-' + tabId);
             if (targetScreen) targetScreen.classList.add('active');
             if (targetBtn) targetBtn.classList.add('active');
-        }
-
-        function updateEnvironmentSimulation() {
-            const env = document.getElementById('simEnvSelect').value;
-            const years = parseInt(document.getElementById('simYearsRange').value, 10);
-            const shield = parseInt(document.getElementById('simThermalRange').value, 10);
-
-            document.getElementById('simYearsVal').textContent = `${years} años`;
-            const labels = { 1: 'Pasiva básica', 2: 'Aislamiento Kapton MLI', 3: 'Calentadores RHU/RTG' };
-            document.getElementById('simThermalVal').textContent = labels[shield];
-
-            const factor = shield === 1 ? 1.35 : (shield === 2 ? 1.0 : 0.72);
-            let title = '';
-            let deg = 0;
-            let power = '';
-            let life = '';
-            let text = '';
-
-            if (env === 'luna') {
-                title = `Conservación en Superficie Lunar (${years} años)`;
-                deg = Math.min(95, Math.round(years * 0.24 * factor));
-                power = years <= 8 ? 'Activo (SNAP-27)' : '0 W (Pasivo)';
-                life = '> 100,000 años';
-                text = 'En la Luna, la ausencia de atmósfera elimina la oxidación química y la erosión eólica. Sin embargo, los ciclos térmicos extremos (+127 °C a -173 °C) provocan fatiga mecánica en las láminas aislantes de Kapton y el polvo electrostático se adhiere a las ópticas, mientras que los retrorreflectores LRRR continúan operando sin energía eléctrica.';
-            } else if (env === 'marte') {
-                title = `Conservación en Superficie Marciana (${years} años)`;
-                deg = Math.min(98, Math.round(years * 0.42 * factor));
-                power = years <= 15 ? 'Solar / RTG Activo' : '0 W (Cubierto de polvo)';
-                life = '10,000 - 50,000 años';
-                text = 'En Marte, la tenue atmósfera de CO₂ (6 milibares) deposita polvo fino sobre los paneles solares y somete las estructuras de aluminio a abrasión eólica gradual y oscilaciones térmicas diarias de hasta 80 °C.';
-            } else if (env === 'ceres') {
-                title = `Conservación en Ceres / Asteroide 433 Eros (${years} años)`;
-                deg = Math.min(90, Math.round(years * 0.16 * factor));
-                power = years <= 11 ? 'Propulsión Iónica' : '0 W (Órbita estable)';
-                life = '> 1,000,000 años';
-                text = 'En órbita alrededor de Ceres o sobre la superficie de asteroides sin atmósfera como 433 Eros, no existe arrastre aerodinámico ni erosión por viento; la principal alteración proviene de la radiación ultravioleta solar.';
-            } else {
-                title = `Conservación en Espacio Interestelar (${years} años)`;
-                deg = Math.min(85, Math.round(years * 0.08 * factor));
-                power = years <= 30 ? 'RTG Decreciente' : '0 W (~2.7 Kelvin)';
-                life = '> 100,000,000 años';
-                text = 'Más allá de la heliopausia, sondas como Pioneer 10 y 11 viajan en un vacío casi perfecto a temperaturas cercanas a 2.7 Kelvin, preservando sus estructuras metálicas y placas grabadas en oro durante millones de años.';
-            }
-
-            const badge = document.getElementById('simStatusBadge');
-            if (deg < 30) {
-                badge.textContent = 'INTEGRIDAD ALTA';
-                badge.style.backgroundColor = '#105BD8';
-            } else if (deg < 65) {
-                badge.textContent = 'DESGASTE MODERADO';
-                badge.style.backgroundColor = '#D97706';
-            } else {
-                badge.textContent = 'EROSIÓN SUPERFICIAL ALTA';
-                badge.style.backgroundColor = '#FC3D21';
-            }
-
-            document.getElementById('simResultTitle').textContent = title;
-            document.getElementById('simDegradationMetric').textContent = `${deg}%`;
-            document.getElementById('simPowerMetric').textContent = power;
-            document.getElementById('simLifespanMetric').textContent = life;
-            document.getElementById('simAnalysisText').textContent = text;
         }
 
         let FORUM_THREADS = [
@@ -2177,7 +1901,7 @@
         const GLOSSARY_TERMS = [
             { term: 'NSSDCA (NASA Space Science Data Coordinated Archive)', category: 'Archivo Oficial', definition: 'Archivo permanente de datos científicos espaciales de la NASA en el Centro Goddard que asigna identificadores únicos y preserva los registros públicos de cada misión espacial.' },
             { term: 'Identificador Internacional COSPAR', category: 'Nomenclatura Orbital', definition: 'Código estándar asignado por el Comité de Investigaciones Espaciales (ej. 1969-059C), formado por el año de lanzamiento, el número secuencial y la letra del componente.' },
-            { term: 'RTG (Generador Termoeléctrico de Radioisótopos)', category: 'Energía Espacial', definition: 'Fuente eléctrica que convierte el calor de desintegración del plutonio-238 en electricidad continua mediante termopares, empleada en Viking 1 y las sondas Pioneer 10 y 11.' },
+            { term: 'RTG (Generador Termoeléctrico de Radioisótopos)', category: 'Energía Espacial', definition: 'Fuente eléctrica que convierte el calor de desintegración del plutonio-238 en electricidad continua mediante termopares, empleada en Viking 1 y la sonda Pioneer 10.' },
             { term: 'ALSEP / LRRR', category: 'Instrumentación Lunar', definition: 'Paquetes de experimentos geofísicos de superficie lunar y matrices retrorreflectoras láser desplegados durante el programa Apolo.' },
             { term: 'Suspensión Rocker-Bogie', category: 'Ingeniería Robótica', definition: 'Sistema articulado de seis ruedas sin resortes desarrollado por el JPL para los rovers Sojourner, Spirit y Opportunity, capaz de superar obstáculos rocosos irregulares.' },
             { term: 'Coordenadas Selenográficas', category: 'Cartografía Lunar', definition: 'Sistema de latitud y longitud utilizado para determinar con exactitud la posición de cráteres, mares y artefactos sobre la superficie de la Luna.' }
@@ -2197,7 +1921,6 @@
 
         window.onload = function() {
             selectDestination('Luna');
-            updateEnvironmentSimulation();
             renderForum();
             renderGlossary();
         };
