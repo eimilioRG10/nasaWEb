@@ -15,6 +15,9 @@ function crearEnlaceHistoria(historia) {
   enlace.className = `tarjeta historia-tarjeta tarjeta-${historia.destino}`;
   enlace.href = `historia.html?id=${encodeURIComponent(historia.id)}`;
   enlace.dataset.historia = historia.id;
+  const imagen = `url("../${historia.imagen}")`;
+  enlace.style.setProperty("--imagen-normal", imagen);
+  enlace.style.setProperty("--imagen-hover", imagen);
 
   const mision = document.createElement("span");
   mision.className = "historia-etiqueta";
@@ -87,6 +90,12 @@ if (lecturaHistoria) {
     document.getElementById("mision-historia").textContent = historia.mision;
     document.getElementById("titulo-historia").textContent = historia.titulo;
     document.getElementById("anio-historia").textContent = `${destino.nombre} · ${historia.anio}`;
+    const imagen = document.getElementById("foto-historia");
+    const foto = document.getElementById("imagen-historia");
+    imagen.src = historia.imagen;
+    imagen.alt = historia.altImagen;
+    foto.querySelector("figcaption").textContent = `${historia.mision} · ${historia.anio}`;
+    foto.hidden = false;
 
     historia.parrafos.forEach(texto => {
       const parrafo = document.createElement("p");
