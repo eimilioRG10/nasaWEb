@@ -401,7 +401,7 @@
       <div>
         <p class="etiqueta">APRENDE JUGANDO</p>
         <h2 id="titulo-juegos">Juegos espaciales</h2>
-        <p class="descripcion-juegos">Explora el espacio y descubre dónde están los robots que la humanidad ha enviado a otros mundos.</p>
+        <p class="descripcion-juegos">Explora las misiones que la humanidad ha enviado a la Luna, Marte y más allá.</p>
       </div>
       <div class="fila-botones">
         <button class="gomita azul" id="volver-lista" hidden><svg class="ic" aria-hidden="true"><use href="#ic-atras"/></svg>Otros juegos</button>
@@ -445,13 +445,13 @@
           <article class="tarjeta-juego">
             <div class="arte" style="background:#E9E3F7">${PLANETAS_MINI.luna}${PLANETAS_MINI.marte}${PLANETAS_MINI.lejos}</div>
             <h3>¿Dónde quedó?</h3>
-            <p>Te enseño un robot y tú dices si se quedó en la Luna, en Marte o muy lejos en el espacio.</p>
+            <p>Descubre si cada misión llegó a la Luna, a Marte o exploró más allá.</p>
             <button class="gomita" id="jugar-donde"><svg class="ic" aria-hidden="true"><use href="#ic-play"/></svg>¡Jugar!</button>
           </article>
           <article class="tarjeta-juego">
-            <div class="arte" style="background:#FFF0C2;font-size:26px;font-weight:700;color:#16183A">1967 → 1977 → 2004 → 2021</div>
+            <div class="arte" style="background:#FFF0C2;font-size:26px;font-weight:700;color:#16183A">1967 → 1976 → 1997 → 2021</div>
             <h3>Ordena la línea del tiempo</h3>
-            <p>Acomoda los robots del más viejo al más nuevo. ¿Sabes quién salió primero?</p>
+            <p>Acomoda las misiones de la más antigua a la más reciente. ¿Cuál ocurrió primero?</p>
             <button class="gomita amarilla" id="jugar-orden"><svg class="ic" aria-hidden="true"><use href="#ic-play"/></svg>¡Jugar!</button>
           </article>
           <article class="tarjeta-juego">
@@ -460,7 +460,7 @@
               <div style="width:78%;height:10px;border-radius:5px;background:#8C6BFF;position:relative"><span style="position:absolute;left:62%;top:-9px;width:28px;height:28px;border-radius:50%;background:#FFC93C;border:3px solid #FFF7E8"></span></div>
             </div>
             <h3>Viaje en el tiempo</h3>
-            <p>Mueve la barra del tiempo hasta el año en que llegó cada robot y míralo aparecer en el mapa.</p>
+            <p>Mueve la barra del tiempo hasta el año de cada misión y mírala aparecer en el mapa.</p>
             <button class="gomita morada" id="jugar-viaje"><svg class="ic" aria-hidden="true"><use href="#ic-play"/></svg>¡Jugar!</button>
           </article>
         </div>`;
@@ -484,7 +484,7 @@
         zona.innerHTML = `
           <div class="caja-juego">
             <div class="marcador">
-              <span>Robot ${turno + 1} de ${ronda.length}</span>
+              <span>Misión ${turno + 1} de ${ronda.length}</span>
               <div class="barra-progreso" aria-hidden="true"><div style="width:${turno / ronda.length * 100}%"></div></div>
               <button class="gomita redonda amarilla" id="voz-donde" aria-label="Escuchar">${icono("bocina")}</button>
             </div>
@@ -498,14 +498,14 @@
             </div>
             <p class="aviso" id="aviso" aria-live="polite"></p>
           </div>`;
-        document.getElementById("voz-donde").onclick = () => hablar(`¿Dónde se quedó ${e.nombre}? ¿En la Luna, en Marte o muy lejos?`);
+        document.getElementById("voz-donde").onclick = () => hablar(`¿Dónde se quedó ${e.nombre}? ¿En la Luna, en Marte o más allá?`);
         zona.querySelectorAll(".destino").forEach(b => b.onclick = () => {
           const aviso = document.getElementById("aviso");
           if (b.dataset.lugar === e.lugar) {
             b.classList.add("bien");
             zona.querySelectorAll(".destino").forEach(x => x.disabled = true);
             if (!fallo) aciertosPrimera++;
-            aviso.textContent = `¡Sí! ${e.nombre} está en ${LUGARES[e.lugar].nombre === "Muy lejos" ? "el espacio, muy lejos" : LUGARES[e.lugar].nombre}.`;
+            aviso.textContent = `¡Sí! ${e.nombre} está en ${e.lugar === "lejos" ? "el espacio, más allá" : LUGARES[e.lugar].nombre}.`;
             hablar(aviso.textContent);
             setTimeout(() => { turno++; turno < ronda.length ? pintarTurno() : finalDonde(); }, 1500);
           } else {
@@ -540,7 +540,7 @@
     function juegoOrden() {
       botonVolverLista.hidden = false;
       document.getElementById("titulo-juegos").textContent = "Ordena la línea del tiempo";
-      // 5 robots con años distintos
+      // 5 misiones de años distintos
       const porAnio = {};
       revolver(EXPLORADORES).forEach(e => { if (!porAnio[e.anio]) porAnio[e.anio] = e; });
       const elegidos = revolver(Object.values(porAnio)).slice(0, 5);
@@ -553,7 +553,7 @@
         const enBandeja = elegidos.filter(e => !huecos.includes(e));
         zona.innerHTML = `
           <div class="caja-juego">
-            <p class="instruccion">Toca un robot y luego toca un hueco. Del más viejo (1) al más nuevo (5).</p>
+            <p class="instruccion">Toca una misión y luego un hueco. De la más antigua (1) a la más reciente (5).</p>
             <div class="flechas-tiempo" aria-hidden="true"><span>← Más viejo</span><span>Más nuevo →</span></div>
             <div class="linea-tiempo">
               ${huecos.map((e, i) => {
@@ -564,7 +564,7 @@
                 </button>`;
               }).join("")}
             </div>
-            <div class="bandeja" aria-label="Robots por acomodar">
+            <div class="bandeja" aria-label="Misiones por acomodar">
               ${enBandeja.length ? enBandeja.map(e => `<button class="ficha-robot ${elegido === e ? "elegida" : ""}" data-id="${e.id}"><svg viewBox="0 0 120 100" aria-hidden="true"><use href="#dib-${e.dibujo}"/></svg>${e.nombre}</button>`).join("")
                 : `<p class="instruccion" style="align-self:center">¡Ya acomodaste todos! Revisa tu respuesta.</p>`}
             </div>
@@ -662,7 +662,7 @@
               <div class="planeta tierra" style="left:${CENTRO.tierra[0]}%;top:${CENTRO.tierra[1]}%"><span>Tierra</span></div>
               <div class="planeta luna" style="left:${CENTRO.luna[0]}%;top:${CENTRO.luna[1]}%"><span>Luna</span></div>
               <div class="planeta marte" style="left:${CENTRO.marte[0]}%;top:${CENTRO.marte[1]}%"><span>Marte</span></div>
-              <div class="planeta lejos" style="left:${CENTRO.lejos[0]}%;top:${CENTRO.lejos[1]}%"><span>Muy lejos</span></div>
+              <div class="planeta lejos" style="left:${CENTRO.lejos[0]}%;top:${CENTRO.lejos[1]}%"><span>Más allá</span></div>
               ${EXPLORADORES.map(x => `<div class="pin-juego" data-id="${x.id}" data-anio="${x.anio}" style="${posicion(x)}" title="${x.nombre}"><svg viewBox="0 0 120 100" aria-hidden="true"><use href="#dib-${x.dibujo}"/></svg></div>`).join("")}
             </div>
             <div class="control-tiempo">
@@ -681,7 +681,7 @@
         const pins = zona.querySelectorAll(".pin-juego");
         const termometro = document.getElementById("termometro");
 
-        // Al mover la barra, aparecen los robots que ya habían llegado ese año
+        // Al mover la barra, aparecen las misiones que ya habían llegado ese año
         barra.oninput = () => {
           const anio = Number(barra.value);
           document.getElementById("anio-viaje").textContent = anio;

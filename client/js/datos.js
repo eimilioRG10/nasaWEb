@@ -9,147 +9,136 @@
    ========================================================= */
 
 const LUGARES = {
-  luna:  { nombre: "La Luna",   color: "#E9E6DD", pista: "Uno de mis amigos de la Luna es un espejo. ¡Todavía le mandan rayos láser!" },
-  marte: { nombre: "Marte",     color: "#F6B48F", pista: "Uno de los amigos que faltan es un helicóptero chiquito. ¿Lo buscamos?" },
-  lejos: { nombre: "Muy lejos", color: "#C9C2F0", pista: "Hay dos hermanas que salieron en 1977 y todavía siguen viajando." }
+  luna:  { nombre: "La Luna",   color: "#E9E6DD", pista: "Eagle, Falcon e Intrepid fueron módulos lunares. ¿Recuerdas cuál llevó el primer coche lunar?" },
+  marte: { nombre: "Marte",     color: "#F6B48F", pista: "En Marte aterrizó Viking 1 y también voló Ingenuity, el primer helicóptero en otro mundo." },
+  lejos: { nombre: "Más allá", color: "#C9C2F0", pista: "Dawn exploró Vesta y Ceres; Kepler buscó planetas alrededor de otras estrellas." }
 };
 
 const EXPLORADORES = [
   /* ---------- LUNA ---------- */
   {
-    id: "espejo-apolo11", lugar: "luna", nombre: "Espejo del Apolo 11", anio: 1969,
-    dibujo: "espejo", estado: "funciona", estadoTexto: "Sigue funcionando",
+    id: "eagle", lugar: "luna", nombre: "Módulo lunar Eagle", anio: 1969,
+    dibujo: "modulo", estado: "silencio", estadoTexto: "Su base quedó en la Luna",
     paginas: [
-      "Soy un espejo muy especial. Los astronautas del Apolo 11 me dejaron en la Luna en 1969.",
-      "Desde la Tierra, unos científicos me lanzan rayos láser. Yo los reboto de regreso, y así miden qué tan lejos está la Luna.",
-      "Gracias a mí sabemos que la Luna se aleja de la Tierra un poquito cada año: ¡casi 4 centímetros!"
+      "Soy Eagle, el módulo lunar del Apolo 11. El 20 de julio de 1969 llevé a Neil Armstrong y Buzz Aldrin hasta el Mar de la Tranquilidad.",
+      "Después de más de 21 horas en la Luna, me dividí en dos. Mi base con cuatro patas se quedó en el suelo y mi parte superior despegó.",
+      "También llevé el laboratorio EASEP y un espejo especial que reflejaba rayos láser enviados desde la Tierra."
     ],
-    dato: "El Apolo 11 fue la primera misión en llevar personas a la Luna.",
-    pregunta: { texto: "¿Qué me mandan desde la Tierra?", opciones: ["Cartas", "Rayos láser", "Pizzas"], correcta: 1 }
+    dato: "Eagle fue el módulo que llevó a las primeras personas a la superficie lunar.",
+    pregunta: { texto: "¿Qué parte de Eagle se quedó en la Luna?", opciones: ["La base con sus cuatro patas", "La nave principal", "El traje de Neil"], correcta: 0 }
   },
   {
-    id: "coche-apolo15", lugar: "luna", nombre: "Coche lunar del Apolo 15", anio: 1971,
-    dibujo: "coche", estado: "silencio", estadoTexto: "Ya no funciona",
+    id: "falcon", lugar: "luna", nombre: "Módulo lunar Falcon", anio: 1971,
+    dibujo: "modulo", estado: "silencio", estadoTexto: "Su base quedó en la Luna",
     paginas: [
-      "¡Fui el primer coche que manejaron unos astronautas en la Luna! Llegué en 1971 con el Apolo 15.",
-      "Gracias a mí, los astronautas pudieron ir mucho más lejos que caminando y traer rocas de lugares nuevos.",
-      "Cuando se fueron, me dejaron estacionado. Mi cámara grabó cuando despegaron de regreso a casa."
+      "Soy Falcon, el módulo lunar del Apolo 15. Llegué a la Luna el 30 de julio de 1971 con David Scott y James Irwin.",
+      "Llevaba una sorpresa: el Vehículo Explorador Lunar. Los astronautas fueron los primeros en conducir un coche fuera de la Tierra.",
+      "En tres excursiones recorrieron casi 28 kilómetros y recogieron más de 77 kilos de rocas y tierra lunar."
     ],
-    dato: "Los coches lunares se doblaban para caber dentro de la nave.",
-    pregunta: { texto: "¿Para qué servía el coche lunar?", opciones: ["Para ir más lejos y traer rocas", "Para hacer carreras", "Para dormir"], correcta: 0 }
+    dato: "Antes de irse, la tripulación del Apolo 15 instaló la estación científica ALSEP.",
+    pregunta: { texto: "¿Qué sorpresa llevaba Falcon?", opciones: ["Un submarino", "El primer coche lunar", "Un telescopio gigante"], correcta: 1 }
   },
   {
-    id: "surveyor3", lugar: "luna", nombre: "Surveyor 3", anio: 1967,
-    dibujo: "modulo", estado: "silencio", estadoTexto: "Ya no funciona",
+    id: "intrepid", lugar: "luna", nombre: "Módulo lunar Intrepid", anio: 1969,
+    dibujo: "modulo", estado: "silencio", estadoTexto: "Su base quedó en la Luna",
     paginas: [
-      "Llegué a la Luna en 1967, sin ningún astronauta. Mi trabajo era ver si el suelo era firme para que pudieran aterrizar personas.",
-      "En 1969, los astronautas del Apolo 12 aterrizaron cerquita de mí... ¡y vinieron a visitarme!",
-      "Se llevaron mi cámara de regreso a la Tierra para estudiar cómo me había tratado la Luna."
+      "Soy Intrepid, el módulo lunar del Apolo 12. Pete Conrad y Alan Bean aterrizaron conmigo en el Océano de las Tormentas.",
+      "Aterricé a solo 180 metros de Surveyor 3. Los astronautas caminaron hasta ese robot y trajeron algunas de sus piezas a la Tierra.",
+      "Al final, mi parte superior volvió hacia la Luna para provocar un impacto controlado y crear un «lunamoto»."
     ],
-    dato: "Es uno de los pocos robots que han recibido visitas de astronautas.",
-    pregunta: { texto: "¿Quién vino a visitarme?", opciones: ["Un extraterrestre", "Nadie", "Los astronautas del Apolo 12"], correcta: 2 }
+    dato: "La tripulación del Apolo 12 pasó más de 31 horas en la superficie lunar.",
+    pregunta: { texto: "¿A qué robot visitaron Pete Conrad y Alan Bean?", opciones: ["Sojourner", "Surveyor 3", "Viking 1"], correcta: 1 }
   },
   {
-    id: "coche-apolo17", lugar: "luna", nombre: "Coche lunar del Apolo 17", anio: 1972,
-    dibujo: "coche", estado: "silencio", estadoTexto: "Ya no funciona",
+    id: "surveyor-3", lugar: "luna", nombre: "Surveyor 3", anio: 1967,
+    dibujo: "modulo", estado: "silencio", estadoTexto: "En silencio desde 1967",
     paginas: [
-      "Soy el coche lunar del Apolo 17. Llegué en diciembre de 1972.",
-      "Fui el último coche que manejaron personas en la Luna. Desde 1972 nadie ha vuelto a caminar allá.",
-      "Sigo estacionado esperando a los próximos astronautas. ¿Quién sabe? ¡Tal vez vengas tú!"
+      "Soy Surveyor 3. Llegué a la Luna en 1967 para probar si el suelo podía sostener una nave tripulada.",
+      "Al aterrizar reboté dos veces. Luego usé mi cámara y una pala mecánica para tomar fotos, cavar zanjas y estudiar el suelo.",
+      "Dos años después, los astronautas del Apolo 12 caminaron hasta mí y llevaron algunas de mis piezas a la Tierra."
     ],
-    dato: "El Apolo 17 fue la última misión del programa Apolo.",
-    pregunta: { texto: "¿En qué año se fueron los últimos astronautas de la Luna?", opciones: ["1950", "1972", "2020"], correcta: 1 }
+    dato: "Surveyor 3 fue el primer explorador espacial visitado por personas en otro mundo.",
+    pregunta: { texto: "¿Cuántas veces reboté al llegar a la Luna?", opciones: ["Dos", "Ninguna", "Diez"], correcta: 0 }
   },
 
   /* ---------- MARTE ---------- */
   {
-    id: "sojourner", lugar: "marte", nombre: "Sojourner", anio: 1997,
+    id: "pathfinder", lugar: "marte", nombre: "Mars Pathfinder y Sojourner", anio: 1997,
     dibujo: "rover", estado: "silencio", estadoTexto: "Ya no funciona",
     paginas: [
-      "Soy Sojourner, el primer rover de la NASA en Marte. Llegué en 1997.",
-      "Era del tamaño de un horno de microondas y tenía 6 ruedas para no atorarme con las piedras.",
-      "Me hicieron para trabajar una semana... ¡y trabajé casi tres meses!"
+      "Soy Sojourner, el pequeño rover que viajó dentro de Mars Pathfinder. Llegué a Marte en 1997.",
+      "Pathfinder se protegió con bolsas de aire y rebotó unas 15 veces antes de detenerse en Ares Vallis.",
+      "Rodé por una rampa y me convertí en el primer vehículo robótico que recorrió la superficie de Marte."
     ],
-    dato: "Los rovers que llegaron después también tienen 6 ruedas.",
-    pregunta: { texto: "¿Cuántas ruedas tengo?", opciones: ["4", "6", "8"], correcta: 1 }
+    dato: "Pathfinder y Sojourner enviaron más de 17,000 fotografías a la Tierra.",
+    pregunta: { texto: "¿Cómo se protegió Pathfinder al aterrizar?", opciones: ["Con bolsas de aire", "Con un par de alas", "Con un paracaídas solamente"], correcta: 0 }
   },
   {
-    id: "spirit", lugar: "marte", nombre: "Spirit", anio: 2004,
-    dibujo: "rover", estado: "silencio", estadoTexto: "En silencio desde 2010",
+    id: "spirit-opportunity", lugar: "marte", nombre: "Spirit y Opportunity", anio: 2004,
+    dibujo: "rover", estado: "silencio", estadoTexto: "Misiones finalizadas",
     paginas: [
-      "Soy Spirit. Llegué a Marte en enero de 2004. Me hicieron para trabajar 3 meses... ¡y trabajé 6 años!",
-      "Encontré rocas que muestran que en Marte hubo agua calientita, como en unas aguas termales.",
-      "En 2009 mis ruedas se atoraron en arena muy suave. Llegó el invierno y no me llegó suficiente Sol. En 2010 mandé mi último mensaje."
+      "Somos Spirit y Opportunity, dos rovers gemelos que llegaron a Marte en 2004 para buscar señales de agua antigua.",
+      "Spirit exploró el cráter Gusev y Opportunity la llanura Meridiani Planum. Los dos encontraron pistas de que hubo agua líquida.",
+      "Spirit recorrió 7.7 kilómetros. Opportunity recorrió 45.16 kilómetros antes de quedarse en silencio en 2018."
     ],
-    dato: "Spirit tiene un gemelo: Opportunity.",
-    pregunta: { texto: "¿Por qué se quedó dormido Spirit?", opciones: ["Se atoró en la arena y le faltó Sol", "Se cansó de jugar", "Lo apagaron por error"], correcta: 0 }
+    dato: "Opportunity recorrió más distancia que cualquier otro explorador fuera de la Tierra hasta octubre de 2026.",
+    pregunta: { texto: "¿Cuál de los dos recorrió 45.16 kilómetros?", opciones: ["Spirit", "Opportunity", "Sojourner"], correcta: 1 }
   },
   {
-    id: "opportunity", lugar: "marte", nombre: "Opportunity", anio: 2004,
-    dibujo: "rover", estado: "silencio", estadoTexto: "En silencio desde 2018",
+    id: "viking-1", lugar: "marte", nombre: "Viking 1", anio: 1976,
+    dibujo: "modulo", estado: "silencio", estadoTexto: "En silencio desde 1982",
     paginas: [
-      "Llegué a Marte el 25 de enero de 2004 y fui rodando hasta caer dentro de un cráter chiquito. ¡Un hoyo en uno!",
-      "Ahí encontré unas bolitas de hematita, un mineral que se forma con agua. Así supimos que Marte tuvo agua hace mucho tiempo.",
-      "Me hicieron para trabajar 90 días... ¡y aguanté más de 14 años! En 2018 una tormenta de polvo tapó el Sol y me quedé dormido."
+      "Soy Viking 1. Llegué a Marte en 1976 en dos partes: un orbitador y un módulo de aterrizaje.",
+      "Mi módulo se posó en Chryse Planitia y envió las primeras fotografías nítidas desde el suelo marciano.",
+      "También analicé muestras de tierra y envié reportes del clima hasta que se interrumpió mi señal en 1982."
     ],
-    dato: "Opportunity recorrió más de 45 kilómetros: ¡más que un maratón!",
-    pregunta: { texto: "¿Cuánto tiempo iba a trabajar Opportunity?", opciones: ["1 hora", "90 días", "100 años"], correcta: 1 }
-  },
-  {
-    id: "curiosity", lugar: "marte", nombre: "Curiosity", anio: 2012,
-    dibujo: "rover", estado: "funciona", estadoTexto: "Sigue trabajando",
-    paginas: [
-      "Soy Curiosity. Llegué a Marte en 2012 y soy grande como un carro.",
-      "Tengo un láser para estudiar las rocas desde lejos y un taladro para ver qué hay adentro.",
-      "No necesito el Sol: tengo una pila especial que me da energía. ¡Por eso sigo trabajando!"
-    ],
-    dato: "Curiosity encontró que hace mucho, Marte pudo tener lugares buenos para la vida pequeñita.",
-    pregunta: { texto: "¿Qué uso para estudiar las rocas desde lejos?", opciones: ["Una lupa", "Un martillo", "Un láser"], correcta: 2 }
+    dato: "El orbitador de Viking 1 dio casi 1,500 vueltas alrededor de Marte.",
+    pregunta: { texto: "¿Qué envió Viking 1 desde la superficie marciana?", opciones: ["Las primeras fotos nítidas", "Una carta para la Tierra", "Un mapa de la Luna"], correcta: 0 }
   },
   {
     id: "ingenuity", lugar: "marte", nombre: "Ingenuity", anio: 2021,
-    dibujo: "heli", estado: "dormido", estadoTexto: "Ya no puede volar",
+    dibujo: "heli", estado: "silencio", estadoTexto: "Misión finalizada en 2024",
     paginas: [
-      "Soy Ingenuity, un helicóptero. Viajé a Marte pegado a la panza del rover Perseverance. ¡Peso menos que un gato!",
-      "En Marte el aire es muy delgado y nadie sabía si podría volar. Lo intenté... ¡y volé! Fue la primera vez que una máquina voló con motor en otro planeta.",
-      "Al final volé 72 veces. En mi último vuelo se lastimó una de mis hélices y ya no puedo volar, pero sigo allá."
+      "Soy Ingenuity, un pequeño helicóptero que viajó a Marte bajo la panza del rover Perseverance.",
+      "El 19 de abril de 2021 hice el primer vuelo propulsado y controlado en otro mundo.",
+      "Mi misión iba a durar cinco vuelos, pero logré completar 72 antes de terminar en enero de 2024."
     ],
-    dato: "Al principio solo iba a intentar 5 vuelos.",
-    pregunta: { texto: "¿Cuántas veces voló Ingenuity?", opciones: ["2", "72", "1000"], correcta: 1 }
+    dato: "Ingenuity voló casi 129 minutos y recorrió 17 kilómetros en total.",
+    pregunta: { texto: "¿Cuántos vuelos completó Ingenuity?", opciones: ["5", "17", "72"], correcta: 2 }
   },
 
-  /* ---------- MUY LEJOS ---------- */
+  /* ---------- MÁS ALLÁ ---------- */
   {
-    id: "voyager1", lugar: "lejos", nombre: "Voyager 1", anio: 1977,
-    dibujo: "sonda", estado: "funciona", estadoTexto: "Todavía manda señales",
+    id: "dawn", lugar: "lejos", nombre: "Dawn", anio: 2007,
+    dibujo: "sonda", estado: "silencio", estadoTexto: "Misión finalizada en 2018",
     paginas: [
-      "Soy Voyager 1. Salí de la Tierra en 1977, ¡antes de que nacieran tus papás! Pasé junto a Júpiter y Saturno.",
-      "Soy el objeto hecho por personas que está más lejos de la Tierra. Mi mensaje tarda casi un día entero en llegar.",
-      "Llevo un disco de oro con sonidos y saludos de la Tierra, por si alguien me encuentra."
+      "Soy Dawn, una nave espacial que visitó dos mundos distintos en un mismo viaje.",
+      "Primero estudié Vesta, un asteroide gigante. Después seguí mi camino hasta Ceres, un planeta enano.",
+      "Ambos mundos están en el cinturón de asteroides, entre Marte y Júpiter."
     ],
-    dato: "Voyager 1 ya salió de la burbuja que rodea al Sol.",
-    pregunta: { texto: "¿Qué llevo por si alguien me encuentra?", opciones: ["Un mapa del tesoro", "Un disco de oro", "Una pizza"], correcta: 1 }
+    dato: "Dawn demostró que una nave puede visitar y estudiar dos mundos en una misma misión.",
+    pregunta: { texto: "¿Qué dos mundos estudió Dawn?", opciones: ["Vesta y Ceres", "Marte y la Luna", "Júpiter y Saturno"], correcta: 0 }
   },
   {
-    id: "voyager2", lugar: "lejos", nombre: "Voyager 2", anio: 1977,
-    dibujo: "sonda", estado: "funciona", estadoTexto: "Todavía manda señales",
-    paginas: [
-      "Soy Voyager 2, la hermana de Voyager 1. ¡Y eso que yo salí primero, en agosto de 1977!",
-      "Soy la única nave que ha visitado Urano y Neptuno. Les tomé fotos de cerca por primera vez.",
-      "Yo también llevo un disco de oro y sigo viajando muy, muy lejos."
-    ],
-    dato: "Voyager 2 salió unos días antes que Voyager 1.",
-    pregunta: { texto: "¿Qué planetas visité yo sola?", opciones: ["Urano y Neptuno", "Marte y Venus", "La Tierra"], correcta: 0 }
-  },
-  {
-    id: "pioneer10", lugar: "lejos", nombre: "Pioneer 10", anio: 1972,
+    id: "pioneer-10", lugar: "lejos", nombre: "Pioneer 10", anio: 1972,
     dibujo: "sonda", estado: "silencio", estadoTexto: "En silencio desde 2003",
     paginas: [
-      "Soy Pioneer 10. Salí de la Tierra en 1972.",
-      "Fui la primera nave en pasar junto a Júpiter, el planeta más grande. ¡Le tomé fotos de cerca!",
-      "Llevo una placa con un dibujo que explica de dónde vengo. Mandé mi último mensaje en 2003, pero sigo viajando."
+      "Soy Pioneer 10. Salí de la Tierra en 1972 y fui la primera nave en cruzar el cinturón de asteroides.",
+      "En 1973 pasé cerca de Júpiter y envié imágenes de sus nubes y algunas de sus lunas.",
+      "Llevo una placa con un dibujo y un mapa que muestran de dónde vengo."
     ],
-    dato: "Pioneer 10 también cruzó el cinturón de asteroides.",
-    pregunta: { texto: "¿Qué planeta gigante visité primero?", opciones: ["Júpiter", "Mercurio", "La Luna"], correcta: 0 }
+    dato: "La última señal de Pioneer 10 llegó a la Tierra en enero de 2003.",
+    pregunta: { texto: "¿Qué planeta visitó Pioneer 10 después de cruzar el cinturón de asteroides?", opciones: ["Júpiter", "Mercurio", "Neptuno"], correcta: 0 }
+  },
+  {
+    id: "kepler", lugar: "lejos", nombre: "Telescopio Kepler", anio: 2009,
+    dibujo: "sonda", estado: "silencio", estadoTexto: "Misión finalizada en 2018",
+    paginas: [
+      "Soy el telescopio espacial Kepler. Desde 2009 observé una región del cielo con miles de estrellas.",
+      "Buscaba planetas lejanos midiendo pequeños cambios en el brillo de las estrellas cuando un planeta pasaba frente a ellas.",
+      "Mi misión terminó en 2018 después de ayudar a descubrir que hay muchísimos planetas fuera de nuestro sistema solar."
+    ],
+    dato: "Kepler vigiló unas 150,000 estrellas en una región de la constelación del Cisne.",
+    pregunta: { texto: "¿Qué cambio observaba Kepler para encontrar planetas?", opciones: ["El brillo de las estrellas", "El color de la Luna", "La temperatura de Marte"], correcta: 0 }
   }
 ];
