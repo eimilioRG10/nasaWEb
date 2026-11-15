@@ -3,14 +3,27 @@ const tarjetas = document.querySelectorAll(".tarjeta");
 const modal = document.getElementById("modal");
 const titulo = document.getElementById("modal-titulo");
 const texto = document.getElementById("modal-texto");
+let temporizadorFondo;
+
+const cambiarFondo = (escena) => {
+    window.clearTimeout(temporizadorFondo);
+
+    const actualizarEscena = () => {
+        fondo.className = escena ? "fondo " + escena : "fondo";
+        fondo.style.removeProperty("--opacidad-fondo");
+    };
+
+    fondo.style.setProperty("--opacidad-fondo", "0.55");
+    temporizadorFondo = window.setTimeout(actualizarEscena, 400);
+};
 
 tarjetas.forEach(tarjeta => {
     tarjeta.addEventListener("mouseenter", () => {
-        fondo.className = "fondo " + tarjeta.dataset.scene;
+        cambiarFondo(tarjeta.dataset.scene);
     });
 
     tarjeta.addEventListener("mouseleave", () => {
-        fondo.className = "fondo";
+        cambiarFondo("");
     });
 
     tarjeta.addEventListener("click", () => {
