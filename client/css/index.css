@@ -326,6 +326,11 @@ h1 {
     --imagen-hover: url("../imagenes/opportunity.jpg");
 }
 
+.tarjeta-lejos {
+    --imagen-normal: url("../imagenes/espacio.jpg");
+    --imagen-hover: url("../imagenes/nave.jpg");
+}
+
 .tarjeta-tierra {
     --imagen-normal: url("../imagenes/Tierra.jpeg");
     --imagen-hover: url("../imagenes/satelite.jpg");
