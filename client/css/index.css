@@ -106,17 +106,113 @@ header {
 
 nav {
     display: flex;
-    gap: 35px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
 }
 
 nav a {
-    color: #c6d0df;
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid rgba(85, 185, 250, 0.28);
+    border-radius: 999px;
+    background: rgba(12, 30, 54, 0.72);
+    color: #dcecff;
+    font-size: 14px;
+    font-weight: 600;
     text-decoration: none;
-    transition: 0.3s;
+    transition: color 0.25s, background 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
 
 nav a:hover {
     color: white;
+    border-color: #55b9fa;
+    background: linear-gradient(135deg, #238bd1, #12639c);
+    box-shadow: 0 6px 18px rgba(35, 139, 209, 0.3);
+    transform: translateY(-2px);
+}
+
+nav a:active {
+    transform: translateY(0) scale(0.98);
+}
+
+nav a:focus-visible {
+    outline: 2px solid #55b9fa;
+    outline-offset: 3px;
+}
+
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown > summary {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border: 1px solid rgba(85, 185, 250, 0.28);
+    border-radius: 999px;
+    background: rgba(12, 30, 54, 0.72);
+    color: #dcecff;
+    font-size: 14px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+    transition: color 0.25s, background 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+
+.nav-dropdown > summary::-webkit-details-marker {
+    display: none;
+}
+
+.nav-dropdown > summary::after {
+    content: "▾";
+    margin-left: 9px;
+    color: #55b9fa;
+}
+
+.nav-dropdown[open] > summary,
+.nav-dropdown > summary:hover {
+    border-color: #55b9fa;
+    background: linear-gradient(135deg, #238bd1, #12639c);
+    color: white;
+    box-shadow: 0 6px 18px rgba(35, 139, 209, 0.3);
+}
+
+.nav-dropdown > summary:focus-visible {
+    outline: 2px solid #55b9fa;
+    outline-offset: 3px;
+}
+
+.nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 20;
+    min-width: 160px;
+    padding: 8px;
+    border: 1px solid rgba(85, 185, 250, 0.35);
+    border-radius: 14px;
+    background: rgba(7, 17, 34, 0.97);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+.nav-dropdown-menu a {
+    width: 100%;
+    justify-content: flex-start;
+    border-color: transparent;
+    border-radius: 9px;
+    background: transparent;
+}
+
+.nav-dropdown-menu a:hover {
+    transform: none;
+    box-shadow: none;
 }
 
 /* PORTADA */

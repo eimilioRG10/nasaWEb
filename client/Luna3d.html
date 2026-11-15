@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atlas Lunar Ilustrado 3D — Reliquias de la Era Apolo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js y OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Fuentes tipográficas estilo cuaderno de exploración -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #060e18;
+            font-family: 'Inter', sans-serif;
+            color: #f4efe6;
+        }
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            cursor: grab;
+        }
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+        .font-serif-title {
+            font-family: 'Cinzel', serif;
+        }
+        .font-mono-coord {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .parchment-panel {
+            background: rgba(12, 22, 34, 0.84);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(235, 224, 204, 0.24);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        /* Etiquetas 3D proyectadas sobre los artefactos */
+        .poi-marker {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            z-index: 10;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+        }
+        .poi-marker:hover {
+            transform: translate(-50%, -108%) scale(1.07);
+            z-index: 20;
+        }
+        .poi-pill {
+            background: rgba(13, 23, 36, 0.90);
+            border: 1.5px solid #e6dcc8;
+            color: #f7f3eb;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.65);
+        }
+        .poi-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f5d08a;
+            box-shadow: 0 0 8px #f5d08a;
+            animation: pulseGlow 2.2s infinite ease-in-out;
+        }
+        .poi-stem {
+            width: 1.5px;
+            height: 18px;
+            background: linear-gradient(to bottom, #e6dcc8, rgba(230, 220, 200, 0.1));
+            margin: 0 auto;
+        }
+        .beacon-marker .poi-pill {
+            border-color: #7dd3fc;
+            background: rgba(10, 32, 52, 0.92);
+        }
+        .beacon-marker .poi-dot {
+            background: #38bdf8;
+            box-shadow: 0 0 8px #38bdf8;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.7; }
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(230, 220, 200, 0.3);
+            border-radius: 9999px;
+        }
+        .fade-in {
+            animation: fadeIn 0.35s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor Principal WebGL -->
+    <div id="canvas-container"></div>
+
+    <!-- Capa de Etiquetas 3D Proyectadas -->
+    <div id="labels-layer" class="fixed inset-0 pointer-events-none z-10 overflow-hidden"></div>
+
+    <!-- Pantalla de Carga Ilustrada -->
+    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#060e18] transition-opacity duration-700">
+        <div class="relative w-20 h-20 mb-5 flex items-center justify-center">
+            <svg class="w-16 h-16 text-[#ebd9b4] animate-spin" style="animation-duration: 9s;" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+                <path d="M32 6 L35 29 L58 32 L35 35 L32 58 L29 35 L6 32 L29 29 Z" fill="currentColor" opacity="0.85"/>
+            </svg>
+        </div>
+        <h2 class="font-serif-title text-xl tracking-widest text-[#f5ebd6] uppercase">Cartografiando Reliquias NASA</h2>
+        <p class="text-xs text-[#a9b8c7] mt-2 tracking-wide">Expandiendo superficie lunar y posicionando artefactos históricos en 3D...</p>
+    </div>
+
+    <!-- Encabezado Superior Izquierdo: Título y Coordenadas -->
+    <header class="fixed top-4 left-4 z-20 pointer-events-none max-w-[calc(100vw-2rem)] sm:max-w-md">
+        <div class="parchment-panel rounded-2xl px-4 py-3 pointer-events-auto">
+            <div class="flex items-center gap-2.5">
+                <svg class="w-6 h-6 text-[#f5d08a] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <path d="M12 2L14.2 9.8L22 12L14.2 14.2L12 22L9.8 14.2L2 12L9.8 9.8L12 2Z" fill="rgba(245, 208, 138, 0.2)"/>
+                </svg>
+                <div>
+                    <h1 class="font-serif-title text-base sm:text-lg font-bold tracking-wider text-[#f7f1e3] leading-tight">
+                        ATLAS LUNAR <span class="text-[#d9b87c] font-normal">3D • NASA</span>
+                    </h1>
+                    <p class="text-[11px] text-[#c7bfb2] leading-tight">Artefactos Abandonados en la Superficie Lunar • Programa Apolo & Surveyor</p>
+                </div>
+            </div>
+            <!-- Telemetría del cursor en tiempo real -->
+            <div class="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-coord text-[#d6cfc4]">
+                <span id="cursor-coords">LAT 00.0° N • LON 00.0° E</span>
+                <span id="elevation-readout" class="text-[#f5d08a]">ALT +0m</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Panel Lateral Derecho: Explorador de Artefactos de la NASA -->
+    <aside id="poi-sidebar" class="fixed top-4 right-4 z-20 w-76 max-w-[calc(100vw-2rem)] transition-all duration-300">
+        <div class="parchment-panel rounded-2xl overflow-hidden">
+            <div class="px-4 py-3 flex items-center justify-between border-b border-white/10 cursor-pointer" id="toggle-sidebar-btn">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#f5d08a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-[#f5ebd6]">Artefactos NASA (3D)</span>
+                </div>
+                <button class="text-[#cbd5e1] hover:text-white p-1 rounded-lg transition" aria-label="Alternar lista">
+                    <svg id="sidebar-chevron" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="sidebar-content" class="max-h-[46vh] overflow-y-auto p-2 space-y-1.5">
+                <!-- Se llena dinámicamente con JS -->
+            </div>
+            <!-- Sección de Balizas Personalizadas -->
+            <div id="beacons-footer" class="px-3 py-2.5 bg-black/25 border-t border-white/10 flex items-center justify-between text-[11px] text-[#9fb1c4]">
+                <span id="beacon-count">Doble clic para poner baliza</span>
+                <button id="clear-beacons-btn" class="text-sky-300 hover:text-sky-200 underline hidden">Limpiar</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Tarjeta Informativa de Cuaderno (Modal Flotante al seleccionar Artefacto) -->
+    <div id="info-card" class="fixed bottom-24 left-4 z-30 w-80 sm:w-96 max-w-[calc(100vw-2rem)] hidden">
+        <div class="parchment-panel rounded-2xl p-4 sm:p-5 relative fade-in border border-[#e6d5b8]/40">
+            <button id="close-info-btn" class="absolute top-3.5 right-3.5 text-[#b4c2d0] hover:text-white p-1.5 rounded-full hover:bg-white/10 transition" title="Cerrar ficha">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="flex items-center gap-2 text-[11px] font-mono-coord text-[#d9b87c] uppercase tracking-wider mb-1">
+                <span id="info-category">MISIÓN APOLO</span>
+                <span>•</span>
+                <span id="info-coords">00.67°N, 23.47°E</span>
+            </div>
+            <h3 id="info-title" class="font-serif-title text-lg sm:text-xl font-bold text-[#fbf6ec] mb-2">Módulo Lunar Eagle</h3>
+            <p id="info-desc" class="text-xs sm:text-sm text-[#d4dde6] leading-relaxed mb-3">
+                Etapa de descenso del módulo lunar Apolo 11 abandonada en el Mar de la Tranquilidad.
+            </p>
+            <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-white/10 text-[11px]">
+                <div class="bg-white/5 rounded-xl px-2.5 py-1.5">
+                    <span class="text-[#94a3b8] block">Fecha / Misión</span>
+                    <span id="info-stat1" class="font-mono-coord text-[#f5ebd6] font-medium">20 Jul 1969</span>
+                </div>
+                <div class="bg-white/5 rounded-xl px-2.5 py-1.5">
+                    <span class="text-[#94a3b8] block">Masa / Estado</span>
+                    <span id="info-stat2" class="font-mono-coord text-[#f5ebd6] font-medium">2,033 kg • Intacto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast / Notificación de Acción -->
+    <div id="toast-msg" class="fixed top-20 left-1/2 -translate-x-1/2 z-40 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="parchment-panel rounded-full px-4 py-2 text-xs text-[#f7f1e3] flex items-center gap-2 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+            <span id="toast-text">Baliza colocada en el terreno</span>
+        </div>
+    </div>
+
+    <!-- Barra Inferior de Herramientas y Acciones 3D -->
+    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 max-w-[95vw]">
+        <div class="parchment-panel rounded-2xl px-2.5 py-2 flex items-center gap-1.5 sm:gap-2 overflow-x-auto">
+            <!-- Vista Panorámica Inicial -->
+            <button id="btn-view-default" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#f7f1e3] transition shrink-0" title="Restaurar vista ilustrada original">
+                <svg class="w-4 h-4 text-[#f5d08a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Vista Clásica</span>
+            </button>
+
+            <!-- Vista Orbital / Cenital -->
+            <button id="btn-view-top" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 hover:bg-white/15 text-[#dce5ee] transition shrink-0" title="Vista cenital cartográfica">
+                <svg class="w-4 h-4 text-sky-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span class="hidden sm:inline">Orbital</span>
+            </button>
+
+            <!-- Vista Superficie / Rasante -->
+            <button id="btn-view-surface" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 hover:bg-white/15 text-[#dce5ee] transition shrink-0" title="Explorar a ras de suelo entre los artefactos">
+                <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 17h14M5 17l4-8 4 5 3-3 3 6"/>
+                </svg>
+                <span class="hidden sm:inline">Superficie</span>
+            </button>
+
+            <div class="w-px h-6 bg-white/15 mx-0.5 shrink-0"></div>
+
+            <!-- Alternar Etiquetas -->
+            <button id="btn-toggle-labels" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#f7f1e3] transition shrink-0" title="Mostrar u ocultar etiquetas">
+                <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                <span class="hidden md:inline">Etiquetas</span>
+            </button>
+
+            <!-- Alternar Constelaciones -->
+            <button id="btn-toggle-stars" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#f7f1e3] transition shrink-0" title="Resaltar líneas de constelaciones">
+                <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                </svg>
+                <span class="hidden md:inline">Constelaciones</span>
+            </button>
+
+            <div class="w-px h-6 bg-white/15 mx-0.5 shrink-0"></div>
+
+            <!-- Control de Intensidad de Trazos de Lápiz -->
+            <div class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/5 shrink-0" title="Intensidad de sombreado a lápiz y contraste">
+                <svg class="w-3.5 h-3.5 text-[#e6d5b8]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+                <span class="text-[11px] text-[#d6cfc4] hidden lg:inline">Lápiz</span>
+                <input id="pencil-slider" type="range" min="0.65" max="1.45" step="0.05" value="1.0" class="w-16 sm:w-20 accent-[#e6d5b8] cursor-pointer h-1 bg-white/20 rounded-lg">
+            </div>
+
+            <!-- Ayuda -->
+            <button id="btn-help" class="tool-btn px-2.5 py-2 rounded-xl text-xs font-medium flex items-center gap-1 hover:bg-white/15 text-[#cbd5e1] transition shrink-0" title="Controles de navegación">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Modal de Ayuda de Controles -->
+    <div id="help-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="parchment-panel rounded-2xl max-w-md w-full p-5 relative fade-in">
+            <button id="close-help-btn" class="absolute top-4 right-4 text-[#b4c2d0] hover:text-white p-1 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <h3 class="font-serif-title text-lg font-bold text-[#f7f1e3] mb-3">Guía de Exploración Lunar</h3>
+            <ul class="space-y-2.5 text-xs sm:text-sm text-[#d4dde6]">
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-white/10 font-mono-coord text-[11px] text-[#f5d08a] shrink-0">Clic Artefacto</span>
+                    <span>Haz clic en cualquier modelo 3D o etiqueta para acercarte y leer su ficha histórica de la NASA.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-white/10 font-mono-coord text-[11px] text-[#f5d08a] shrink-0">Arrastrar</span>
+                    <span>Clic izquierdo y arrastrar (o 1 dedo) para orbitar alrededor de la Luna expandida.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-white/10 font-mono-coord text-[11px] text-[#f5d08a] shrink-0">Desplazar</span>
+                    <span>Clic derecho y arrastrar (o 2 dedos) para moverte lateralmente por la superficie.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-white/10 font-mono-coord text-[11px] text-[#f5d08a] shrink-0">W A S D / Flechas</span>
+                    <span>Navegación libre sobre el terreno lunar con teclado.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-sky-500/20 border border-sky-400/40 font-mono-coord text-[11px] text-sky-300 shrink-0">Doble Clic</span>
+                    <span>Coloca una <strong>baliza de exploración</strong> en cualquier punto y calcula distancias entre sitios.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+    /**
+     * ATLAS LUNAR ILUSTRADO 3D — RELIQUIAS DE LA NASA
+     * - Superficie lunar expandida (340 x 260 unidades) con nuevos cráteres y cordilleras periféricas.
+     * - Modelos 3D detallados con estilo ilustración a tinta y aguada (contornos negros Inverted Hull + acabados metálicos/dorados):
+     *   1. Etapa de Descenso del Módulo Lunar Eagle (Apolo 11)
+     *   2. Vehículo Explorador Lunar LRV (Apolo 15) + huellas en el regolito
+     *   3. Paquete de Experimentos EASEP / Sismómetro Pasivo y Retrorreflector Láser (Apolo 11/14)
+     *   4. Bandera de EE.UU. y Placa Conmemorativa Apolo 11
+     *   5. Sonda Robótica Surveyor 3 (visitada por Apolo 12)
+     *   6. Etapa Superior de Ascenso Impactada / Cámara de TV Westinghouse (Apolo 12)
+     */
+
+    (function() {
+        // --- VARIABLES GLOBALES DE ESCENA ---
+        let scene, camera, renderer, controls;
+        let terrainMesh, terrainGeometry, terrainMaterial;
+        let starFieldGroup, constellationsGroup, beaconsGroup, rocksGroup, artifactsGroup;
+        let pencilCanvas, pencilCtx, watercolorTexture;
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        let clock = new THREE.Clock();
+
+        // Dimensiones EXPANDIDAS del terreno 3D lunar
+        const TERRAIN_WIDTH = 340;
+        const TERRAIN_DEPTH = 260;
+        const SEGMENTS_X = 300;
+        const SEGMENTS_Z = 240;
+
+        // Estado de navegación y animación de cámara
+        const keysPressed = {};
+        let cameraTransition = {
+            active: false,
+            startPos: new THREE.Vector3(),
+            endPos: new THREE.Vector3(),
+            startTarget: new THREE.Vector3(),
+            endTarget: new THREE.Vector3(),
+            progress: 0,
+            duration: 1.4
+        };
+
+        // Estado de UI y marcadores
+        let showLabels = true;
+        let showConstellations = true;
+        let customBeacons = [];
+        let beaconLine = null;
+        let twinklingStars = [];
+        let clickableMeshes = [];
+
+        // Definición de Cráteres (originales + nuevos cráteres en la expansión del mapa)
+        const CRATERS = [
+            // Gran cráter prominente a la derecha-centro
+            { x: 74, z: -12, radius: 22, depth: 4.8, rimHeight: 5.2, centralPeak: true },
+            // Cráter grande en primer plano derecho
+            { x: 72, z: 44, radius: 19, depth: 4.2, rimHeight: 4.0, centralPeak: false },
+            // Cráter mediano elevado detrás del principal
+            { x: 42, z: -22, radius: 11, depth: 2.5, rimHeight: 3.1, centralPeak: false },
+            // Cráteres medios centrales
+            { x: 16, z: -10, radius: 10.5, depth: 2.2, rimHeight: 2.4, centralPeak: false },
+            { x: 3, z: -12, radius: 7.5, depth: 1.5, rimHeight: 1.6, centralPeak: false },
+            // Cráter en primer plano izquierdo
+            { x: -58, z: 42, radius: 14, depth: 3.0, rimHeight: 2.6, centralPeak: false },
+            // Cráter esquina inferior izquierda
+            { x: -86, z: 66, radius: 13, depth: 2.6, rimHeight: 2.8, centralPeak: false },
+            // Cráter medio-izquierdo tras la montaña
+            { x: -52, z: -18, radius: 9.5, depth: 1.8, rimHeight: 1.9, centralPeak: false },
+            // Cráteres secundarios dispersos
+            { x: 42, z: 34, radius: 9.0, depth: 2.0, rimHeight: 2.2, centralPeak: false },
+            { x: 34, z: 62, radius: 11.5, depth: 2.4, rimHeight: 2.3, centralPeak: false },
+            { x: 28, z: 12, radius: 7.0, depth: 1.3, rimHeight: 1.4, centralPeak: false },
+            { x: 52, z: 8, radius: 6.5, depth: 1.2, rimHeight: 1.3, centralPeak: false },
+            { x: 64, z: -56, radius: 6.0, depth: 1.2, rimHeight: 1.4, centralPeak: false },
+            { x: -30, z: 36, radius: 6.5, depth: 1.1, rimHeight: 1.2, centralPeak: false },
+            { x: 18, z: 30, radius: 5.5, depth: 1.0, rimHeight: 1.1, centralPeak: false },
+
+            // --- NUEVOS CRÁTERES EN LA LUNA EXPANDIDA ---
+            // Zona Este expandida (donde descansa Surveyor 3)
+            { x: 128, z: 18, radius: 24, depth: 5.4, rimHeight: 4.6, centralPeak: false },
+            { x: 136, z: -48, radius: 17, depth: 3.6, rimHeight: 3.4, centralPeak: true },
+            { x: 118, z: 82, radius: 16, depth: 3.2, rimHeight: 3.0, centralPeak: false },
+            // Zona Oeste expandida
+            { x: -132, z: 34, radius: 21, depth: 4.5, rimHeight: 4.2, centralPeak: false },
+            { x: -124, z: -56, radius: 18, depth: 3.8, rimHeight: 3.5, centralPeak: true },
+            // Zona Norte lejana expandida
+            { x: -18, z: -88, radius: 20, depth: 4.1, rimHeight: 4.0, centralPeak: false },
+            { x: 88, z: -92, radius: 15, depth: 3.0, rimHeight: 2.9, centralPeak: false },
+            // Zona Sur en primer plano expandido
+            { x: -24, z: 96, radius: 15, depth: 2.8, rimHeight: 2.5, centralPeak: false },
+            { x: 68, z: 98, radius: 14, depth: 2.7, rimHeight: 2.6, centralPeak: false }
+        ];
+
+        // --- ARTEFACTOS ABANDONADOS DE LA NASA (POIs 3D) ---
+        const NASA_ARTIFACTS = [
+            {
+                id: 'apollo-11-lm',
+                title: 'Módulo Lunar Eagle (Apolo 11)',
+                category: 'Etapa de Descenso • Base Tranquilidad',
+                coords: '00°40′26″ N, 23°28′22″ E',
+                pos: new THREE.Vector3(12, 0, 22),
+                camOffset: new THREE.Vector3(16, 10, 22),
+                stat1: '20 de julio de 1969',
+                stat2: '2,033 kg • Etapa inferior',
+                desc: 'Etapa de descenso octogonal revestida en lámina térmica dorada Kapton. Sirvió como plataforma de lanzamiento para el regreso de Neil Armstrong y Buzz Aldrin, permaneciendo intacta en Mare Tranquillitatis.'
+            },
+            {
+                id: 'lunar-rover-15',
+                title: 'Lunar Roving Vehicle (Apolo 15)',
+                category: 'Vehículo Todo Terreno • Hadley-Apennine',
+                coords: '26°07′55″ N, 03°38′01″ E',
+                pos: new THREE.Vector3(-42, 0, 24),
+                camOffset: new THREE.Vector3(14, 8, 18),
+                stat1: '31 de julio de 1971',
+                stat2: '210 kg • 27.9 km recorridos',
+                desc: 'Primer automóvil tripulado conducido fuera de la Tierra. Equipado con ruedas de malla de alambre de zinc, antena parabólica de alta ganancia y cámara de TV a color que transmitió el despegue del módulo.'
+            },
+            {
+                id: 'easep-alsep',
+                title: 'Estación Científica EASEP / LRRR',
+                category: 'Retrorreflector Láser y Sismómetro',
+                coords: '00°40′25″ N, 23°28′21″ E',
+                pos: new THREE.Vector3(26, 0, 34),
+                camOffset: new THREE.Vector3(-12, 7, 15),
+                stat1: '21 de julio de 1969',
+                stat2: '100 prismas de cuarzo • Activo',
+                desc: 'Matriz de retrorreflectores ópticos y sismómetro pasivo con paneles solares desplegados. Es el único experimento del Apolo 11 que sigue operando hoy, permitiendo medir la distancia Tierra-Luna con láseres.'
+            },
+            {
+                id: 'apollo-flag',
+                title: 'Bandera y Placa Apolo 11',
+                category: 'Monumento Histórico • Mástil Telescópico',
+                coords: '00°40′27″ N, 23°28′23″ E',
+                pos: new THREE.Vector3(4, 0, 32),
+                camOffset: new THREE.Vector3(11, 6, 14),
+                stat1: '20 de julio de 1969',
+                stat2: 'Aluminio anodizado y nailon',
+                desc: 'Insignia desplegada mediante barra horizontal superior para mantenerse extendida en el vacío lunar. Décadas de radiación ultravioleta intensa han blanqueado sus tintes originales.'
+            },
+            {
+                id: 'surveyor-3',
+                title: 'Sonda Robótica Surveyor 3',
+                category: 'Aterrizador No Tripulado • Oceanus Procellarum',
+                coords: '03°00′54″ S, 23°25′05″ O',
+                pos: new THREE.Vector3(124, 0, 16),
+                camOffset: new THREE.Vector3(-16, 10, 20),
+                stat1: '20 Abr 1967 / Visita Nov 1969',
+                stat2: '302 kg • Brazo excavador',
+                desc: 'Sonda posada en la ladera interior de un cráter. Dos años y medio después, los astronautas del Apolo 12 aterrizaron a 180 metros y desmontaron su cámara de televisión para estudiarla en la Tierra.'
+            },
+            {
+                id: 'mert-camera-tripod',
+                title: 'Cámara TV Westinghouse & MERT',
+                category: 'Equipo de Transmisión y Herramientas',
+                coords: '00°40′28″ N, 23°28′20″ E',
+                pos: new THREE.Vector3(-18, 0, 56),
+                camOffset: new THREE.Vector3(12, 7, 15),
+                stat1: '20 de julio de 1969',
+                stat2: '3.29 kg • Lente lunar',
+                desc: 'Cámara de televisión de barrido lento montada sobre trípode de aluminio que transmitió en vivo los primeros pasos de la humanidad a 600 millones de espectadores antes de ser dejada en la superficie.'
+            }
+        ];
+
+        // --- FUNCIONES MATEMÁTICAS DE RUIDO Y RELIEVE ---
+        function hash2D(x, y) {
+            const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
+            return n - Math.floor(n);
+        }
+
+        function valueNoise(x, y) {
+            const ix = Math.floor(x);
+            const iy = Math.floor(y);
+            const fx = x - ix;
+            const fy = y - iy;
+            const ux = fx * fx * (3.0 - 2.0 * fx);
+            const uy = fy * fy * (3.0 - 2.0 * fy);
+
+            const a = hash2D(ix, iy);
+            const b = hash2D(ix + 1, iy);
+            const c = hash2D(ix, iy + 1);
+            const d = hash2D(ix + 1, iy + 1);
+
+            return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+        }
+
+        function fbm(x, y, octaves = 4) {
+            let value = 0;
+            let amp = 0.5;
+            let freq = 1.0;
+            for (let i = 0; i < octaves; i++) {
+                value += amp * valueNoise(x * freq, y * freq);
+                freq *= 2.05;
+                amp *= 0.48;
+            }
+            return value;
+        }
+
+        // Altura topográfica del terreno lunar expandido
+        function getTerrainHeight(x, z) {
+            // 1. Ondulación base suave y elevación gradual hacia el horizonte norte (z negativo)
+            let h = (fbm(x * 0.016 + 3.1, z * 0.016 + 7.4, 4) - 0.5) * 4.5;
+            const horizonRise = Math.max(0, (-z + 25) / TERRAIN_DEPTH);
+            h += Math.pow(horizonRise, 1.45) * 16.5;
+
+            // 2. Cresta intermedia sinuosa
+            const ridgeZ = 14 + Math.sin(x * 0.045) * 9 + Math.cos(x * 0.09) * 3;
+            const distToRidge = z - ridgeZ;
+            if (distToRidge > -18 && distToRidge < 24) {
+                const step = 1.0 / (1.0 + Math.exp(distToRidge * 0.25));
+                h += step * 3.8;
+            }
+
+            // 3. Gran Macizo Montañoso Izquierdo ("Monte Tinta", x ≈ -82, z ≈ -2)
+            const mx = (x - (-82)) / 26;
+            const mz = (z - (-2)) / 20;
+            const mDist2 = mx * mx + mz * mz;
+            if (mDist2 < 2.6) {
+                const mountainBase = Math.exp(-mDist2 * 1.45) * 23.0;
+                const angle = Math.atan2(z - (-2), x - (-82));
+                const ridges = Math.sin(angle * 16 + fbm(x * 0.1, z * 0.1, 2) * 3) * 1.4 * Math.exp(-mDist2 * 0.8);
+                const crag = (fbm(x * 0.08, z * 0.08, 3) - 0.4) * 5.5 * Math.exp(-mDist2 * 1.2);
+                h += mountainBase + ridges + crag;
+            }
+
+            // Cordillera periférica en la expansión Este/Noreste (x ≈ 138, z ≈ -85)
+            const ex = (x - 138) / 34;
+            const ez = (z - (-85)) / 24;
+            const eDist2 = ex * ex + ez * ez;
+            if (eDist2 < 2.4) {
+                h += Math.exp(-eDist2 * 1.4) * 19.0 + (fbm(x * 0.07, z * 0.07, 3) - 0.4) * 4.5 * Math.exp(-eDist2);
+            }
+
+            // Falda sedimentaria estriada que baja desde la montaña izquierda
+            const apronX = (x - (-54)) / 42;
+            const apronZ = (z - 8) / 18;
+            const apronD2 = apronX * apronX + apronZ * apronZ;
+            if (apronD2 < 1.8) {
+                const striations = Math.sin((z - 8) * 1.3 + (x + 82) * 0.18) * 0.55;
+                h += Math.exp(-apronD2 * 1.3) * (3.2 + striations);
+            }
+
+            // 4. Meseta escalonada central (x ≈ -36, z ≈ -6)
+            const bx = (x - (-36)) / 13;
+            const bz = (z - (-6)) / 9;
+            const bDist = Math.sqrt(bx * bx + bz * bz);
+            if (bDist < 1.6) {
+                const plateau = bDist < 0.55 ? 7.8 : Math.exp(-Math.pow(bDist - 0.55, 2) * 3.5) * 7.8;
+                h += plateau;
+            }
+
+            // 5. Cráteres de impacto con bordes elevados y cuencas cóncavas
+            for (let i = 0; i < CRATERS.length; i++) {
+                const c = CRATERS[i];
+                const dx = x - c.x;
+                const dz = z - c.z;
+                const dist = Math.sqrt((dx * dx) + (dz * dz * 1.25));
+                const rNorm = dist / c.radius;
+
+                if (rNorm < 1.85) {
+                    if (rNorm < 0.78) {
+                        const bowl = (1 - Math.pow(rNorm / 0.78, 2.2)) * c.depth;
+                        h -= bowl;
+                        if (c.centralPeak && rNorm < 0.22) {
+                            h += (1 - rNorm / 0.22) * (c.depth * 0.34);
+                        }
+                    }
+                    const rimBell = Math.exp(-Math.pow((rNorm - 0.84) / 0.28, 2)) * c.rimHeight;
+                    const angle = Math.atan2(dz, dx);
+                    const gullies = (rNorm > 0.85 && rNorm < 1.55 && c.radius > 12)
+                        ? Math.sin(angle * 22) * 0.35 * Math.exp(-Math.pow((rNorm - 1.1) / 0.3, 2))
+                        : 0;
+                    h += rimBell + gullies;
+                }
+            }
+
+            // 6. Micro-rugosidad del regolito
+            h += (fbm(x * 0.14, z * 0.14, 2) - 0.5) * 0.45;
+            return h;
+        }
+
+        // --- GENERACIÓN DE TEXTURA PROCEDURAL LÁPIZ, TINTA Y AGUADA SEPIA (2048x2048) ---
+        function generateWatercolorInkTexture() {
+            pencilCanvas = document.createElement('canvas');
+            const size = 2048;
+            pencilCanvas.width = size;
+            pencilCanvas.height = size;
+            const ctx = pencilCanvas.getContext('2d');
+            pencilCtx = ctx;
+
+            // 1. Base de papel crema / gris piedra claro neutro
+            const baseGrad = ctx.createLinearGradient(0, 0, size, size);
+            baseGrad.addColorStop(0, '#b9b4ab');
+            baseGrad.addColorStop(0.45, '#aea89e');
+            baseGrad.addColorStop(1, '#a39d93');
+            ctx.fillStyle = baseGrad;
+            ctx.fillRect(0, 0, size, size);
+
+            // 2. Aguadas suaves de acuarela en tonos piedra neutra y sepia/ocre cálido
+            const washes = [
+                { x: 0.68, y: 0.46, r: 0.34, color: 'rgba(143, 122, 102, 0.44)' },
+                { x: 0.78, y: 0.72, r: 0.28, color: 'rgba(130, 110, 90, 0.40)' },
+                { x: 0.46, y: 0.44, r: 0.28, color: 'rgba(150, 130, 108, 0.36)' },
+                { x: 0.24, y: 0.22, r: 0.36, color: 'rgba(168, 163, 154, 0.42)' },
+                { x: 0.22, y: 0.78, r: 0.34, color: 'rgba(158, 152, 143, 0.38)' },
+                { x: 0.56, y: 0.86, r: 0.30, color: 'rgba(145, 138, 128, 0.36)' },
+                { x: 0.25, y: 0.50, r: 0.24, color: 'rgba(72, 68, 63, 0.44)' },
+                { x: 0.88, y: 0.22, r: 0.26, color: 'rgba(92, 86, 78, 0.42)' }
+            ];
+
+            washes.forEach(w => {
+                for (let layer = 0; layer < 4; layer++) {
+                    const ox = (w.x + (Math.random() - 0.5) * 0.06) * size;
+                    const oy = (w.y + (Math.random() - 0.5) * 0.06) * size;
+                    const rad = w.r * size * (0.75 + layer * 0.12);
+                    const grad = ctx.createRadialGradient(ox, oy, rad * 0.1, ox, oy, rad);
+                    grad.addColorStop(0, w.color);
+                    grad.addColorStop(0.7, w.color.replace(/0\.\d+\)/, '0.18)'));
+                    grad.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(ox, oy, rad, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // 3. Manchas irregulares de aguada sepia y gris piedra
+            for (let i = 0; i < 220; i++) {
+                const px = Math.random() * size;
+                const py = Math.random() * size;
+                const pr = 24 + Math.random() * 90;
+                const isWarm = (px / size) > 0.36 && Math.random() > 0.32;
+                ctx.fillStyle = isWarm
+                    ? `rgba(138, 118, 98, ${0.05 + Math.random() * 0.07})`
+                    : `rgba(112, 107, 100, ${0.05 + Math.random() * 0.07})`;
+                ctx.beginPath();
+                for (let a = 0; a < Math.PI * 2; a += 0.4) {
+                    const jitter = 0.75 + Math.random() * 0.45;
+                    const vx = px + Math.cos(a) * pr * jitter;
+                    const vy = py + Math.sin(a) * pr * jitter;
+                    if (a === 0) ctx.moveTo(vx, vy);
+                    else ctx.lineTo(vx, vy);
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            const toCanvasX = (wx) => ((wx + TERRAIN_WIDTH / 2) / TERRAIN_WIDTH) * size;
+            const toCanvasY = (wz) => ((wz + TERRAIN_DEPTH / 2) / TERRAIN_DEPTH) * size;
+
+            function drawPencilCrossHatch(cx, cy, rx, ry, angleOffset, density = 18) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+                ctx.clip();
+
+                for (let pass = 0; pass < 2; pass++) {
+                    const ang = angleOffset + pass * 0.78;
+                    const cosA = Math.cos(ang);
+                    const sinA = Math.sin(ang);
+                    const step = Math.max(5, (rx * 2) / density);
+
+                    for (let d = -rx * 1.4; d <= rx * 1.4; d += step) {
+                        ctx.strokeStyle = pass === 0
+                            ? 'rgba(42, 39, 36, 0.34)'
+                            : 'rgba(54, 50, 46, 0.24)';
+                        ctx.lineWidth = pass === 0 ? 1.25 : 0.95;
+                        ctx.beginPath();
+                        const x1 = cx + d * cosA - rx * 1.5 * sinA;
+                        const y1 = cy + d * sinA + rx * 1.5 * cosA;
+                        const x2 = cx + d * cosA + rx * 1.5 * sinA;
+                        const y2 = cy + d * sinA - rx * 1.5 * cosA;
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    }
+                }
+                ctx.restore();
+            }
+
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // 4a. Trazos de lápiz y tinta en la Gran Montaña Izquierda y Cordillera Noreste
+            [
+                { wx: -82, wz: -2, scale: 1.0 },
+                { wx: 138, wz: -85, scale: 0.95 }
+            ].forEach(m => {
+                const mcx = toCanvasX(m.wx);
+                const mcy = toCanvasY(m.wz);
+                const rad = 165 * m.scale;
+
+                const mGrad = ctx.createLinearGradient(mcx - rad, mcy, mcx + rad * 0.85, mcy);
+                mGrad.addColorStop(0, 'rgba(48, 45, 41, 0.62)');
+                mGrad.addColorStop(0.48, 'rgba(188, 183, 174, 0.42)');
+                mGrad.addColorStop(1, 'rgba(78, 73, 67, 0.32)');
+                ctx.fillStyle = mGrad;
+                ctx.beginPath();
+                ctx.arc(mcx, mcy, rad, 0, Math.PI * 2);
+                ctx.fill();
+
+                drawPencilCrossHatch(mcx - 35 * m.scale, mcy - 8 * m.scale, 82 * m.scale, 68 * m.scale, -0.45, 24);
+
+                for (let s = 0; s < 64; s++) {
+                    const angle = -0.38 + (s / 64) * 1.72;
+                    const startR = 32 * m.scale + (s % 5) * 10;
+                    const endR = (175 + Math.sin(s * 1.7) * 70) * m.scale;
+                    ctx.strokeStyle = s % 2 === 0
+                        ? `rgba(34, 31, 28, ${0.42 + (s % 3) * 0.14})`
+                        : `rgba(62, 58, 53, ${0.34 + (s % 3) * 0.12})`;
+                    ctx.lineWidth = s % 3 === 0 ? 2.0 : 1.2;
+                    ctx.beginPath();
+                    for (let step = 0; step <= 10; step++) {
+                        const t = step / 10;
+                        const r = startR + (endR - startR) * t;
+                        const wobble = Math.sin(t * 7 + s) * 3.0;
+                        const lx = mcx + Math.cos(angle) * r * 1.35 + wobble;
+                        const ly = mcy + Math.sin(angle) * r * 0.85 + wobble * 0.5;
+                        if (step === 0) ctx.moveTo(lx, ly);
+                        else ctx.lineTo(lx, ly);
+                    }
+                    ctx.stroke();
+                }
+            });
+
+            // 4b. Dibujo detallado a lápiz y tinta de todos los Cráteres
+            CRATERS.forEach((c, idx) => {
+                const cx = toCanvasX(c.x);
+                const cy = toCanvasY(c.z);
+                const rx = (c.radius / TERRAIN_WIDTH) * size * 1.05;
+                const ry = (c.radius / TERRAIN_DEPTH) * size * 0.86;
+
+                const innerGrad = ctx.createLinearGradient(cx, cy - ry * 0.8, cx, cy + ry * 0.8);
+                innerGrad.addColorStop(0, 'rgba(38, 35, 32, 0.80)');
+                innerGrad.addColorStop(0.55, 'rgba(78, 73, 67, 0.48)');
+                innerGrad.addColorStop(1, 'rgba(176, 170, 160, 0.38)');
+                ctx.fillStyle = innerGrad;
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, rx * 0.78, ry * 0.78, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                drawPencilCrossHatch(cx, cy - ry * 0.14, rx * 0.72, ry * 0.56, 0.42 + idx, Math.max(10, Math.floor(rx * 0.25)));
+
+                for (let pass = 0; pass < 3; pass++) {
+                    ctx.strokeStyle = pass === 0
+                        ? 'rgba(24, 22, 20, 0.90)'
+                        : pass === 1
+                            ? 'rgba(54, 50, 45, 0.62)'
+                            : 'rgba(74, 69, 63, 0.42)';
+                    ctx.lineWidth = pass === 0 ? 2.6 : 1.3;
+                    ctx.beginPath();
+                    const steps = 48;
+                    for (let i = 0; i <= steps; i++) {
+                        const a = (i / steps) * Math.PI * 2;
+                        const jitter = 1.0 + Math.sin(a * 8 + idx + pass * 1.7) * 0.038;
+                        const px = cx + Math.cos(a) * rx * (0.81 + pass * 0.05) * jitter;
+                        const py = cy + Math.sin(a) * ry * (0.81 + pass * 0.05) * jitter;
+                        if (i === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.stroke();
+                }
+
+                const hatchCount = Math.floor(rx * 0.72);
+                for (let h = 0; h < hatchCount; h++) {
+                    const a = (h / hatchCount) * Math.PI * 2;
+                    if (Math.sin(a) < -0.68 && h % 2 === 0) continue;
+                    const rStart = 0.85;
+                    const rEnd = 1.28 + (h % 4) * 0.11;
+                    const isInk = h % 3 === 0;
+                    ctx.strokeStyle = isInk
+                        ? `rgba(26, 24, 21, ${0.52 + (h % 2) * 0.24})`
+                        : `rgba(64, 59, 53, ${0.42 + (h % 3) * 0.15})`;
+                    ctx.lineWidth = isInk ? 1.8 : 1.1;
+                    ctx.beginPath();
+                    const x1 = cx + Math.cos(a) * rx * rStart;
+                    const y1 = cy + Math.sin(a) * ry * rStart;
+                    const x2 = cx + Math.cos(a) * rx * rEnd + Math.sin(h * 1.3) * 3.5;
+                    const y2 = cy + Math.sin(a) * ry * rEnd + 4.5;
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
+            });
+
+            // 4c. Huellas paralelas del Lunar Rover (LRV) dibujadas en el regolito alrededor de x=-42, z=24
+            ctx.strokeStyle = 'rgba(36, 33, 30, 0.58)';
+            ctx.lineWidth = 1.6;
+            [-0.8, 0.8].forEach(trackOffset => {
+                ctx.beginPath();
+                for (let t = 0; t <= 40; t++) {
+                    const wx = -64 + t * 1.1;
+                    const wz = 16 + Math.sin(t * 0.22) * 5.5 + t * 0.22 + trackOffset;
+                    const px = toCanvasX(wx);
+                    const py = toCanvasY(wz);
+                    if (t === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+            });
+
+            // 4d. Zona de eyección quemada por el motor del Módulo Lunar Eagle (x=12, z=22)
+            const lmCx = toCanvasX(12);
+            const lmCy = toCanvasY(22);
+            const scorchGrad = ctx.createRadialGradient(lmCx, lmCy, 4, lmCx, lmCy, 36);
+            scorchGrad.addColorStop(0, 'rgba(30, 27, 24, 0.55)');
+            scorchGrad.addColorStop(1, 'rgba(30, 27, 24, 0)');
+            ctx.fillStyle = scorchGrad;
+            ctx.beginPath();
+            ctx.arc(lmCx, lmCy, 36, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 4e. Doble línea de tinta de la cresta intermedia
+            for (let pass = 0; pass < 2; pass++) {
+                ctx.strokeStyle = pass === 0 ? 'rgba(24, 22, 20, 0.82)' : 'rgba(65, 60, 54, 0.55)';
+                ctx.lineWidth = pass === 0 ? 2.5 : 1.25;
+                ctx.beginPath();
+                for (let wx = -TERRAIN_WIDTH / 2; wx <= TERRAIN_WIDTH / 2; wx += 3) {
+                    const wz = 14 + Math.sin(wx * 0.045) * 9 + Math.cos(wx * 0.09) * 3 + pass * 1.4;
+                    const px = toCanvasX(wx);
+                    const py = toCanvasY(wz);
+                    if (wx === -TERRAIN_WIDTH / 2) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+            }
+
+            // 4f. Trazos cortos de lápiz y guijarros dispersos
+            for (let p = 0; p < 550; p++) {
+                const rx = Math.random() * size;
+                const ry = Math.random() * size;
+                const rw = 3 + Math.random() * 11;
+                ctx.strokeStyle = `rgba(46, 43, 39, ${0.24 + Math.random() * 0.34})`;
+                ctx.lineWidth = 1.05;
+                ctx.beginPath();
+                ctx.moveTo(rx, ry);
+                ctx.lineTo(rx + rw, ry + (Math.random() - 0.5) * 2.5);
+                ctx.stroke();
+            }
+
+            // 5. Grano de papel de algodón
+            for (let g = 0; g < 11000; g++) {
+                const gx = Math.random() * size;
+                const gy = Math.random() * size;
+                ctx.fillStyle = g % 2 === 0
+                    ? 'rgba(255, 250, 240, 0.055)'
+                    : 'rgba(45, 42, 38, 0.045)';
+                ctx.fillRect(gx, gy, 2, 2);
+            }
+
+            watercolorTexture = new THREE.CanvasTexture(pencilCanvas);
+            watercolorTexture.anisotropy = 8;
+            watercolorTexture.needsUpdate = true;
+            return watercolorTexture;
+        }
+
+        // --- CONSTRUCCIÓN DEL TERRENO LUNAR EXPANDIDO ---
+        function buildTerrain() {
+            terrainGeometry = new THREE.PlaneGeometry(
+                TERRAIN_WIDTH,
+                TERRAIN_DEPTH,
+                SEGMENTS_X,
+                SEGMENTS_Z
+            );
+            terrainGeometry.rotateX(-Math.PI / 2);
+
+            const posAttr = terrainGeometry.attributes.position;
+            for (let i = 0; i < posAttr.count; i++) {
+                const x = posAttr.getX(i);
+                const z = posAttr.getZ(i);
+                const y = getTerrainHeight(x, z);
+                posAttr.setY(i, y);
+            }
+            terrainGeometry.computeVertexNormals();
+
+            const tex = generateWatercolorInkTexture();
+
+            terrainMaterial = new THREE.MeshStandardMaterial({
+                map: tex,
+                color: 0xf7f4ee,
+                roughness: 0.96,
+                metalness: 0.0,
+                flatShading: false
+            });
+
+            terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
+            terrainMesh.receiveShadow = true;
+            scene.add(terrainMesh);
+
+            // Base / zócalo inferior expandido
+            const skirtMat = new THREE.MeshBasicMaterial({
+                color: 0x1a1816,
+                side: THREE.DoubleSide
+            });
+            const skirtGeo = new THREE.BoxGeometry(TERRAIN_WIDTH, 22, TERRAIN_DEPTH);
+            const skirtMesh = new THREE.Mesh(skirtGeo, skirtMat);
+            skirtMesh.position.y = -11.5;
+            scene.add(skirtMesh);
+
+            const edgesGeo = new THREE.EdgesGeometry(skirtGeo);
+            const edgesMat = new THREE.LineBasicMaterial({ color: 0x6e685f, transparent: true, opacity: 0.55 });
+            const borderLines = new THREE.LineSegments(edgesGeo, edgesMat);
+            borderLines.position.y = -11.5;
+            scene.add(borderLines);
+        }
+
+        // --- HELPER ESTILO ILUSTRACIÓN CON CONTORNO DE TINTA (INVERTED HULL) ---
+        function addInkedMesh(parent, geometry, colorHex, options = {}) {
+            const mat = options.metalness !== undefined
+                ? new THREE.MeshStandardMaterial({
+                    color: colorHex,
+                    roughness: options.roughness !== undefined ? options.roughness : 0.45,
+                    metalness: options.metalness,
+                    emissive: options.emissive || 0x000000,
+                    emissiveIntensity: options.emissiveIntensity || 0
+                })
+                : new THREE.MeshToonMaterial({ color: colorHex });
+
+            const mesh = new THREE.Mesh(geometry, mat);
+            if (options.position) mesh.position.set(...options.position);
+            if (options.rotation) mesh.rotation.set(...options.rotation);
+            if (options.scale) mesh.scale.set(...options.scale);
+            parent.add(mesh);
+
+            if (!options.noOutline) {
+                const outlineScale = options.outlineScale || 1.06;
+                const outlineMat = new THREE.MeshBasicMaterial({
+                    color: 0x141210,
+                    side: THREE.BackSide
+                });
+                const outline = new THREE.Mesh(geometry, outlineMat);
+                outline.scale.set(outlineScale, outlineScale, outlineScale);
+                mesh.add(outline);
+            }
+
+            if (options.artifactRef) {
+                mesh.userData.artifact = options.artifactRef;
+                clickableMeshes.push(mesh);
+            }
+
+            return mesh;
+        }
+
+        // --- CONSTRUCCIÓN DE ARTEFACTOS 3D DE LA NASA ---
+        function buildNASAArtifacts() {
+            artifactsGroup = new THREE.Group();
+
+            // 1. MÓDULO LUNAR EAGLE (ETAPA DE DESCENSO - APOLO 11)
+            const lmData = NASA_ARTIFACTS.find(a => a.id === 'apollo-11-lm');
+            const lmGroup = new THREE.Group();
+            const lmGroundY = getTerrainHeight(lmData.pos.x, lmData.pos.z);
+            lmData.pos.y = lmGroundY;
+            lmGroup.position.set(lmData.pos.x, lmGroundY, lmData.pos.z);
+
+            // Cuerpo octogonal dorado (Kapton foil)
+            addInkedMesh(lmGroup, new THREE.CylinderGeometry(2.5, 2.5, 1.85, 8), 0xd4a038, {
+                position: [0, 2.1, 0],
+                metalness: 0.72,
+                roughness: 0.32,
+                outlineScale: 1.04,
+                artifactRef: lmData
+            });
+            // Cubierta superior oscura y anillo de acoplamiento
+            addInkedMesh(lmGroup, new THREE.CylinderGeometry(2.2, 2.45, 0.25, 8), 0x2b2927, {
+                position: [0, 3.12, 0],
+                metalness: 0.5,
+                artifactRef: lmData
+            });
+            addInkedMesh(lmGroup, new THREE.CylinderGeometry(0.95, 1.05, 0.35, 16), 0x524e4a, {
+                position: [0, 3.35, 0],
+                artifactRef: lmData
+            });
+            // Tobera del motor de descenso bajo el cuerpo
+            addInkedMesh(lmGroup, new THREE.CylinderGeometry(0.45, 0.85, 0.9, 16), 0x262422, {
+                position: [0, 0.95, 0],
+                artifactRef: lmData
+            });
+            // Tanques laterales plateados/negros
+            [0, Math.PI / 2, Math.PI, -Math.PI / 2].forEach((ang, i) => {
+                const tx = Math.cos(ang) * 1.9;
+                const tz = Math.sin(ang) * 1.9;
+                addInkedMesh(lmGroup, new THREE.SphereGeometry(0.75, 12, 10), i % 2 === 0 ? 0xc8c2b8 : 0x383532, {
+                    position: [tx, 2.1, tz],
+                    scale: [1, 1.15, 1],
+                    artifactRef: lmData
+                });
+            });
+            // 4 Patas de aterrizaje articuladas + platos circulares dorados
+            [Math.PI / 4, (3 * Math.PI) / 4, (5 * Math.PI) / 4, (7 * Math.PI) / 4].forEach((ang, idx) => {
+                const legHolder = new THREE.Group();
+                legHolder.rotation.y = ang;
+
+                // Puntal principal inclinado
+                addInkedMesh(legHolder, new THREE.CylinderGeometry(0.11, 0.13, 3.1, 8), 0xd9a840, {
+                    position: [2.75, 1.45, 0],
+                    rotation: [0, 0, -0.46],
+                    metalness: 0.65,
+                    artifactRef: lmData
+                });
+                // Puntales secundarios en V
+                addInkedMesh(legHolder, new THREE.CylinderGeometry(0.06, 0.06, 2.2, 6), 0xb8b2a8, {
+                    position: [2.35, 2.25, 0.45],
+                    rotation: [0.25, 0, -0.85]
+                });
+                addInkedMesh(legHolder, new THREE.CylinderGeometry(0.06, 0.06, 2.2, 6), 0xb8b2a8, {
+                    position: [2.35, 2.25, -0.45],
+                    rotation: [-0.25, 0, -0.85]
+                });
+                // Plato de aterrizaje (Footpad)
+                addInkedMesh(legHolder, new THREE.CylinderGeometry(0.72, 0.82, 0.18, 16), 0xd9a840, {
+                    position: [3.42, 0.12, 0],
+                    metalness: 0.7,
+                    artifactRef: lmData
+                });
+                // Escalera en la pata delantera (idx === 0)
+                if (idx === 0) {
+                    addInkedMesh(legHolder, new THREE.BoxGeometry(0.14, 2.1, 0.48), 0xd8d2c7, {
+                        position: [2.95, 1.65, 0],
+                        rotation: [0, 0, -0.46],
+                        artifactRef: lmData
+                    });
+                }
+                lmGroup.add(legHolder);
+            });
+            artifactsGroup.add(lmGroup);
+
+            // 2. LUNAR ROVING VEHICLE (LRV - APOLO 15)
+            const lrvData = NASA_ARTIFACTS.find(a => a.id === 'lunar-rover-15');
+            const lrvGroup = new THREE.Group();
+            const lrvGroundY = getTerrainHeight(lrvData.pos.x, lrvData.pos.z);
+            lrvData.pos.y = lrvGroundY;
+            lrvGroup.position.set(lrvData.pos.x, lrvGroundY, lrvData.pos.z);
+            lrvGroup.rotation.y = 0.55;
+
+            // Chasis tubular de aluminio
+            addInkedMesh(lrvGroup, new THREE.BoxGeometry(3.4, 0.26, 1.85), 0xc9c3b8, {
+                position: [0, 0.72, 0],
+                metalness: 0.55,
+                artifactRef: lrvData
+            });
+            // Dos asientos plegables de nailon y aluminio
+            [-0.48, 0.48].forEach(sz => {
+                addInkedMesh(lrvGroup, new THREE.BoxGeometry(0.65, 0.12, 0.65), 0x3b3835, {
+                    position: [-0.15, 0.92, sz],
+                    artifactRef: lrvData
+                });
+                addInkedMesh(lrvGroup, new THREE.BoxGeometry(0.12, 0.75, 0.65), 0xc7c1b6, {
+                    position: [-0.45, 1.28, sz],
+                    rotation: [0, 0, 0.18],
+                    artifactRef: lrvData
+                });
+            });
+            // Consola central con joystick en T
+            addInkedMesh(lrvGroup, new THREE.BoxGeometry(0.55, 0.45, 0.32), 0x262422, {
+                position: [0.45, 1.05, 0],
+                artifactRef: lrvData
+            });
+            // 4 Ruedas de malla con guardabarros naranja/blanco
+            [
+                [1.18, 0.98], [1.18, -0.98],
+                [-1.18, 0.98], [-1.18, -0.98]
+            ].forEach(([wx, wz]) => {
+                const wheelGeo = new THREE.CylinderGeometry(0.52, 0.52, 0.34, 16);
+                wheelGeo.rotateX(Math.PI / 2);
+                addInkedMesh(lrvGroup, wheelGeo, 0x45413d, {
+                    position: [wx, 0.52, wz],
+                    artifactRef: lrvData
+                });
+                // Guardabarros
+                addInkedMesh(lrvGroup, new THREE.BoxGeometry(0.85, 0.08, 0.42), 0xd97b38, {
+                    position: [wx, 1.06, wz]
+                });
+            });
+            // Antena parabólica de alta ganancia (malla dorada) + cámara de TV frontal
+            addInkedMesh(lrvGroup, new THREE.CylinderGeometry(0.04, 0.04, 1.35, 8), 0xd8d2c7, {
+                position: [1.25, 1.45, -0.55]
+            });
+            const dishGeo = new THREE.ConeGeometry(0.68, 0.35, 16, 1, true);
+            dishGeo.rotateX(Math.PI * 0.78);
+            addInkedMesh(lrvGroup, dishGeo, 0xdba944, {
+                position: [1.25, 2.15, -0.55],
+                metalness: 0.75,
+                artifactRef: lrvData
+            });
+            // Cámara de TV en el mástil delantero derecho
+            addInkedMesh(lrvGroup, new THREE.CylinderGeometry(0.03, 0.03, 0.95, 8), 0xd8d2c7, {
+                position: [1.35, 1.25, 0.55]
+            });
+            addInkedMesh(lrvGroup, new THREE.BoxGeometry(0.38, 0.24, 0.24), 0xe8e2d7, {
+                position: [1.35, 1.75, 0.55],
+                artifactRef: lrvData
+            });
+            artifactsGroup.add(lrvGroup);
+
+            // 3. ESTACIÓN CIENTÍFICA EASEP / RETRORREFLECTOR LÁSER Y SISMÓMETRO
+            const easepData = NASA_ARTIFACTS.find(a => a.id === 'easep-alsep');
+            const easepGroup = new THREE.Group();
+            const easepGroundY = getTerrainHeight(easepData.pos.x, easepData.pos.z);
+            easepData.pos.y = easepGroundY;
+            easepGroup.position.set(easepData.pos.x, easepGroundY, easepData.pos.z);
+            easepGroup.rotation.y = -0.35;
+
+            // Sismómetro Pasivo (PSE) dorado con alas solares azules
+            addInkedMesh(easepGroup, new THREE.CylinderGeometry(0.55, 0.65, 0.75, 14), 0xd9a840, {
+                position: [0, 0.42, 0],
+                metalness: 0.7,
+                artifactRef: easepData
+            });
+            // Paneles solares desplegados a ambos lados
+            [-1.35, 1.35].forEach(px => {
+                addInkedMesh(easepGroup, new THREE.BoxGeometry(1.45, 0.06, 0.72), 0x1e3a5f, {
+                    position: [px, 0.55, 0],
+                    rotation: [0.22, 0, 0],
+                    metalness: 0.45,
+                    artifactRef: easepData
+                });
+            });
+            // Retrorreflector Láser (LRRR) inclinado hacia la Tierra
+            addInkedMesh(easepGroup, new THREE.BoxGeometry(0.85, 0.14, 0.85), 0xd6d0c5, {
+                position: [2.2, 0.45, 1.2],
+                rotation: [0.55, 0.2, 0],
+                artifactRef: easepData
+            });
+            addInkedMesh(easepGroup, new THREE.BoxGeometry(0.68, 0.08, 0.68), 0x7dd3fc, {
+                position: [2.2, 0.52, 1.2],
+                rotation: [0.55, 0.2, 0],
+                emissive: 0x38bdf8,
+                emissiveIntensity: 0.35,
+                noOutline: true,
+                artifactRef: easepData
+            });
+            artifactsGroup.add(easepGroup);
+
+            // 4. BANDERA DE EE.UU. Y PLACA APOLO 11
+            const flagData = NASA_ARTIFACTS.find(a => a.id === 'apollo-flag');
+            const flagGroup = new THREE.Group();
+            const flagGroundY = getTerrainHeight(flagData.pos.x, flagData.pos.z);
+            flagData.pos.y = flagGroundY;
+            flagGroup.position.set(flagData.pos.x, flagGroundY, flagData.pos.z);
+
+            // Mástil vertical y barra horizontal telescópica
+            addInkedMesh(flagGroup, new THREE.CylinderGeometry(0.045, 0.045, 3.1, 8), 0xe2dcd0, {
+                position: [0, 1.55, 0],
+                metalness: 0.6,
+                artifactRef: flagData
+            });
+            addInkedMesh(flagGroup, new THREE.CylinderGeometry(0.03, 0.03, 1.75, 8), 0xe2dcd0, {
+                position: [0.85, 3.02, 0],
+                rotation: [0, 0, Math.PI / 2]
+            });
+            // Tela ondulada de la bandera (textura pintada en Canvas)
+            const flagCanvas = document.createElement('canvas');
+            flagCanvas.width = 256;
+            flagCanvas.height = 160;
+            const fctx = flagCanvas.getContext('2d');
+            for (let s = 0; s < 13; s++) {
+                fctx.fillStyle = s % 2 === 0 ? '#a83232' : '#f2ede2';
+                fctx.fillRect(0, (s * 160) / 13, 256, 160 / 13 + 1);
+            }
+            fctx.fillStyle = '#1b365d';
+            fctx.fillRect(0, 0, 108, (7 * 160) / 13);
+            fctx.fillStyle = '#f2ede2';
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 6; c++) {
+                    fctx.fillRect(10 + c * 16, 10 + r * 15, 4, 4);
+                }
+            }
+            const flagGeo = new THREE.PlaneGeometry(1.7, 1.05, 12, 6);
+            const fPos = flagGeo.attributes.position;
+            for (let i = 0; i < fPos.count; i++) {
+                const vx = fPos.getX(i);
+                fPos.setZ(i, Math.sin((vx + 0.85) * 4.2) * 0.07);
+            }
+            flagGeo.computeVertexNormals();
+            const flagMat = new THREE.MeshStandardMaterial({
+                map: new THREE.CanvasTexture(flagCanvas),
+                side: THREE.DoubleSide,
+                roughness: 0.85
+            });
+            const flagCloth = new THREE.Mesh(flagGeo, flagMat);
+            flagCloth.position.set(0.87, 2.48, 0);
+            flagCloth.userData.artifact = flagData;
+            clickableMeshes.push(flagCloth);
+            flagGroup.add(flagCloth);
+            artifactsGroup.add(flagGroup);
+
+            // 5. SONDA ROBÓTICA SURVEYOR 3
+            const survData = NASA_ARTIFACTS.find(a => a.id === 'surveyor-3');
+            const survGroup = new THREE.Group();
+            const survGroundY = getTerrainHeight(survData.pos.x, survData.pos.z);
+            survData.pos.y = survGroundY;
+            survGroup.position.set(survData.pos.x, survGroundY, survData.pos.z);
+
+            // Estructura central tubular blanca y dorada
+            addInkedMesh(survGroup, new THREE.CylinderGeometry(0.45, 0.65, 1.65, 6), 0xebe5d9, {
+                position: [0, 1.25, 0],
+                artifactRef: survData
+            });
+            // Mástil superior con panel solar y antena plana
+            addInkedMesh(survGroup, new THREE.CylinderGeometry(0.06, 0.06, 1.85, 8), 0xd8d2c7, {
+                position: [0, 2.75, 0]
+            });
+            addInkedMesh(survGroup, new THREE.BoxGeometry(1.45, 0.08, 0.95), 0x23446e, {
+                position: [0, 3.65, 0],
+                rotation: [0.35, 0.4, 0],
+                artifactRef: survData
+            });
+            // 3 Patas de aterrizaje desplegadas
+            [0, (2 * Math.PI) / 3, (4 * Math.PI) / 3].forEach(ang => {
+                const leg = new THREE.Group();
+                leg.rotation.y = ang;
+                addInkedMesh(leg, new THREE.CylinderGeometry(0.06, 0.07, 1.9, 8), 0xe8e2d6, {
+                    position: [1.15, 0.65, 0],
+                    rotation: [0, 0, -0.78],
+                    artifactRef: survData
+                });
+                addInkedMesh(leg, new THREE.CylinderGeometry(0.32, 0.38, 0.12, 12), 0xd9a840, {
+                    position: [1.82, 0.08, 0]
+                });
+                survGroup.add(leg);
+            });
+            // Brazo mecánico excavador extendido
+            addInkedMesh(survGroup, new THREE.BoxGeometry(1.6, 0.08, 0.08), 0x8a847b, {
+                position: [1.15, 0.85, 0.55],
+                rotation: [0, -0.4, -0.35],
+                artifactRef: survData
+            });
+            artifactsGroup.add(survGroup);
+
+            // 6. CÁMARA TV WESTINGHOUSE EN TRÍPODE (PRIMER PLANO)
+            const camData = NASA_ARTIFACTS.find(a => a.id === 'mert-camera-tripod');
+            const camGroup = new THREE.Group();
+            const camGroundY = getTerrainHeight(camData.pos.x, camData.pos.z);
+            camData.pos.y = camGroundY;
+            camGroup.position.set(camData.pos.x, camGroundY, camData.pos.z);
+
+            // Cuerpo de la cámara de TV lunar
+            addInkedMesh(camGroup, new THREE.BoxGeometry(0.55, 0.34, 0.34), 0xe6e0d5, {
+                position: [0, 1.55, 0],
+                rotation: [0.15, 0.5, 0],
+                artifactRef: camData
+            });
+            // Lente óptica frontal
+            const lensGeo = new THREE.CylinderGeometry(0.11, 0.13, 0.24, 12);
+            lensGeo.rotateZ(Math.PI / 2);
+            addInkedMesh(camGroup, lensGeo, 0x22201e, {
+                position: [0.32, 1.58, -0.16],
+                rotation: [0, 0.5, 0],
+                artifactRef: camData
+            });
+            // 3 Patas del trípode
+            [0, (2 * Math.PI) / 3, (4 * Math.PI) / 3].forEach(ang => {
+                const tLeg = new THREE.Group();
+                tLeg.rotation.y = ang;
+                addInkedMesh(tLeg, new THREE.CylinderGeometry(0.03, 0.03, 1.65, 6), 0xc9c3b8, {
+                    position: [0.42, 0.75, 0],
+                    rotation: [0, 0, -0.32]
+                });
+                camGroup.add(tLeg);
+            });
+            artifactsGroup.add(camGroup);
+
+            scene.add(artifactsGroup);
+        }
+
+        // --- CÚMULOS DE ROCAS 3D CON CONTORNO DE TINTA ---
+        function buildForegroundRocks() {
+            rocksGroup = new THREE.Group();
+
+            const rockSketchCanvas = document.createElement('canvas');
+            rockSketchCanvas.width = 256;
+            rockSketchCanvas.height = 256;
+            const rctx = rockSketchCanvas.getContext('2d');
+            rctx.fillStyle = '#a8a298';
+            rctx.fillRect(0, 0, 256, 256);
+            rctx.strokeStyle = 'rgba(36, 33, 30, 0.35)';
+            rctx.lineWidth = 1.5;
+            for (let i = -256; i < 512; i += 10) {
+                rctx.beginPath();
+                rctx.moveTo(i, 0);
+                rctx.lineTo(i - 120, 256);
+                rctx.stroke();
+            }
+            const rockSketchTex = new THREE.CanvasTexture(rockSketchCanvas);
+
+            function createInkedRock(x, z, scaleX, scaleY, scaleZ, rotY) {
+                const geo = new THREE.DodecahedronGeometry(1, 1);
+                const pos = geo.attributes.position;
+                for (let i = 0; i < pos.count; i++) {
+                    const vx = pos.getX(i);
+                    const vy = pos.getY(i);
+                    const vz = pos.getZ(i);
+                    const n = 0.82 + hash2D(vx * 12 + x, vz * 12 + z) * 0.34;
+                    pos.setXYZ(i, vx * scaleX * n, vy * scaleY * n, vz * scaleZ * n);
+                }
+                geo.computeVertexNormals();
+
+                const rockMat = new THREE.MeshToonMaterial({
+                    map: rockSketchTex,
+                    color: 0xc2bcb2
+                });
+                const rockMesh = new THREE.Mesh(geo, rockMat);
+
+                const outlineMat = new THREE.MeshBasicMaterial({
+                    color: 0x161412,
+                    side: THREE.BackSide
+                });
+                const outlineMesh = new THREE.Mesh(geo, outlineMat);
+                outlineMesh.scale.set(1.075, 1.075, 1.075);
+
+                const holder = new THREE.Group();
+                holder.add(rockMesh);
+                holder.add(outlineMesh);
+
+                const groundY = getTerrainHeight(x, z);
+                holder.position.set(x, groundY + scaleY * 0.42, z);
+                holder.rotation.set(
+                    (Math.random() - 0.5) * 0.25,
+                    rotY,
+                    (Math.random() - 0.5) * 0.25
+                );
+                rocksGroup.add(holder);
+            }
+
+            // Cúmulo de rocas en primer plano (desplazado ligeramente a x = -46, z = 62 para no chocar con artefactos)
+            const mainCluster = [
+                { dx: 0, dz: 0, sx: 3.8, sy: 2.8, sz: 3.2 },
+                { dx: -4.4, dz: 1.2, sx: 3.1, sy: 2.1, sz: 2.5 },
+                { dx: 4.1, dz: 1.4, sx: 2.8, sy: 2.0, sz: 2.4 },
+                { dx: -1.6, dz: -2.0, sx: 2.7, sy: 2.4, sz: 2.2 },
+                { dx: -8.0, dz: 2.2, sx: 1.8, sy: 1.2, sz: 1.6 },
+                { dx: 7.5, dz: 2.4, sx: 1.7, sy: 1.1, sz: 1.5 }
+            ];
+            mainCluster.forEach((r, idx) => {
+                createInkedRock(-46 + r.dx, 62 + r.dz, r.sx, r.sy, r.sz, idx * 0.8);
+            });
+
+            // Rocas dispersas en la superficie expandida
+            for (let i = 0; i < 45; i++) {
+                const rx = (hash2D(i, 1.3) - 0.5) * (TERRAIN_WIDTH * 0.85);
+                const rz = (hash2D(2.7, i) - 0.5) * (TERRAIN_DEPTH * 0.85);
+                const s = 0.55 + hash2D(i, i) * 1.15;
+                createInkedRock(rx, rz, s * 1.2, s * 0.75, s, i * 1.4);
+            }
+
+            scene.add(rocksGroup);
+        }
+
+        // --- CIELO ESTRELLADO 3D Y CONSTELACIONES ILUSTRADAS ---
+        function createFourPointStarTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            const c = 64;
+
+            const glow = ctx.createRadialGradient(c, c, 2, c, c, 54);
+            glow.addColorStop(0, 'rgba(255, 252, 240, 1)');
+            glow.addColorStop(0.25, 'rgba(255, 248, 225, 0.55)');
+            glow.addColorStop(1, 'rgba(255, 248, 225, 0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(c, c, 54, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#fffdf7';
+            ctx.beginPath();
+            ctx.moveTo(c, 4);
+            ctx.quadraticCurveTo(c, c, 124, c);
+            ctx.quadraticCurveTo(c, c, c, 124);
+            ctx.quadraticCurveTo(c, c, 4, c);
+            ctx.quadraticCurveTo(c, c, c, 4);
+            ctx.fill();
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        function buildNightSkyAndConstellations() {
+            starFieldGroup = new THREE.Group();
+            constellationsGroup = new THREE.Group();
+
+            const skyCanvas = document.createElement('canvas');
+            skyCanvas.width = 512;
+            skyCanvas.height = 512;
+            const sctx = skyCanvas.getContext('2d');
+            const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
+            skyGrad.addColorStop(0, '#02070f');
+            skyGrad.addColorStop(0.45, '#071628');
+            skyGrad.addColorStop(0.75, '#0c233a');
+            skyGrad.addColorStop(1, '#06111e');
+            sctx.fillStyle = skyGrad;
+            sctx.fillRect(0, 0, 512, 512);
+
+            const skyGeo = new THREE.SphereGeometry(540, 32, 24);
+            const skyMat = new THREE.MeshBasicMaterial({
+                map: new THREE.CanvasTexture(skyCanvas),
+                side: THREE.BackSide,
+                depthWrite: false
+            });
+            scene.add(new THREE.Mesh(skyGeo, skyMat));
+
+            const starTex = createFourPointStarTexture();
+
+            const starCount = 900;
+            const starPositions = new Float32Array(starCount * 3);
+            for (let i = 0; i < starCount; i++) {
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(Math.random() * 0.92);
+                const r = 440 + Math.random() * 60;
+                starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+                starPositions[i * 3 + 1] = r * Math.cos(phi) - 10;
+                starPositions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+            }
+            const starsGeo = new THREE.BufferGeometry();
+            starsGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+            const starsMat = new THREE.PointsMaterial({
+                color: 0xf7f1e1,
+                size: 2.4,
+                transparent: true,
+                opacity: 0.85
+            });
+            starFieldGroup.add(new THREE.Points(starsGeo, starsMat));
+
+            const constellationData = [
+                {
+                    stars: [
+                        new THREE.Vector3(-62, 86, -180),
+                        new THREE.Vector3(-44, 95, -180),
+                        new THREE.Vector3(-30, 88, -180),
+                        new THREE.Vector3(-19, 73, -180),
+                        new THREE.Vector3(-26, 61, -180),
+                        new THREE.Vector3(4, 71, -180)
+                    ],
+                    links: [[0,1], [1,2], [2,0], [2,3], [3,4], [3,5]],
+                    brightIndices: [0, 1, 2]
+                },
+                {
+                    stars: [
+                        new THREE.Vector3(30, 62, -180),
+                        new THREE.Vector3(39, 78, -180),
+                        new THREE.Vector3(65, 97, -180),
+                        new THREE.Vector3(61, 73, -180),
+                        new THREE.Vector3(45, 67, -180)
+                    ],
+                    links: [[0,1], [1,2], [2,3], [3,4], [4,0], [0,2]],
+                    brightIndices: [0, 2]
+                }
+            ];
+
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0xeef4fa,
+                transparent: true,
+                opacity: 0.72
+            });
+
+            constellationData.forEach(cData => {
+                cData.stars.forEach((pos, idx) => {
+                    const isBright = cData.brightIndices.includes(idx);
+                    const spMat = new THREE.SpriteMaterial({
+                        map: starTex,
+                        color: 0xffffff,
+                        transparent: true,
+                        opacity: 0.95
+                    });
+                    const sprite = new THREE.Sprite(spMat);
+                    sprite.position.copy(pos);
+                    const baseScale = isBright ? 8.5 : 4.8;
+                    sprite.scale.set(baseScale, baseScale, 1);
+                    constellationsGroup.add(sprite);
+
+                    twinklingStars.push({
+                        sprite,
+                        baseScale,
+                        phase: Math.random() * Math.PI * 2,
+                        speed: 1.8 + Math.random() * 1.5
+                    });
+                });
+
+                cData.links.forEach(([a, b]) => {
+                    const lineGeo = new THREE.BufferGeometry().setFromPoints([
+                        cData.stars[a],
+                        cData.stars[b]
+                    ]);
+                    constellationsGroup.add(new THREE.Line(lineGeo, lineMaterial));
+                });
+            });
+
+            scene.add(starFieldGroup);
+            scene.add(constellationsGroup);
+        }
+
+        // --- ILUMINACIÓN ---
+        function setupLighting() {
+            const ambient = new THREE.AmbientLight(0xf6f1e7, 0.90);
+            scene.add(ambient);
+
+            const dirLight = new THREE.DirectionalLight(0xfff7ea, 0.65);
+            dirLight.position.set(-110, 95, 60);
+            scene.add(dirLight);
+
+            const rimLight = new THREE.DirectionalLight(0xe5dfd5, 0.25);
+            rimLight.position.set(100, 45, -110);
+            scene.add(rimLight);
+        }
+
+        // --- SISTEMA DE ETIQUETAS 3D PROYECTADAS SOBRE ARTEFACTOS ---
+        const labelsLayer = document.getElementById('labels-layer');
+        const poiDomElements = [];
+
+        function initArtifactMarkers() {
+            const sidebarList = document.getElementById('sidebar-content');
+            sidebarList.innerHTML = '';
+
+            NASA_ARTIFACTS.forEach(art => {
+                const markerEl = document.createElement('div');
+                markerEl.className = 'poi-marker';
+                markerEl.innerHTML = `
+                    <div class="poi-pill">
+                        <span class="poi-dot"></span>
+                        <span>${art.title}</span>
+                    </div>
+                    <div class="poi-stem"></div>
+                `;
+                markerEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    focusOnArtifact(art);
+                });
+                labelsLayer.appendChild(markerEl);
+                poiDomElements.push({ poi: art, el: markerEl, isBeacon: false });
+
+                const itemBtn = document.createElement('button');
+                itemBtn.className = 'w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center justify-between group';
+                itemBtn.innerHTML = `
+                    <div>
+                        <div class="text-xs font-medium text-[#f5ebd6] group-hover:text-[#f5d08a] transition">${art.title}</div>
+                        <div class="text-[10px] text-[#9fb1c4]">${art.category}</div>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-[#9fb1c4] group-hover:translate-x-0.5 transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
+                `;
+                itemBtn.addEventListener('click', () => focusOnArtifact(art));
+                sidebarList.appendChild(itemBtn);
+            });
+        }
+
+        function focusOnArtifact(art) {
+            const target = art.pos.clone().add(new THREE.Vector3(0, 1.5, 0));
+            const camPos = target.clone().add(art.camOffset);
+            flyCameraTo(camPos, target);
+
+            document.getElementById('info-category').textContent = art.category;
+            document.getElementById('info-coords').textContent = art.coords;
+            document.getElementById('info-title').textContent = art.title;
+            document.getElementById('info-desc').textContent = art.desc;
+            document.getElementById('info-stat1').textContent = art.stat1;
+            document.getElementById('info-stat2').textContent = art.stat2;
+            document.getElementById('info-card').classList.remove('hidden');
+        }
+
+        function flyCameraTo(endPos, endTarget, duration = 1.35) {
+            cameraTransition.active = true;
+            cameraTransition.startPos.copy(camera.position);
+            cameraTransition.endPos.copy(endPos);
+            cameraTransition.startTarget.copy(controls.target);
+            cameraTransition.endTarget.copy(endTarget);
+            cameraTransition.progress = 0;
+            cameraTransition.duration = duration;
+        }
+
+        // --- COLOCACIÓN DE BALIZAS PERSONALIZADAS Y MEDICIÓN ---
+        function placeCustomBeacon(worldPoint) {
+            const index = customBeacons.length + 1;
+
+            const beaconObj = new THREE.Group();
+            const poleGeo = new THREE.CylinderGeometry(0.14, 0.14, 5.5, 8);
+            const poleMat = new THREE.MeshBasicMaterial({ color: 0x11151c });
+            const pole = new THREE.Mesh(poleGeo, poleMat);
+            pole.position.y = 2.75;
+            beaconObj.add(pole);
+
+            const flagGeo = new THREE.ConeGeometry(1.1, 2.2, 4);
+            flagGeo.rotateZ(-Math.PI / 2);
+            const flagMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+            const flag = new THREE.Mesh(flagGeo, flagMat);
+            flag.position.set(1.0, 4.6, 0);
+            beaconObj.add(flag);
+
+            const ringGeo = new THREE.RingGeometry(0.8, 1.3, 24);
+            ringGeo.rotateX(-Math.PI / 2);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.75 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.position.y = 0.15;
+            beaconObj.add(ring);
+
+            beaconObj.position.copy(worldPoint);
+            beaconsGroup.add(beaconObj);
+
+            const labelEl = document.createElement('div');
+            labelEl.className = 'poi-marker beacon-marker';
+            labelEl.innerHTML = `
+                <div class="poi-pill">
+                    <span class="poi-dot"></span>
+                    <span>Baliza #${index}</span>
+                </div>
+                <div class="poi-stem"></div>
+            `;
+            labelsLayer.appendChild(labelEl);
+
+            const beaconData = {
+                id: index,
+                pos: worldPoint.clone(),
+                mesh: beaconObj,
+                el: labelEl
+            };
+            customBeacons.push(beaconData);
+            poiDomElements.push({ poi: { pos: beaconData.pos }, el: labelEl, isBeacon: true });
+
+            updateBeaconsUI();
+        }
+
+        function updateBeaconsUI() {
+            const countEl = document.getElementById('beacon-count');
+            const clearBtn = document.getElementById('clear-beacons-btn');
+
+            if (beaconLine) {
+                beaconsGroup.remove(beaconLine);
+                beaconLine = null;
+            }
+
+            if (customBeacons.length === 0) {
+                countEl.textContent = 'Doble clic para poner baliza';
+                clearBtn.classList.add('hidden');
+                return;
+            }
+
+            clearBtn.classList.remove('hidden');
+
+            if (customBeacons.length >= 2) {
+                const points = customBeacons.map(b => b.pos.clone().add(new THREE.Vector3(0, 0.8, 0)));
+                const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+                const lineMat = new THREE.LineDashedMaterial({
+                    color: 0x7dd3fc,
+                    dashSize: 2.2,
+                    gapSize: 1.4
+                });
+                beaconLine = new THREE.Line(lineGeo, lineMat);
+                beaconLine.computeLineDistances();
+                beaconsGroup.add(beaconLine);
+
+                let totalDist = 0;
+                for (let i = 1; i < customBeacons.length; i++) {
+                    totalDist += customBeacons[i].pos.distanceTo(customBeacons[i - 1].pos);
+                }
+                const km = (totalDist * 1.5).toFixed(1);
+                countEl.textContent = `${customBeacons.length} balizas • Ruta: ${km} km`;
+                showToast(`Baliza #${customBeacons.length} colocada • Distancia total: ${km} km`);
+            } else {
+                countEl.textContent = '1 baliza (añade otra para medir)';
+                showToast('Baliza #1 colocada. Haz doble clic en otro punto para medir distancia.');
+            }
+        }
+
+        function clearAllBeacons() {
+            customBeacons.forEach(b => {
+                beaconsGroup.remove(b.mesh);
+                if (b.el && b.el.parentNode) b.el.parentNode.removeChild(b.el);
+            });
+            for (let i = poiDomElements.length - 1; i >= 0; i--) {
+                if (poiDomElements[i].isBeacon) poiDomElements.splice(i, 1);
+            }
+            customBeacons = [];
+            updateBeaconsUI();
+            showToast('Balizas eliminadas');
+        }
+
+        let toastTimer = null;
+        function showToast(text) {
+            const toast = document.getElementById('toast-msg');
+            document.getElementById('toast-text').textContent = text;
+            toast.style.opacity = '1';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3200);
+        }
+
+        // --- ACTUALIZACIÓN DE ETIQUETAS 3D -> 2D EN PANTALLA ---
+        function updateProjectedLabels() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            poiDomElements.forEach(item => {
+                if (!showLabels) {
+                    item.el.style.display = 'none';
+                    return;
+                }
+
+                const worldPos = item.poi.pos.clone();
+                worldPos.y += 3.6;
+                const projected = worldPos.project(camera);
+
+                if (projected.z > 1) {
+                    item.el.style.display = 'none';
+                    return;
+                }
+
+                const screenX = (projected.x * 0.5 + 0.5) * width;
+                const screenY = (-projected.y * 0.5 + 0.5) * height;
+
+                if (screenX < -60 || screenX > width + 60 || screenY < -60 || screenY > height + 60) {
+                    item.el.style.display = 'none';
+                } else {
+                    item.el.style.display = 'block';
+                    item.el.style.left = `${screenX}px`;
+                    item.el.style.top = `${screenY}px`;
+                }
+            });
+        }
+
+        // --- EVENTOS DE RATÓN, TÁCTIL Y TECLADO ---
+        function setupInteractions() {
+            const container = document.getElementById('canvas-container');
+
+            // Telemetría de coordenadas al mover el puntero sobre el terreno
+            container.addEventListener('pointermove', (e) => {
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+
+                // Cambiar cursor si pasa sobre un artefacto 3D
+                const artHits = raycaster.intersectObjects(clickableMeshes, false);
+                container.style.cursor = artHits.length > 0 ? 'pointer' : 'grab';
+
+                const hits = raycaster.intersectObject(terrainMesh);
+                if (hits.length > 0) {
+                    const pt = hits[0].point;
+                    const lat = (10.0 - (pt.z / TERRAIN_DEPTH) * 32.0).toFixed(1);
+                    const lon = ((pt.x / TERRAIN_WIDTH) * 75.0).toFixed(1);
+                    const alt = Math.round(pt.y * 140);
+                    const latDir = lat >= 0 ? 'N' : 'S';
+                    const lonDir = lon >= 0 ? 'E' : 'O';
+                    document.getElementById('cursor-coords').textContent =
+                        `LAT ${Math.abs(lat)}° ${latDir} • LON ${Math.abs(lon)}° ${lonDir}`;
+                    document.getElementById('elevation-readout').textContent =
+                        `ALT ${alt >= 0 ? '+' : ''}${alt}m`;
+                }
+            });
+
+            // Clic simple sobre un artefacto 3D para inspeccionarlo
+            let pointerDownPos = { x: 0, y: 0 };
+            container.addEventListener('pointerdown', (e) => {
+                pointerDownPos = { x: e.clientX, y: e.clientY };
+            });
+            container.addEventListener('pointerup', (e) => {
+                const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+                if (dist < 5) {
+                    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                    raycaster.setFromCamera(mouse, camera);
+                    const artHits = raycaster.intersectObjects(clickableMeshes, false);
+                    if (artHits.length > 0 && artHits[0].object.userData.artifact) {
+                        focusOnArtifact(artHits[0].object.userData.artifact);
+                    }
+                }
+            });
+
+            // Doble clic para colocar balizas de exploración
+            container.addEventListener('dblclick', (e) => {
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                const hits = raycaster.intersectObject(terrainMesh);
+                if (hits.length > 0) {
+                    placeCustomBeacon(hits[0].point);
+                }
+            });
+
+            controls.addEventListener('start', () => {
+                cameraTransition.active = false;
+            });
+
+            window.addEventListener('keydown', (e) => {
+                keysPressed[e.key.toLowerCase()] = true;
+            });
+            window.addEventListener('keyup', (e) => {
+                keysPressed[e.key.toLowerCase()] = false;
+            });
+
+            // Botones de la barra de herramientas
+            document.getElementById('btn-view-default').addEventListener('click', () => {
+                flyCameraTo(new THREE.Vector3(0, 46, 148), new THREE.Vector3(0, 6, -10));
+            });
+
+            document.getElementById('btn-view-top').addEventListener('click', () => {
+                flyCameraTo(new THREE.Vector3(0, 225, 30), new THREE.Vector3(0, 0, 0));
+            });
+
+            document.getElementById('btn-view-surface').addEventListener('click', () => {
+                // Vista rasante cerca de Base Tranquilidad mirando el Módulo Eagle y el Rover
+                flyCameraTo(new THREE.Vector3(-8, 8.5, 58), new THREE.Vector3(12, 6, 12));
+            });
+
+            document.getElementById('btn-toggle-labels').addEventListener('click', (e) => {
+                showLabels = !showLabels;
+                e.currentTarget.classList.toggle('bg-white/10', showLabels);
+                e.currentTarget.classList.toggle('opacity-60', !showLabels);
+            });
+
+            document.getElementById('btn-toggle-stars').addEventListener('click', (e) => {
+                showConstellations = !showConstellations;
+                constellationsGroup.visible = showConstellations;
+                e.currentTarget.classList.toggle('bg-white/10', showConstellations);
+                e.currentTarget.classList.toggle('opacity-60', !showConstellations);
+            });
+
+            const pencilSlider = document.getElementById('pencil-slider');
+            pencilSlider.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                if (terrainMaterial) {
+                    const shade = Math.min(1.05, Math.max(0.78, 1.25 - val * 0.25));
+                    terrainMaterial.color.setRGB(shade, shade * 0.99, shade * 0.97);
+                }
+            });
+
+            let sidebarOpen = true;
+            document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
+                sidebarOpen = !sidebarOpen;
+                document.getElementById('sidebar-content').classList.toggle('hidden', !sidebarOpen);
+                document.getElementById('beacons-footer').classList.toggle('hidden', !sidebarOpen);
+                document.getElementById('sidebar-chevron').style.transform = sidebarOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+            });
+
+            document.getElementById('clear-beacons-btn').addEventListener('click', clearAllBeacons);
+            document.getElementById('close-info-btn').addEventListener('click', () => {
+                document.getElementById('info-card').classList.add('hidden');
+            });
+
+            const helpModal = document.getElementById('help-modal');
+            document.getElementById('btn-help').addEventListener('click', () => {
+                helpModal.classList.remove('hidden');
+                helpModal.classList.add('flex');
+            });
+            document.getElementById('close-help-btn').addEventListener('click', () => {
+                helpModal.classList.add('hidden');
+                helpModal.classList.remove('flex');
+            });
+            helpModal.addEventListener('click', (e) => {
+                if (e.target === helpModal) {
+                    helpModal.classList.add('hidden');
+                    helpModal.classList.remove('flex');
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // --- MOVIMIENTO POR TECLADO (WASD / FLECHAS) ---
+        function handleKeyboardNavigation(delta) {
+            const moveSpeed = 62 * delta;
+            const forward = new THREE.Vector3();
+            camera.getWorldDirection(forward);
+            forward.y = 0;
+            forward.normalize();
+
+            const right = new THREE.Vector3();
+            right.crossVectors(forward, camera.up).normalize();
+
+            let moved = false;
+            const offset = new THREE.Vector3();
+
+            if (keysPressed['w'] || keysPressed['arrowup']) {
+                offset.addScaledVector(forward, moveSpeed);
+                moved = true;
+            }
+            if (keysPressed['s'] || keysPressed['arrowdown']) {
+                offset.addScaledVector(forward, -moveSpeed);
+                moved = true;
+            }
+            if (keysPressed['a'] || keysPressed['arrowleft']) {
+                offset.addScaledVector(right, -moveSpeed);
+                moved = true;
+            }
+            if (keysPressed['d'] || keysPressed['arrowright']) {
+                offset.addScaledVector(right, moveSpeed);
+                moved = true;
+            }
+
+            if (moved) {
+                cameraTransition.active = false;
+                camera.position.add(offset);
+                controls.target.add(offset);
+            }
+        }
+
+        // --- BUCLE PRINCIPAL DE ANIMACIÓN ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            const elapsed = clock.getElapsedTime();
+
+            if (cameraTransition.active) {
+                cameraTransition.progress += delta / cameraTransition.duration;
+                if (cameraTransition.progress >= 1) {
+                    cameraTransition.progress = 1;
+                    cameraTransition.active = false;
+                }
+                const t = cameraTransition.progress;
+                const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+                camera.position.lerpVectors(cameraTransition.startPos, cameraTransition.endPos, ease);
+                controls.target.lerpVectors(cameraTransition.startTarget, cameraTransition.endTarget, ease);
+            }
+
+            handleKeyboardNavigation(delta);
+
+            for (let i = 0; i < twinklingStars.length; i++) {
+                const st = twinklingStars[i];
+                const pulse = 1.0 + Math.sin(elapsed * st.speed + st.phase) * 0.16;
+                st.sprite.scale.set(st.baseScale * pulse, st.baseScale * pulse, 1);
+            }
+
+            controls.update();
+            updateProjectedLabels();
+            renderer.render(scene, camera);
+        }
+
+        // --- INICIALIZACIÓN GENERAL ---
+        window.onload = function() {
+            const container = document.getElementById('canvas-container');
+
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x090d14, 0.00085);
+
+            camera = new THREE.PerspectiveCamera(
+                44,
+                window.innerWidth / window.innerHeight,
+                0.5,
+                1200
+            );
+            // Cámara ligeramente más amplia para abarcar la Luna expandida y los artefactos
+            camera.position.set(0, 46, 148);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.target.set(0, 6, -10);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.06;
+            controls.maxDistance = 320;
+            controls.minDistance = 8;
+            controls.maxPolarAngle = Math.PI * 0.495;
+
+            beaconsGroup = new THREE.Group();
+            scene.add(beaconsGroup);
+
+            setupLighting();
+            buildNightSkyAndConstellations();
+            buildTerrain();
+            buildForegroundRocks();
+            buildNASAArtifacts();
+            initArtifactMarkers();
+            setupInteractions();
+            updateBeaconsUI();
+
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 700);
+            }, 400);
+
+            animate();
+        };
+    })();
+    </script>
+</body>
+</html>
