@@ -307,7 +307,7 @@ h1 {
 
 .tarjetas {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 25px;
 }
 
@@ -317,8 +317,8 @@ h1 {
 }
 
 .tarjeta-luna {
-    --imagen-normal: url("../imagenes/luna.jpeg");
-    --imagen-hover: url("../imagenes/apollo.jpg");
+    --imagen-normal: url("../imagenes/apollo noche.jpg");
+    --imagen-hover: url("../imagenes/apolo dia.jpg");
 }
 
 .tarjeta-marte {
@@ -334,7 +334,7 @@ h1 {
 .tarjeta {
     display: block;
     position: relative;
-    min-height: 320px;
+    aspect-ratio: 16 / 10;
     padding: 2em 1.2em;
     border: 1px solid #ffffff25;
     border-radius: 10px;
