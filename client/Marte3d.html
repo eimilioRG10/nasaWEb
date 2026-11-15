@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atlas Marciano Ilustrado 3D — Exploración Robótica NASA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js y OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Fuentes tipográficas estilo cuaderno de exploración -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #160a07;
+            font-family: 'Inter', sans-serif;
+            color: #f7ece4;
+        }
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            cursor: grab;
+        }
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+        .font-serif-title {
+            font-family: 'Cinzel', serif;
+        }
+        .font-mono-coord {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .parchment-panel {
+            background: rgba(28, 14, 10, 0.84);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(235, 196, 168, 0.25);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 230, 210, 0.08);
+        }
+        #atlas-header {
+            width: min(21rem, calc(100vw - 2rem));
+        }
+        #atlas-header .parchment-panel {
+            padding: 0.6rem 0.75rem;
+        }
+        #atlas-header h1 {
+            font-size: clamp(0.85rem, 1.3vw, 1rem);
+        }
+        #atlas-header p {
+            font-size: 10px;
+            line-height: 1.3;
+        }
+        #atlas-header .atlas-telemetry {
+            flex-wrap: wrap;
+            gap: 0.2rem 0.6rem;
+            margin-top: 0.45rem;
+            padding-top: 0.4rem;
+            font-size: 9px;
+        }
+        #poi-sidebar {
+            width: min(17rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+        }
+        #sidebar-content {
+            max-height: min(34vh, 19rem);
+        }
+        #poi-sidebar #toggle-sidebar-btn {
+            padding: 0.5rem 0.75rem;
+        }
+        #sidebar-content > button {
+            padding: 0.35rem 0.5rem;
+            border-radius: 0.65rem;
+        }
+        #sidebar-content > button > div > div:first-child {
+            font-size: 11px;
+            line-height: 1.25;
+        }
+        #sidebar-content > button > div > div:last-child {
+            font-size: 9px;
+            line-height: 1.2;
+        }
+        #beacons-footer {
+            padding: 0.4rem 0.65rem;
+            font-size: 10px;
+        }
+        #info-card {
+            left: 1rem;
+            bottom: 5rem;
+            width: min(21rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 7rem);
+            overflow-y: auto;
+        }
+        #info-card > .parchment-panel {
+            padding: 0.75rem;
+        }
+        #info-card h3 {
+            font-size: 1rem;
+            line-height: 1.25;
+            margin-bottom: 0.4rem;
+        }
+        #info-card p {
+            font-size: 0.75rem;
+            line-height: 1.45;
+            margin-bottom: 0.6rem;
+        }
+        #info-card .grid {
+            grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+            gap: 0.4rem;
+        }
+        #controls-bar > div {
+            max-width: min(90vw, 64rem);
+            padding: 0.35rem;
+        }
+        #controls-bar .tool-btn {
+            padding: 0.35rem 0.5rem;
+        }
+        @media (max-width: 640px) {
+            #atlas-header {
+                top: 0.5rem;
+                left: 0.5rem;
+                width: min(19rem, calc(100vw - 1rem));
+            }
+            #atlas-header .atlas-telemetry {
+                font-size: 8px;
+            }
+            #poi-sidebar {
+                top: 6.5rem;
+                right: 0.5rem;
+                width: min(16rem, calc(100vw - 1rem));
+                max-height: calc(100vh - 9rem);
+            }
+            #sidebar-content {
+                max-height: 28vh;
+            }
+            #info-card {
+                left: 0.5rem;
+                bottom: 4.5rem;
+                width: min(19rem, calc(100vw - 1rem));
+                max-height: calc(100vh - 6rem);
+            }
+        }
+        /* Etiquetas 3D proyectadas sobre los artefactos */
+        .poi-marker {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            z-index: 10;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+        }
+        .poi-marker:hover {
+            transform: translate(-50%, -108%) scale(1.07);
+            z-index: 20;
+        }
+        .poi-pill {
+            background: rgba(32, 15, 10, 0.92);
+            border: 1.5px solid #e8c3a8;
+            color: #fbf2eb;
+            padding: 3px 7px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.65);
+        }
+        .poi-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #f59e0b;
+            box-shadow: 0 0 8px #f59e0b;
+            animation: pulseGlow 2.2s infinite ease-in-out;
+        }
+        .poi-stem {
+            width: 1.5px;
+            height: 14px;
+            background: linear-gradient(to bottom, #e8c3a8, rgba(232, 195, 168, 0.1));
+            margin: 0 auto;
+        }
+        .beacon-marker .poi-pill {
+            border-color: #7dd3fc;
+            background: rgba(12, 34, 52, 0.92);
+        }
+        .beacon-marker .poi-dot {
+            background: #38bdf8;
+            box-shadow: 0 0 8px #38bdf8;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.7; }
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.25);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(232, 195, 168, 0.32);
+            border-radius: 9999px;
+        }
+        .fade-in {
+            animation: fadeIn 0.35s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor Principal WebGL -->
+    <div id="canvas-container"></div>
+
+    <!-- Capa de Etiquetas 3D Proyectadas -->
+    <div id="labels-layer" class="fixed inset-0 pointer-events-none z-10 overflow-hidden"></div>
+
+    <!-- Pantalla de Carga Ilustrada -->
+    <div id="loader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#180b07] transition-opacity duration-700">
+        <div class="relative w-20 h-20 mb-5 flex items-center justify-center">
+            <svg class="w-16 h-16 text-[#f2b885] animate-spin" style="animation-duration: 9s;" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+                <path d="M32 6 L35 29 L58 32 L35 35 L32 58 L29 35 L6 32 L29 29 Z" fill="currentColor" opacity="0.85"/>
+            </svg>
+        </div>
+        <h2 class="font-serif-title text-xl tracking-widest text-[#fbe9dc] uppercase">Cartografiando Marte</h2>
+        <p class="text-xs text-[#cfa992] mt-2 tracking-wide">Aplicando aguadas de óxido de hierro, tinta y desplegando rovers NASA...</p>
+    </div>
+
+    <!-- Encabezado Superior Izquierdo: Título y Coordenadas -->
+    <header id="atlas-header" class="fixed top-4 left-4 z-20 pointer-events-none max-w-[calc(100vw-2rem)] sm:max-w-md">
+        <div class="parchment-panel rounded-2xl px-4 py-3 pointer-events-auto">
+            <div class="flex items-center gap-2.5">
+                <svg class="w-6 h-6 text-[#f59e0b] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <circle cx="12" cy="12" r="8" fill="rgba(245, 158, 11, 0.2)"/>
+                    <path d="M4 14c4-3 12-3 16 0" stroke-linecap="round"/>
+                </svg>
+                <div>
+                    <h1 class="font-serif-title text-base sm:text-lg font-bold tracking-wider text-[#fdf2ea] leading-tight">
+                        ATLAS MARCIANO <span class="text-[#e8985e] font-normal">3D • NASA</span>
+                    </h1>
+                    <p class="text-[11px] text-[#d6b8a5] leading-tight">Rovers, Aterrizadores y Reliquias en el Planeta Rojo</p>
+                </div>
+            </div>
+            <!-- Telemetría del cursor en tiempo real -->
+            <div class="atlas-telemetry mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-coord text-[#e3cbbd]">
+                <span id="cursor-coords">LAT 00.0° N • LON 000.0° E</span>
+                <span id="elevation-readout" class="text-[#f59e0b]">ALT -1,420m</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Panel Lateral Derecho: Explorador de Artefactos de la NASA en Marte -->
+    <aside id="poi-sidebar" class="fixed top-4 right-4 z-20 max-w-[calc(100vw-2rem)] transition-all duration-300">
+        <div class="parchment-panel rounded-2xl overflow-hidden">
+            <div class="px-4 py-3 flex items-center justify-between border-b border-white/10 cursor-pointer" id="toggle-sidebar-btn">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-[#f59e0b]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                    </svg>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-[#fbe9dc]">Misiones NASA (3D)</span>
+                </div>
+                <button class="text-[#d6b8a5] hover:text-white p-1 rounded-lg transition" aria-label="Alternar lista">
+                    <svg id="sidebar-chevron" class="w-4 h-4 transition-transform duration-300" style="transform: rotate(180deg)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="sidebar-content" class="hidden max-h-[46vh] overflow-y-auto p-2 space-y-1.5">
+                <!-- Se llena dinámicamente con JS -->
+            </div>
+            <!-- Sección de Balizas Personalizadas -->
+            <div id="beacons-footer" class="hidden px-3 py-2.5 bg-black/30 border-t border-white/10 flex items-center justify-between text-[11px] text-[#cfa992]">
+                <span id="beacon-count">Doble clic para poner baliza</span>
+                <button id="clear-beacons-btn" class="text-sky-300 hover:text-sky-200 underline hidden">Limpiar</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Tarjeta Informativa de Cuaderno (Modal Flotante al seleccionar Artefacto) -->
+    <div id="info-card" class="fixed bottom-24 left-4 z-30 w-80 sm:w-96 max-w-[calc(100vw-2rem)] hidden">
+        <div class="parchment-panel rounded-2xl p-4 sm:p-5 relative fade-in border border-[#e8b48a]/40">
+            <button id="close-info-btn" class="absolute top-3.5 right-3.5 text-[#cfa992] hover:text-white p-1.5 rounded-full hover:bg-white/10 transition" title="Cerrar ficha">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <div class="flex items-center gap-2 text-[11px] font-mono-coord text-[#e8985e] uppercase tracking-wider mb-1">
+                <span id="info-category">ROVER DE EXPLORACIÓN</span>
+                <span>•</span>
+                <span id="info-coords">18.44°N, 77.45°E</span>
+            </div>
+            <h3 id="info-title" class="font-serif-title text-lg sm:text-xl font-bold text-[#fdf2ea] mb-2">Rover Perseverance</h3>
+            <p id="info-desc" class="text-xs sm:text-sm text-[#e6d0c3] leading-relaxed mb-3">
+                Vehículo nuclear de seis ruedas que explora el antiguo delta fluvial del cráter Jezero buscando biofirmas.
+            </p>
+            <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-white/10 text-[11px]">
+                <div class="bg-white/5 rounded-xl px-2.5 py-1.5">
+                    <span class="text-[#b8927c] block">Aterrizaje / Misión</span>
+                    <span id="info-stat1" class="font-mono-coord text-[#fbe9dc] font-medium">18 Feb 2021</span>
+                </div>
+                <div class="bg-white/5 rounded-xl px-2.5 py-1.5">
+                    <span class="text-[#b8927c] block">Masa / Estado</span>
+                    <span id="info-stat2" class="font-mono-coord text-[#fbe9dc] font-medium">1,025 kg • Activo</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast / Notificación de Acción -->
+    <div id="toast-msg" class="fixed top-20 left-1/2 -translate-x-1/2 z-40 pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="parchment-panel rounded-full px-4 py-2 text-xs text-[#fdf2ea] flex items-center gap-2 shadow-lg">
+            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+            <span id="toast-text">Baliza colocada en el terreno</span>
+        </div>
+    </div>
+
+    <!-- Barra Inferior de Herramientas y Acciones 3D -->
+    <nav id="controls-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 max-w-[95vw]">
+        <div class="parchment-panel rounded-2xl px-2.5 py-2 flex items-center gap-1.5 sm:gap-2 overflow-x-auto">
+            <a href="index.html" aria-label="Volver al inicio" title="Volver al inicio" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#fdf2ea] transition shrink-0">
+                <svg class="w-4 h-4 text-[#f59e0b]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m7 7-7-7 7-7"/>
+                </svg>
+                <span>Inicio</span>
+            </a>
+
+            <!-- Vista Panorámica Inicial -->
+            <button id="btn-view-default" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#fdf2ea] transition shrink-0" title="Restaurar vista ilustrada panorámica">
+                <svg class="w-4 h-4 text-[#f59e0b]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Vista Clásica</span>
+            </button>
+
+            <!-- Vista Orbital / Cenital -->
+            <button id="btn-view-top" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 hover:bg-white/15 text-[#ebd5c7] transition shrink-0" title="Vista cenital cartográfica">
+                <svg class="w-4 h-4 text-sky-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span class="optional-label hidden sm:inline">Orbital</span>
+            </button>
+
+            <!-- Vista Superficie / Rasante -->
+            <button id="btn-view-surface" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 hover:bg-white/15 text-[#ebd5c7] transition shrink-0" title="Explorar a ras de suelo mirando el cielo ambarino">
+                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 17h14M5 17l4-8 4 5 3-3 3 6"/>
+                </svg>
+                <span class="optional-label hidden sm:inline">Superficie</span>
+            </button>
+
+            <div class="w-px h-6 bg-white/15 mx-0.5 shrink-0"></div>
+
+            <!-- Alternar Etiquetas -->
+            <button id="btn-toggle-labels" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#fdf2ea] transition shrink-0" title="Mostrar u ocultar etiquetas">
+                <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                </svg>
+                <span class="optional-label hidden md:inline">Etiquetas</span>
+            </button>
+
+            <!-- Alternar Fobos, Deimos y Polvo Atmosférico -->
+            <button id="btn-toggle-skyfx" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#fdf2ea] transition shrink-0" title="Alternar lunas Fobos/Deimos y polvo marciano">
+                <svg class="w-4 h-4 text-orange-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <span class="optional-label hidden md:inline">Atmósfera</span>
+            </button>
+
+            <div class="w-px h-6 bg-white/15 mx-0.5 shrink-0"></div>
+
+            <!-- Control de Intensidad de Trazos de Lápiz -->
+            <div class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/5 shrink-0" title="Intensidad de sombreado a lápiz y contraste">
+                <svg class="w-3.5 h-3.5 text-[#e8b48a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+                <span class="text-[11px] text-[#e3cbbd] hidden lg:inline">Tinta</span>
+                <input id="pencil-slider" type="range" min="0.65" max="1.45" step="0.05" value="1.0" class="w-16 sm:w-20 accent-[#e8985e] cursor-pointer h-1 bg-white/20 rounded-lg">
+            </div>
+
+            <!-- Ayuda -->
+            <button id="btn-help" class="tool-btn px-2.5 py-2 rounded-xl text-xs font-medium flex items-center gap-1 hover:bg-white/15 text-[#d6b8a5] transition shrink-0" title="Controles de navegación">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Modal de Ayuda de Controles -->
+    <div id="help-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="parchment-panel rounded-2xl max-w-md w-full p-5 relative fade-in">
+            <button id="close-help-btn" class="absolute top-4 right-4 text-[#cfa992] hover:text-white p-1 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <h3 class="font-serif-title text-lg font-bold text-[#fdf2ea] mb-3">Guía de Exploración Marciana</h3>
+            <ul class="space-y-2.5 text-xs sm:text-sm text-[#e6d0c3]">
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-white/10 font-mono-coord text-[11px] text-[#f59e0b] shrink-0">Clic Artefacto</span>
+                    <span>Haz clic en cualquier rover, helicóptero o módulo 3D para volar hasta él y consultar su historial NASA.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-white/10 font-mono-coord text-[11px] text-[#f59e0b] shrink-0">Arrastrar</span>
+                    <span>Clic izquierdo y arrastrar (o 1 dedo) para orbitar por los cañones, dunas y cráteres de Marte.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-white/10 font-mono-coord text-[11px] text-[#f59e0b] shrink-0">Desplazar</span>
+                    <span>Clic derecho y arrastrar (o 2 dedos) para moverte lateralmente por el mapa.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-white/10 font-mono-coord text-[11px] text-[#f59e0b] shrink-0">W A S D / Flechas</span>
+                    <span>Navegación libre sobre el regolito oxidado con teclado.</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                    <span class="px-2 py-0.5 rounded bg-sky-500/20 border border-sky-400/40 font-mono-coord text-[11px] text-sky-300 shrink-0">Doble Clic</span>
+                    <span>Coloca una <strong>baliza de exploración</strong> en el suelo y mide la ruta entre puntos.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+    /**
+     * ATLAS MARCIANO ILUSTRADO 3D — RELIQUIAS DE LA NASA
+     * - Terreno marciano expandido (340 x 260) con mesetas estratificadas (buttes), dunas transversales,
+     *   cañón tipo Valles Marineris, cráteres erosionados y aguadas en tonos terracota, ocre, siena y tinta.
+     * - Cielo marciano ilustrado con gradiente caramelo/salmón en el horizonte, polvo en suspensión y las lunas Fobos y Deimos.
+     * - 7 Artefactos históricos de la NASA en 3D con estética de tinta y aguada:
+     *   1. Rover Perseverance (Mars 2020)
+     *   2. Helicóptero Ingenuity (primer vuelo propulsado en otro planeta)
+     *   3. Rover Curiosity (MSL — Monte Sharp / Cráter Gale)
+     *   4. Rover Opportunity (MER-B — Meridiani Planum)
+     *   5. Aterrizador InSight (sismómetro SEIS y panel solar cubierto de polvo)
+     *   6. Estación Viking 1 (primer aterrizador exitoso en Marte, 1976)
+     *   7. Mars Pathfinder & Mini-Rover Sojourner (1997)
+     */
+
+    (function() {
+        // --- VARIABLES GLOBALES DE ESCENA ---
+        let scene, camera, renderer, controls;
+        let terrainMesh, terrainGeometry, terrainMaterial;
+        let skyFxGroup, dustParticles, beaconsGroup, rocksGroup, artifactsGroup;
+        let rotorTopMesh, rotorBottomMesh;
+        let pencilCanvas, pencilCtx, watercolorTexture;
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        let clock = new THREE.Clock();
+
+        // Dimensiones expandidas del terreno marciano
+        const TERRAIN_WIDTH = 340;
+        const TERRAIN_DEPTH = 260;
+        const SEGMENTS_X = 300;
+        const SEGMENTS_Z = 240;
+
+        // Estado de navegación y animación de cámara
+        const keysPressed = {};
+        let cameraTransition = {
+            active: false,
+            startPos: new THREE.Vector3(),
+            endPos: new THREE.Vector3(),
+            startTarget: new THREE.Vector3(),
+            endTarget: new THREE.Vector3(),
+            progress: 0,
+            duration: 1.4
+        };
+
+        // Estado de UI y marcadores
+        let showLabels = true;
+        let showSkyFx = true;
+        let customBeacons = [];
+        let beaconLine = null;
+        let clickableMeshes = [];
+
+        // Cráteres marcianos erosionados por el viento y rellenos de arena
+        const CRATERS = [
+            { x: 78, z: -16, radius: 24, depth: 4.5, rimHeight: 4.6, centralPeak: true },
+            { x: 70, z: 46, radius: 18, depth: 3.6, rimHeight: 3.5, centralPeak: false },
+            { x: 38, z: -26, radius: 12, depth: 2.2, rimHeight: 2.5, centralPeak: false },
+            { x: 14, z: -14, radius: 10, depth: 1.8, rimHeight: 2.0, centralPeak: false },
+            { x: -56, z: 46, radius: 15, depth: 2.8, rimHeight: 2.4, centralPeak: false },
+            { x: -90, z: 68, radius: 14, depth: 2.5, rimHeight: 2.6, centralPeak: false },
+            { x: -48, z: -22, radius: 10, depth: 1.7, rimHeight: 1.8, centralPeak: false },
+            { x: 40, z: 36, radius: 9.5, depth: 1.8, rimHeight: 2.0, centralPeak: false },
+            { x: 126, z: 22, radius: 23, depth: 4.8, rimHeight: 4.2, centralPeak: false },
+            { x: 132, z: -54, radius: 18, depth: 3.4, rimHeight: 3.2, centralPeak: true },
+            { x: -130, z: 32, radius: 20, depth: 4.0, rimHeight: 3.8, centralPeak: false },
+            { x: -120, z: -60, radius: 19, depth: 3.6, rimHeight: 3.4, centralPeak: true },
+            { x: -16, z: -90, radius: 21, depth: 3.9, rimHeight: 3.7, centralPeak: false },
+            { x: 86, z: -94, radius: 16, depth: 2.8, rimHeight: 2.7, centralPeak: false },
+            { x: 66, z: 96, radius: 14, depth: 2.5, rimHeight: 2.4, centralPeak: false }
+        ];
+
+        // --- ARTEFACTOS ABANDONADOS / ACTIVOS DE LA NASA EN MARTE ---
+        const MARS_ARTIFACTS = [
+            {
+                id: 'perseverance-rover',
+                title: 'Rover Perseverance (Mars 2020)',
+                category: 'Laboratorio Móvil • Cráter Jezero',
+                coords: '18°26′41″ N, 77°27′03″ E',
+                pos: new THREE.Vector3(10, 0, 20),
+                camOffset: new THREE.Vector3(15, 9, 20),
+                stat1: '18 de febrero de 2021',
+                stat2: '1,025 kg • Generador MMRTG',
+                desc: 'Equipado con mástil SuperCam, brazo robótico de 2 metros, taladro percutor y tubos de titanio para sellar muestras de roca marciana destinadas a ser traídas a la Tierra.'
+            },
+            {
+                id: 'ingenuity-helicopter',
+                title: 'Helicóptero Ingenuity (Fields)',
+                category: 'Aeronave Autónomа • Wright Brothers Field',
+                coords: '18°26′42″ N, 77°27′06″ E',
+                pos: new THREE.Vector3(24, 0, 26),
+                camOffset: new THREE.Vector3(10, 6, 13),
+                stat1: '72 vuelos (2021–2024)',
+                stat2: '1.8 kg • Rotores coaxiales',
+                desc: 'Primera aeronave en realizar un vuelo propulsado y controlado en otro planeta. Tras superar con creces su meta de 5 vuelos, sufrió daños en una pala en el vuelo 72 y hoy actúa como estación meteorológica fija.'
+            },
+            {
+                id: 'curiosity-rover',
+                title: 'Rover Curiosity (MSL)',
+                category: 'Explorador Nuclear • Cráter Gale / Monte Sharp',
+                coords: '04°35′22″ S, 137°26′30″ E',
+                pos: new THREE.Vector3(-42, 0, 22),
+                camOffset: new THREE.Vector3(-15, 9, 19),
+                stat1: '6 de agosto de 2012',
+                stat2: '899 kg • Láser ChemCam',
+                desc: 'Descendió mediante la maniobra Sky Crane. Sus análisis confirmaron que el cráter Gale albergó lagos de agua dulce y condiciones químicas favorables para la vida microbiana hace miles de millones de años.'
+            },
+            {
+                id: 'opportunity-rover',
+                title: 'Rover Opportunity (MER-B)',
+                category: 'Vehículo Solar • Valle de la Perseverancia',
+                coords: '01°56′46″ S, 354°28′24″ E',
+                pos: new THREE.Vector3(-24, 0, 56),
+                camOffset: new THREE.Vector3(12, 7, 15),
+                stat1: '2004 – 2018 (45.16 km)',
+                stat2: '185 kg • Récord distancia',
+                desc: 'Diseñado para operar 90 soles, sobrevivió casi 15 años recorriendo un maratón extraplanetario hasta que una tormenta de polvo global cubrió sus paneles solares en junio de 2018.'
+            },
+            {
+                id: 'insight-lander',
+                title: 'Aterrizador InSight & Sismómetro',
+                category: 'Estación Geofísica • Elysium Planitia',
+                coords: '04°30′09″ N, 135°37′24″ E',
+                pos: new THREE.Vector3(54, 0, 14),
+                camOffset: new THREE.Vector3(-14, 8, 17),
+                stat1: '26 Nov 2018 – Dic 2022',
+                stat2: '358 kg • 1,319 martemotos',
+                desc: 'Primera misión dedicada a estudiar el interior profundo de Marte. Desplegó sobre el suelo un domo térmico blanco que protegía un sismómetro ultrasensible antes de quedar cubierto por el polvo rojizo.'
+            },
+            {
+                id: 'viking-1-lander',
+                title: 'Aterrizador Viking 1',
+                category: 'Pionero Histórico • Chryse Planitia',
+                coords: '22°41′49″ N, 48°13′19″ O',
+                pos: new THREE.Vector3(120, 0, 18),
+                camOffset: new THREE.Vector3(-15, 9, 18),
+                stat1: '20 de julio de 1976',
+                stat2: '572 kg • Primer éxito NASA',
+                desc: 'Primera nave estadounidense en aterrizar con éxito y transmitir fotografías panorámicas nítidas desde la superficie de Marte, revelando un paisaje desértico oxidado bajo un cielo rosado.'
+            },
+            {
+                id: 'pathfinder-sojourner',
+                title: 'Pathfinder & Mini-Rover Sojourner',
+                category: 'Estación Carl Sagan • Ares Vallis',
+                coords: '19°07′48″ N, 33°13′12″ O',
+                pos: new THREE.Vector3(-82, 0, 34),
+                camOffset: new THREE.Vector3(13, 8, 17),
+                stat1: '4 de julio de 1997',
+                stat2: '10.6 kg (Sojourner)',
+                desc: 'Aterrizó amortiguado por gigantescas bolsas de aire y desplegó sus pétalos solares para liberar a Sojourner, el primer vehículo con ruedas en operar sobre otro planeta.'
+            }
+        ];
+
+        // --- FUNCIONES MATEMÁTICAS DE RUIDO Y RELIEVE MARCIANO ---
+        function hash2D(x, y) {
+            const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453123;
+            return n - Math.floor(n);
+        }
+
+        function valueNoise(x, y) {
+            const ix = Math.floor(x);
+            const iy = Math.floor(y);
+            const fx = x - ix;
+            const fy = y - iy;
+            const ux = fx * fx * (3.0 - 2.0 * fx);
+            const uy = fy * fy * (3.0 - 2.0 * fy);
+
+            const a = hash2D(ix, iy);
+            const b = hash2D(ix + 1, iy);
+            const c = hash2D(ix, iy + 1);
+            const d = hash2D(ix + 1, iy + 1);
+
+            return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+        }
+
+        function fbm(x, y, octaves = 4) {
+            let value = 0;
+            let amp = 0.5;
+            let freq = 1.0;
+            for (let i = 0; i < octaves; i++) {
+                value += amp * valueNoise(x * freq, y * freq);
+                freq *= 2.05;
+                amp *= 0.48;
+            }
+            return value;
+        }
+
+        // Altura topográfica del terreno marciano (mesetas tipo Monument Valley / Monte Sharp, cañón y dunas)
+        function getTerrainHeight(x, z) {
+            // 1. Ondulación eólica base y elevación hacia el horizonte norte
+            let h = (fbm(x * 0.015 + 2.4, z * 0.015 + 5.8, 4) - 0.5) * 4.2;
+            const horizonRise = Math.max(0, (-z + 25) / TERRAIN_DEPTH);
+            h += Math.pow(horizonRise, 1.45) * 15.5;
+
+            // 2. Campos de dunas transversales marcianas (ripples de arena)
+            const duneWave = Math.sin(x * 0.14 + z * 0.22 + fbm(x * 0.04, z * 0.04, 2) * 3.0);
+            h += Math.pow(Math.max(0, duneWave), 1.6) * 0.85;
+
+            // 3. Gran Macizo Estratificado Oeste ("Monte Sharp / Butte", x ≈ -86, z ≈ -8)
+            const mx = (x - (-86)) / 28;
+            const mz = (z - (-8)) / 22;
+            const mDist2 = mx * mx + mz * mz;
+            if (mDist2 < 2.6) {
+                let mountainBase = Math.exp(-mDist2 * 1.4) * 24.0;
+                // Terrazas sedimentarias escalonadas típicas de los montes marcianos
+                mountainBase = Math.floor(mountainBase * 0.55) / 0.55 * 0.35 + mountainBase * 0.65;
+                const angle = Math.atan2(z - (-8), x - (-86));
+                const gullies = Math.sin(angle * 18 + fbm(x * 0.1, z * 0.1, 2) * 3) * 1.3 * Math.exp(-mDist2 * 0.85);
+                h += mountainBase + gullies;
+            }
+
+            // 4. Meseta Escalonada Central (Butte sedimentario, x ≈ -34, z ≈ -12)
+            const bx = (x - (-34)) / 15;
+            const bz = (z - (-12)) / 10;
+            const bDist = Math.sqrt(bx * bx + bz * bz);
+            if (bDist < 1.65) {
+                const plateau = bDist < 0.58 ? 8.6 : Math.exp(-Math.pow(bDist - 0.58, 2) * 3.4) * 8.6;
+                h += plateau;
+            }
+
+            // 5. Cordillera Estratificada Noreste (x ≈ 136, z ≈ -84)
+            const ex = (x - 136) / 34;
+            const ez = (z - (-84)) / 24;
+            const eDist2 = ex * ex + ez * ez;
+            if (eDist2 < 2.4) {
+                h += Math.exp(-eDist2 * 1.35) * 19.5 + (fbm(x * 0.07, z * 0.07, 3) - 0.4) * 4.2 * Math.exp(-eDist2);
+            }
+
+            // 6. Depresión / Cauce fluvial seco sinuoso (como el delta de Jezero)
+            const channelCenterZ = 8 + Math.sin(x * 0.038) * 12;
+            const distChannel = Math.abs(z - channelCenterZ);
+            if (distChannel < 11 && x > -55 && x < 95) {
+                const depthFactor = Math.cos((distChannel / 11) * (Math.PI / 2));
+                h -= depthFactor * 1.65;
+            }
+
+            // 7. Cráteres de impacto marcianos
+            for (let i = 0; i < CRATERS.length; i++) {
+                const c = CRATERS[i];
+                const dx = x - c.x;
+                const dz = z - c.z;
+                const dist = Math.sqrt((dx * dx) + (dz * dz * 1.22));
+                const rNorm = dist / c.radius;
+
+                if (rNorm < 1.85) {
+                    if (rNorm < 0.78) {
+                        const bowl = (1 - Math.pow(rNorm / 0.78, 2.2)) * c.depth;
+                        h -= bowl;
+                        if (c.centralPeak && rNorm < 0.22) {
+                            h += (1 - rNorm / 0.22) * (c.depth * 0.34);
+                        }
+                    }
+                    const rimBell = Math.exp(-Math.pow((rNorm - 0.84) / 0.28, 2)) * c.rimHeight;
+                    const angle = Math.atan2(dz, dx);
+                    const gullies = (rNorm > 0.85 && rNorm < 1.55 && c.radius > 12)
+                        ? Math.sin(angle * 20) * 0.32 * Math.exp(-Math.pow((rNorm - 1.1) / 0.3, 2))
+                        : 0;
+                    h += rimBell + gullies;
+                }
+            }
+
+            // 8. Micro-rugosidad del suelo marciano
+            h += (fbm(x * 0.14, z * 0.14, 2) - 0.5) * 0.42;
+            return h;
+        }
+
+        // --- GENERACIÓN DE TEXTURA PROCEDURAL ACUARELA ÓXIDO, SIENA Y TINTA (2048x2048) ---
+        function generateMartianWatercolorTexture() {
+            pencilCanvas = document.createElement('canvas');
+            const size = 2048;
+            pencilCanvas.width = size;
+            pencilCanvas.height = size;
+            const ctx = pencilCanvas.getContext('2d');
+            pencilCtx = ctx;
+
+            // 1. Base de papel con aguada ocre-terracota cálida
+            const baseGrad = ctx.createLinearGradient(0, 0, size, size);
+            baseGrad.addColorStop(0, '#c97c54');
+            baseGrad.addColorStop(0.45, '#be6d46');
+            baseGrad.addColorStop(1, '#ad5b36');
+            ctx.fillStyle = baseGrad;
+            ctx.fillRect(0, 0, size, size);
+
+            // 2. Aguadas de acuarela en tonos óxido de hierro, siena tostada, arena dorada y basalto oscuro
+            const washes = [
+                { x: 0.68, y: 0.46, r: 0.35, color: 'rgba(166, 74, 38, 0.46)' },
+                { x: 0.78, y: 0.72, r: 0.30, color: 'rgba(142, 58, 28, 0.42)' },
+                { x: 0.46, y: 0.44, r: 0.30, color: 'rgba(214, 146, 94, 0.38)' },
+                { x: 0.24, y: 0.22, r: 0.36, color: 'rgba(196, 118, 74, 0.42)' },
+                { x: 0.22, y: 0.78, r: 0.34, color: 'rgba(156, 78, 44, 0.40)' },
+                { x: 0.56, y: 0.86, r: 0.32, color: 'rgba(132, 62, 34, 0.38)' },
+                { x: 0.24, y: 0.48, r: 0.25, color: 'rgba(74, 34, 22, 0.48)' },
+                { x: 0.88, y: 0.22, r: 0.26, color: 'rgba(88, 42, 26, 0.44)' }
+            ];
+
+            washes.forEach(w => {
+                for (let layer = 0; layer < 4; layer++) {
+                    const ox = (w.x + (Math.random() - 0.5) * 0.06) * size;
+                    const oy = (w.y + (Math.random() - 0.5) * 0.06) * size;
+                    const rad = w.r * size * (0.75 + layer * 0.12);
+                    const grad = ctx.createRadialGradient(ox, oy, rad * 0.1, ox, oy, rad);
+                    grad.addColorStop(0, w.color);
+                    grad.addColorStop(0.7, w.color.replace(/0\.\d+\)/, '0.18)'));
+                    grad.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(ox, oy, rad, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // 3. Manchas irregulares de pigmento terracota y arena ocre
+            for (let i = 0; i < 230; i++) {
+                const px = Math.random() * size;
+                const py = Math.random() * size;
+                const pr = 24 + Math.random() * 92;
+                const isLightSand = Math.random() > 0.45;
+                ctx.fillStyle = isLightSand
+                    ? `rgba(224, 158, 106, ${0.06 + Math.random() * 0.08})`
+                    : `rgba(112, 46, 24, ${0.06 + Math.random() * 0.08})`;
+                ctx.beginPath();
+                for (let a = 0; a < Math.PI * 2; a += 0.4) {
+                    const jitter = 0.75 + Math.random() * 0.45;
+                    const vx = px + Math.cos(a) * pr * jitter;
+                    const vy = py + Math.sin(a) * pr * jitter;
+                    if (a === 0) ctx.moveTo(vx, vy);
+                    else ctx.lineTo(vx, vy);
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            const toCanvasX = (wx) => ((wx + TERRAIN_WIDTH / 2) / TERRAIN_WIDTH) * size;
+            const toCanvasY = (wz) => ((wz + TERRAIN_DEPTH / 2) / TERRAIN_DEPTH) * size;
+
+            function drawPencilCrossHatch(cx, cy, rx, ry, angleOffset, density = 18) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+                ctx.clip();
+
+                for (let pass = 0; pass < 2; pass++) {
+                    const ang = angleOffset + pass * 0.78;
+                    const cosA = Math.cos(ang);
+                    const sinA = Math.sin(ang);
+                    const step = Math.max(5, (rx * 2) / density);
+
+                    for (let d = -rx * 1.4; d <= rx * 1.4; d += step) {
+                        ctx.strokeStyle = pass === 0
+                            ? 'rgba(42, 20, 12, 0.36)'
+                            : 'rgba(58, 28, 18, 0.25)';
+                        ctx.lineWidth = pass === 0 ? 1.25 : 0.95;
+                        ctx.beginPath();
+                        const x1 = cx + d * cosA - rx * 1.5 * sinA;
+                        const y1 = cy + d * sinA + rx * 1.5 * cosA;
+                        const x2 = cx + d * cosA + rx * 1.5 * sinA;
+                        const y2 = cy + d * sinA - rx * 1.5 * cosA;
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    }
+                }
+                ctx.restore();
+            }
+
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // 4a. Estratos horizontales y trazos de tinta en las montañas marcianas
+            [
+                { wx: -86, wz: -8, scale: 1.05 },
+                { wx: 136, wz: -84, scale: 0.95 },
+                { wx: -34, wz: -12, scale: 0.55 }
+            ].forEach(m => {
+                const mcx = toCanvasX(m.wx);
+                const mcy = toCanvasY(m.wz);
+                const rad = 165 * m.scale;
+
+                const mGrad = ctx.createLinearGradient(mcx - rad, mcy, mcx + rad * 0.85, mcy);
+                mGrad.addColorStop(0, 'rgba(54, 24, 14, 0.65)');
+                mGrad.addColorStop(0.48, 'rgba(222, 152, 102, 0.45)');
+                mGrad.addColorStop(1, 'rgba(92, 42, 24, 0.35)');
+                ctx.fillStyle = mGrad;
+                ctx.beginPath();
+                ctx.arc(mcx, mcy, rad, 0, Math.PI * 2);
+                ctx.fill();
+
+                drawPencilCrossHatch(mcx - 35 * m.scale, mcy - 8 * m.scale, 82 * m.scale, 68 * m.scale, -0.45, 24);
+
+                // Estratos geológicos horizontales típicos de Marte dibujados a pluma
+                for (let st = -4; st <= 4; st++) {
+                    ctx.strokeStyle = 'rgba(36, 16, 10, 0.55)';
+                    ctx.lineWidth = 1.6;
+                    ctx.beginPath();
+                    const sy = mcy + st * 14 * m.scale;
+                    const halfW = Math.sqrt(Math.max(0, rad * rad - Math.pow(st * 14 * m.scale, 2))) * 0.82;
+                    ctx.moveTo(mcx - halfW, sy);
+                    ctx.quadraticCurveTo(mcx, sy + 5 * m.scale, mcx + halfW, sy);
+                    ctx.stroke();
+                }
+
+                // Cárcavas y estrías radiales
+                for (let s = 0; s < 58; s++) {
+                    const angle = -0.38 + (s / 58) * 1.72;
+                    const startR = 32 * m.scale + (s % 5) * 10;
+                    const endR = (170 + Math.sin(s * 1.7) * 65) * m.scale;
+                    ctx.strokeStyle = s % 2 === 0
+                        ? `rgba(34, 16, 10, ${0.42 + (s % 3) * 0.14})`
+                        : `rgba(74, 34, 20, ${0.34 + (s % 3) * 0.12})`;
+                    ctx.lineWidth = s % 3 === 0 ? 1.9 : 1.15;
+                    ctx.beginPath();
+                    for (let step = 0; step <= 10; step++) {
+                        const t = step / 10;
+                        const r = startR + (endR - startR) * t;
+                        const wobble = Math.sin(t * 7 + s) * 3.0;
+                        const lx = mcx + Math.cos(angle) * r * 1.35 + wobble;
+                        const ly = mcy + Math.sin(angle) * r * 0.85 + wobble * 0.5;
+                        if (step === 0) ctx.moveTo(lx, ly);
+                        else ctx.lineTo(lx, ly);
+                    }
+                    ctx.stroke();
+                }
+            });
+
+            // 4b. Dibujo detallado a tinta sepia oscura de todos los Cráteres Marcianos
+            CRATERS.forEach((c, idx) => {
+                const cx = toCanvasX(c.x);
+                const cy = toCanvasY(c.z);
+                const rx = (c.radius / TERRAIN_WIDTH) * size * 1.05;
+                const ry = (c.radius / TERRAIN_DEPTH) * size * 0.86;
+
+                const innerGrad = ctx.createLinearGradient(cx, cy - ry * 0.8, cx, cy + ry * 0.8);
+                innerGrad.addColorStop(0, 'rgba(48, 22, 14, 0.78)');
+                innerGrad.addColorStop(0.55, 'rgba(116, 54, 32, 0.48)');
+                innerGrad.addColorStop(1, 'rgba(218, 152, 104, 0.42)');
+                ctx.fillStyle = innerGrad;
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, rx * 0.78, ry * 0.78, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                drawPencilCrossHatch(cx, cy - ry * 0.14, rx * 0.72, ry * 0.56, 0.42 + idx, Math.max(10, Math.floor(rx * 0.25)));
+
+                for (let pass = 0; pass < 3; pass++) {
+                    ctx.strokeStyle = pass === 0
+                        ? 'rgba(30, 14, 9, 0.88)'
+                        : pass === 1
+                            ? 'rgba(68, 32, 20, 0.60)'
+                            : 'rgba(96, 46, 28, 0.42)';
+                    ctx.lineWidth = pass === 0 ? 2.5 : 1.3;
+                    ctx.beginPath();
+                    const steps = 48;
+                    for (let i = 0; i <= steps; i++) {
+                        const a = (i / steps) * Math.PI * 2;
+                        const jitter = 1.0 + Math.sin(a * 8 + idx + pass * 1.7) * 0.038;
+                        const px = cx + Math.cos(a) * rx * (0.81 + pass * 0.05) * jitter;
+                        const py = cy + Math.sin(a) * ry * (0.81 + pass * 0.05) * jitter;
+                        if (i === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.stroke();
+                }
+
+                const hatchCount = Math.floor(rx * 0.7);
+                for (let h = 0; h < hatchCount; h++) {
+                    const a = (h / hatchCount) * Math.PI * 2;
+                    if (Math.sin(a) < -0.68 && h % 2 === 0) continue;
+                    const rStart = 0.85;
+                    const rEnd = 1.26 + (h % 4) * 0.11;
+                    const isInk = h % 3 === 0;
+                    ctx.strokeStyle = isInk
+                        ? `rgba(32, 15, 10, ${0.50 + (h % 2) * 0.24})`
+                        : `rgba(82, 38, 24, ${0.40 + (h % 3) * 0.15})`;
+                    ctx.lineWidth = isInk ? 1.75 : 1.1;
+                    ctx.beginPath();
+                    const x1 = cx + Math.cos(a) * rx * rStart;
+                    const y1 = cy + Math.sin(a) * ry * rStart;
+                    const x2 = cx + Math.cos(a) * rx * rEnd + Math.sin(h * 1.3) * 3.5;
+                    const y2 = cy + Math.sin(a) * ry * rEnd + 4.5;
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
+            });
+
+            // 4c. Huellas de los Rovers (Perseverance, Curiosity y Opportunity) dibujadas en la arena marciana
+            const roverTracks = [
+                { startX: -18, startZ: 8, dx: 0.7, dz: 0.3, len: 42, spread: 0.9 },
+                { startX: -66, startZ: 12, dx: 0.6, dz: 0.25, len: 40, spread: 0.85 },
+                { startX: -48, startZ: 44, dx: 0.6, dz: 0.3, len: 38, spread: 0.6 }
+            ];
+            roverTracks.forEach(tr => {
+                ctx.strokeStyle = 'rgba(42, 18, 12, 0.56)';
+                ctx.lineWidth = 1.5;
+                [-tr.spread, tr.spread].forEach(offset => {
+                    ctx.beginPath();
+                    for (let t = 0; t <= tr.len; t++) {
+                        const wx = tr.startX + t * tr.dx;
+                        const wz = tr.startZ + Math.sin(t * 0.22) * 4.5 + t * tr.dz + offset;
+                        const px = toCanvasX(wx);
+                        const py = toCanvasY(wz);
+                        if (t === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.stroke();
+                });
+            });
+
+            // 4d. Líneas de dunas eólicas y trazos cortos de pluma sobre el regolito
+            for (let d = 0; d < 95; d++) {
+                const dx = Math.random() * size;
+                const dy = Math.random() * size;
+                const dw = 24 + Math.random() * 55;
+                ctx.strokeStyle = 'rgba(58, 26, 16, 0.28)';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(dx, dy);
+                ctx.quadraticCurveTo(dx + dw * 0.5, dy - 5, dx + dw, dy + 2);
+                ctx.stroke();
+            }
+
+            for (let p = 0; p < 550; p++) {
+                const rx = Math.random() * size;
+                const ry = Math.random() * size;
+                const rw = 3 + Math.random() * 11;
+                ctx.strokeStyle = `rgba(54, 24, 15, ${0.24 + Math.random() * 0.34})`;
+                ctx.lineWidth = 1.05;
+                ctx.beginPath();
+                ctx.moveTo(rx, ry);
+                ctx.lineTo(rx + rw, ry + (Math.random() - 0.5) * 2.5);
+                ctx.stroke();
+            }
+
+            // 5. Textura de grano de papel prensado en frío
+            for (let g = 0; g < 11000; g++) {
+                const gx = Math.random() * size;
+                const gy = Math.random() * size;
+                ctx.fillStyle = g % 2 === 0
+                    ? 'rgba(255, 232, 210, 0.055)'
+                    : 'rgba(48, 20, 12, 0.045)';
+                ctx.fillRect(gx, gy, 2, 2);
+            }
+
+            watercolorTexture = new THREE.CanvasTexture(pencilCanvas);
+            watercolorTexture.anisotropy = 8;
+            watercolorTexture.needsUpdate = true;
+            return watercolorTexture;
+        }
+
+        // --- CONSTRUCCIÓN DEL TERRENO MARCIANO 3D ---
+        function buildTerrain() {
+            terrainGeometry = new THREE.PlaneGeometry(
+                TERRAIN_WIDTH,
+                TERRAIN_DEPTH,
+                SEGMENTS_X,
+                SEGMENTS_Z
+            );
+            terrainGeometry.rotateX(-Math.PI / 2);
+
+            const posAttr = terrainGeometry.attributes.position;
+            let minTerrainHeight = Infinity;
+            for (let i = 0; i < posAttr.count; i++) {
+                const x = posAttr.getX(i);
+                const z = posAttr.getZ(i);
+                const y = getTerrainHeight(x, z);
+                posAttr.setY(i, y);
+                minTerrainHeight = Math.min(minTerrainHeight, y);
+            }
+            terrainGeometry.computeVertexNormals();
+
+            const tex = generateMartianWatercolorTexture();
+
+            terrainMaterial = new THREE.MeshStandardMaterial({
+                map: tex,
+                color: 0xfff3eb,
+                roughness: 0.96,
+                metalness: 0.0,
+                flatShading: false
+            });
+
+            terrainMesh = new THREE.Mesh(terrainGeometry, terrainMaterial);
+            terrainMesh.receiveShadow = true;
+            scene.add(terrainMesh);
+
+            // Base / zócalo inferior en tono basalto marciano oscuro
+            const skirtMat = new THREE.MeshBasicMaterial({
+                color: 0x24120c,
+                side: THREE.DoubleSide
+            });
+            const skirtHeight = 22;
+            const skirtY = minTerrainHeight - skirtHeight / 2 - 1;
+            const skirtGeo = new THREE.BoxGeometry(TERRAIN_WIDTH, skirtHeight, TERRAIN_DEPTH);
+            const skirtMesh = new THREE.Mesh(skirtGeo, skirtMat);
+            skirtMesh.position.y = skirtY;
+            scene.add(skirtMesh);
+
+            const edgesGeo = new THREE.EdgesGeometry(skirtGeo);
+            const edgesMat = new THREE.LineBasicMaterial({ color: 0x9c5a3c, transparent: true, opacity: 0.55 });
+            const borderLines = new THREE.LineSegments(edgesGeo, edgesMat);
+            borderLines.position.y = skirtY;
+            scene.add(borderLines);
+        }
+
+        // --- HELPER ESTILO ILUSTRACIÓN CON CONTORNO DE TINTA (INVERTED HULL) ---
+        function addInkedMesh(parent, geometry, colorHex, options = {}) {
+            const mat = options.metalness !== undefined
+                ? new THREE.MeshStandardMaterial({
+                    color: colorHex,
+                    roughness: options.roughness !== undefined ? options.roughness : 0.45,
+                    metalness: options.metalness,
+                    emissive: options.emissive || 0x000000,
+                    emissiveIntensity: options.emissiveIntensity || 0
+                })
+                : new THREE.MeshToonMaterial({ color: colorHex });
+
+            const mesh = new THREE.Mesh(geometry, mat);
+            if (options.position) mesh.position.set(...options.position);
+            if (options.rotation) mesh.rotation.set(...options.rotation);
+            if (options.scale) mesh.scale.set(...options.scale);
+            parent.add(mesh);
+
+            if (!options.noOutline) {
+                const outlineScale = options.outlineScale || 1.06;
+                const outlineMat = new THREE.MeshBasicMaterial({
+                    color: 0x1a0d08,
+                    side: THREE.BackSide
+                });
+                const outline = new THREE.Mesh(geometry, outlineMat);
+                outline.scale.set(outlineScale, outlineScale, outlineScale);
+                mesh.add(outline);
+            }
+
+            if (options.artifactRef) {
+                mesh.userData.artifact = options.artifactRef;
+                clickableMeshes.push(mesh);
+            }
+
+            return mesh;
+        }
+
+        // --- HELPER PARA CONSTRUIR ROVERS DE 6 RUEDAS (PERSEVERANCE / CURIOSITY) ---
+        function buildSixWheelNuclearRover(parentGroup, artifactData, scaleFactor = 1.0, isPerseverance = true) {
+            const rover = new THREE.Group();
+            rover.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+            // Chasis blanco térmico WEB
+            addInkedMesh(rover, new THREE.BoxGeometry(2.7, 0.75, 1.85), 0xf2ece4, {
+                position: [0, 1.15, 0],
+                artifactRef: artifactData
+            });
+            // Cubierta superior con detalles dorados y sensores
+            addInkedMesh(rover, new THREE.BoxGeometry(2.5, 0.14, 1.7), 0xd4a038, {
+                position: [0, 1.56, 0],
+                metalness: 0.65,
+                artifactRef: artifactData
+            });
+            // Generador nuclear trasero MMRTG inclinado con aletas blancas
+            addInkedMesh(rover, new THREE.CylinderGeometry(0.32, 0.36, 1.15, 12), 0xf5efe6, {
+                position: [-1.45, 1.48, 0],
+                rotation: [0, 0, 0.48],
+                artifactRef: artifactData
+            });
+            // Mástil vertical de teledetección (SuperCam / ChemCam)
+            addInkedMesh(rover, new THREE.CylinderGeometry(0.08, 0.10, 1.35, 8), 0xe8e0d5, {
+                position: [0.95, 2.2, 0.55],
+                artifactRef: artifactData
+            });
+            // Cabezal óptico con ojo láser rojo/azul
+            addInkedMesh(rover, new THREE.BoxGeometry(0.45, 0.34, 0.52), 0xf5efe6, {
+                position: [0.95, 2.95, 0.55],
+                artifactRef: artifactData
+            });
+            addInkedMesh(rover, new THREE.CylinderGeometry(0.11, 0.11, 0.12, 12), isPerseverance ? 0xef4444 : 0x38bdf8, {
+                position: [1.18, 2.98, 0.55],
+                rotation: [0, 0, Math.PI / 2],
+                emissive: isPerseverance ? 0xdc2626 : 0x0284c7,
+                emissiveIntensity: 0.5,
+                noOutline: true,
+                artifactRef: artifactData
+            });
+            // Antena de alta ganancia hexagonal en la cubierta trasera
+            addInkedMesh(rover, new THREE.CylinderGeometry(0.35, 0.35, 0.08, 6), 0xd9a840, {
+                position: [-0.65, 1.72, -0.45],
+                rotation: [0.25, 0, -0.2],
+                metalness: 0.7
+            });
+            // Brazo robótico articulado frontal con torreta de instrumentos
+            addInkedMesh(rover, new THREE.BoxGeometry(0.12, 0.12, 1.15), 0xc9c1b6, {
+                position: [1.55, 1.25, -0.25],
+                rotation: [0.35, 0.25, 0]
+            });
+            addInkedMesh(rover, new THREE.CylinderGeometry(0.34, 0.34, 0.38, 10), 0x3d3835, {
+                position: [1.85, 0.92, -0.55],
+                rotation: [Math.PI / 2, 0, 0],
+                artifactRef: artifactData
+            });
+
+            // 6 Ruedas de aluminio negro con suspensión rocker-bogie
+            const wheelX = [-1.22, 0.05, 1.25];
+            const wheelZ = [-1.12, 1.12];
+            wheelZ.forEach(wz => {
+                // Barras laterales de suspensión rocker-bogie
+                addInkedMesh(rover, new THREE.BoxGeometry(2.45, 0.09, 0.09), 0x4a4440, {
+                    position: [0, 0.88, wz * 0.88]
+                });
+                wheelX.forEach(wx => {
+                    const wGeo = new THREE.CylinderGeometry(0.46, 0.46, 0.36, 16);
+                    wGeo.rotateX(Math.PI / 2);
+                    addInkedMesh(rover, wGeo, 0x262220, {
+                        position: [wx, 0.46, wz],
+                        artifactRef: artifactData
+                    });
+                    // Tapacubos metálico
+                    const hubGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.38, 10);
+                    hubGeo.rotateX(Math.PI / 2);
+                    addInkedMesh(rover, hubGeo, 0xd4a038, {
+                        position: [wx, 0.46, wz],
+                        noOutline: true
+                    });
+                });
+            });
+
+            parentGroup.add(rover);
+        }
+
+        // --- CONSTRUCCIÓN DE ARTEFACTOS 3D DE LA NASA EN MARTE ---
+        function buildNASAArtifacts() {
+            artifactsGroup = new THREE.Group();
+
+            // 1. ROVER PERSEVERANCE
+            const persData = MARS_ARTIFACTS.find(a => a.id === 'perseverance-rover');
+            const persGroup = new THREE.Group();
+            const persGroundY = getTerrainHeight(persData.pos.x, persData.pos.z);
+            persData.pos.y = persGroundY;
+            persGroup.position.set(persData.pos.x, persGroundY, persData.pos.z);
+            persGroup.rotation.y = 0.42;
+            buildSixWheelNuclearRover(persGroup, persData, 1.05, true);
+            artifactsGroup.add(persGroup);
+
+            // 2. HELICÓPTERO INGENUITY (POSADO SOBRE SUS 4 PATAS DE FIBRA DE CARBONO)
+            const ingData = MARS_ARTIFACTS.find(a => a.id === 'ingenuity-helicopter');
+            const ingGroup = new THREE.Group();
+            const ingGroundY = getTerrainHeight(ingData.pos.x, ingData.pos.z);
+            ingData.pos.y = ingGroundY;
+            ingGroup.position.set(ingData.pos.x, ingGroundY, ingData.pos.z);
+
+            // Fuselaje cúbico aislado en lámina dorada Kapton
+            addInkedMesh(ingGroup, new THREE.BoxGeometry(0.55, 0.55, 0.55), 0xd9a840, {
+                position: [0, 0.85, 0],
+                metalness: 0.78,
+                roughness: 0.28,
+                artifactRef: ingData
+            });
+            // Mástil central y panel solar superior
+            addInkedMesh(ingGroup, new THREE.CylinderGeometry(0.04, 0.04, 0.95, 8), 0x262220, {
+                position: [0, 1.5, 0]
+            });
+            addInkedMesh(ingGroup, new THREE.BoxGeometry(1.15, 0.05, 0.45), 0x1e3a5f, {
+                position: [0, 2.02, 0],
+                metalness: 0.5,
+                artifactRef: ingData
+            });
+            // Dos rotores coaxiales contrarrotatorios (1.2 m de envergadura)
+            rotorTopMesh = addInkedMesh(ingGroup, new THREE.BoxGeometry(2.6, 0.03, 0.16), 0x24201e, {
+                position: [0, 1.82, 0],
+                artifactRef: ingData
+            });
+            rotorBottomMesh = addInkedMesh(ingGroup, new THREE.BoxGeometry(2.6, 0.03, 0.16), 0x24201e, {
+                position: [0, 1.62, 0],
+                rotation: [0, Math.PI / 2, 0],
+                artifactRef: ingData
+            });
+            // 4 Patas flexibles inclinadas
+            [Math.PI / 4, (3 * Math.PI) / 4, (5 * Math.PI) / 4, (7 * Math.PI) / 4].forEach(ang => {
+                const leg = new THREE.Group();
+                leg.rotation.y = ang;
+                addInkedMesh(leg, new THREE.CylinderGeometry(0.025, 0.025, 0.95, 6), 0x262220, {
+                    position: [0.45, 0.42, 0],
+                    rotation: [0, 0, -0.58]
+                });
+                ingGroup.add(leg);
+            });
+            artifactsGroup.add(ingGroup);
+
+            // 3. ROVER CURIOSITY
+            const curData = MARS_ARTIFACTS.find(a => a.id === 'curiosity-rover');
+            const curGroup = new THREE.Group();
+            const curGroundY = getTerrainHeight(curData.pos.x, curData.pos.z);
+            curData.pos.y = curGroundY;
+            curGroup.position.set(curData.pos.x, curGroundY, curData.pos.z);
+            curGroup.rotation.y = -0.55;
+            buildSixWheelNuclearRover(curGroup, curData, 0.98, false);
+            artifactsGroup.add(curGroup);
+
+            // 4. ROVER OPPORTUNITY (PANELES SOLARES TRIANGULARES)
+            const oppData = MARS_ARTIFACTS.find(a => a.id === 'opportunity-rover');
+            const oppGroup = new THREE.Group();
+            const oppGroundY = getTerrainHeight(oppData.pos.x, oppData.pos.z);
+            oppData.pos.y = oppGroundY;
+            oppGroup.position.set(oppData.pos.x, oppGroundY, oppData.pos.z);
+            oppGroup.rotation.y = 0.75;
+
+            // Cubierta solar en forma de alas desplegadas (cubiertas de polvo rojizo)
+            addInkedMesh(oppGroup, new THREE.BoxGeometry(1.85, 0.10, 2.25), 0x3b3545, {
+                position: [0, 1.12, 0],
+                rotation: [0.08, 0, -0.12],
+                artifactRef: oppData
+            });
+            // Cuerpo dorado inferior
+            addInkedMesh(oppGroup, new THREE.BoxGeometry(1.15, 0.52, 0.95), 0xd4a038, {
+                position: [0, 0.78, 0],
+                metalness: 0.65,
+                artifactRef: oppData
+            });
+            // Mástil Pancam
+            addInkedMesh(oppGroup, new THREE.CylinderGeometry(0.05, 0.05, 0.95, 8), 0xe8e0d5, {
+                position: [0.55, 1.55, 0.35]
+            });
+            addInkedMesh(oppGroup, new THREE.BoxGeometry(0.34, 0.18, 0.42), 0xf2ece4, {
+                position: [0.55, 2.02, 0.35],
+                artifactRef: oppData
+            });
+            // 6 Ruedas pequeñas
+            [-0.78, 0, 0.78].forEach(wx => {
+                [-0.75, 0.75].forEach(wz => {
+                    const wGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.22, 14);
+                    wGeo.rotateX(Math.PI / 2);
+                    addInkedMesh(oppGroup, wGeo, 0x262220, {
+                        position: [wx, 0.28, wz],
+                        artifactRef: oppData
+                    });
+                });
+            });
+            artifactsGroup.add(oppGroup);
+
+            // 5. ATERRIZADOR INSIGHT + SISMÓMETRO SEIS EN EL SUELO
+            const insData = MARS_ARTIFACTS.find(a => a.id === 'insight-lander');
+            const insGroup = new THREE.Group();
+            const insGroundY = getTerrainHeight(insData.pos.x, insData.pos.z);
+            insData.pos.y = insGroundY;
+            insGroup.position.set(insData.pos.x, insGroundY, insData.pos.z);
+
+            // Plataforma central y dos grandes paneles solares circulares (polvorientos)
+            addInkedMesh(insGroup, new THREE.CylinderGeometry(1.1, 1.2, 0.55, 12), 0xd9a840, {
+                position: [0, 1.05, 0],
+                metalness: 0.65,
+                artifactRef: insData
+            });
+            [-2.25, 2.25].forEach(px => {
+                addInkedMesh(insGroup, new THREE.CylinderGeometry(1.45, 1.45, 0.08, 20), 0x6e473b, {
+                    position: [px, 1.12, 0],
+                    rotation: [0.12, 0, 0],
+                    artifactRef: insData
+                });
+            });
+            // 3 Patas de aterrizaje
+            [0, (2 * Math.PI) / 3, (4 * Math.PI) / 3].forEach(ang => {
+                const leg = new THREE.Group();
+                leg.rotation.y = ang;
+                addInkedMesh(leg, new THREE.CylinderGeometry(0.06, 0.06, 1.25, 8), 0x2b2623, {
+                    position: [1.05, 0.52, 0],
+                    rotation: [0, 0, -0.45]
+                });
+                insGroup.add(leg);
+            });
+            // Domo blanco del sismómetro SEIS posado sobre la arena frente al aterrizador
+            addInkedMesh(insGroup, new THREE.SphereGeometry(0.55, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), 0xf5efe6, {
+                position: [0.4, 0.05, 2.1],
+                artifactRef: insData
+            });
+            artifactsGroup.add(insGroup);
+
+            // 6. ATERRIZADOR VIKING 1 (1976)
+            const vikData = MARS_ARTIFACTS.find(a => a.id === 'viking-1-lander');
+            const vikGroup = new THREE.Group();
+            const vikGroundY = getTerrainHeight(vikData.pos.x, vikData.pos.z);
+            vikData.pos.y = vikGroundY;
+            vikGroup.position.set(vikData.pos.x, vikGroundY, vikData.pos.z);
+
+            // Cuerpo hexagonal blanco con cubiertas RTG laterales
+            addInkedMesh(vikGroup, new THREE.CylinderGeometry(1.35, 1.35, 0.65, 6), 0xf0e9df, {
+                position: [0, 0.95, 0],
+                artifactRef: vikData
+            });
+            // Antena parabólica de alta ganancia sobre mástil
+            addInkedMesh(vikGroup, new THREE.CylinderGeometry(0.05, 0.05, 1.15, 8), 0xd8d0c5, {
+                position: [-0.4, 1.75, -0.3]
+            });
+            const vikDish = new THREE.ConeGeometry(0.62, 0.28, 16, 1, true);
+            vikDish.rotateX(Math.PI * 0.72);
+            addInkedMesh(vikGroup, vikDish, 0xf5efe6, {
+                position: [-0.4, 2.35, -0.3],
+                artifactRef: vikData
+            });
+            // Dos cámaras cilíndricas verticales características de Viking
+            [-0.45, 0.45].forEach(cx => {
+                addInkedMesh(vikGroup, new THREE.CylinderGeometry(0.14, 0.14, 0.55, 10), 0xe8e0d5, {
+                    position: [cx, 1.52, 0.55],
+                    artifactRef: vikData
+                });
+            });
+            // 3 Patas con platos circulares
+            [Math.PI / 6, (5 * Math.PI) / 6, (9 * Math.PI) / 6].forEach(ang => {
+                const leg = new THREE.Group();
+                leg.rotation.y = ang;
+                addInkedMesh(leg, new THREE.CylinderGeometry(0.07, 0.07, 1.25, 8), 0xd8d0c5, {
+                    position: [1.35, 0.52, 0],
+                    rotation: [0, 0, -0.52]
+                });
+                addInkedMesh(leg, new THREE.CylinderGeometry(0.34, 0.38, 0.12, 12), 0xd8d0c5, {
+                    position: [1.68, 0.08, 0]
+                });
+                vikGroup.add(leg);
+            });
+            artifactsGroup.add(vikGroup);
+
+            // 7. MARS PATHFINDER & MINI-ROVER SOJOURNER (1997)
+            const pathData = MARS_ARTIFACTS.find(a => a.id === 'pathfinder-sojourner');
+            const pathGroup = new THREE.Group();
+            const pathGroundY = getTerrainHeight(pathData.pos.x, pathData.pos.z);
+            pathData.pos.y = pathGroundY;
+            pathGroup.position.set(pathData.pos.x, pathGroundY, pathData.pos.z);
+
+            // Base tetraédrica desplegada en 4 pétalos solares triangulares
+            addInkedMesh(pathGroup, new THREE.BoxGeometry(1.2, 0.35, 1.2), 0xd9a840, {
+                position: [0, 0.22, 0],
+                artifactRef: pathData
+            });
+            [0, Math.PI / 2, Math.PI, -Math.PI / 2].forEach(ang => {
+                const petal = new THREE.Group();
+                petal.rotation.y = ang;
+                const pGeo = new THREE.ConeGeometry(0.95, 1.45, 3);
+                pGeo.rotateX(Math.PI / 2);
+                addInkedMesh(petal, pGeo, 0x223b5e, {
+                    position: [0, 0.14, 1.15],
+                    scale: [1, 0.12, 1],
+                    artifactRef: pathData
+                });
+                pathGroup.add(petal);
+            });
+            // Mini-rover Sojourner al lado de la rampa (6 ruedas en miniatura)
+            const sojGroup = new THREE.Group();
+            sojGroup.position.set(2.2, 0, 1.6);
+            sojGroup.rotation.y = 0.6;
+            addInkedMesh(sojGroup, new THREE.BoxGeometry(0.95, 0.22, 0.68), 0x223b5e, {
+                position: [0, 0.38, 0],
+                artifactRef: pathData
+            });
+            [-0.32, 0, 0.32].forEach(wx => {
+                [-0.38, 0.38].forEach(wz => {
+                    const wGeo = new THREE.CylinderGeometry(0.14, 0.14, 0.12, 10);
+                    wGeo.rotateX(Math.PI / 2);
+                    addInkedMesh(sojGroup, wGeo, 0x262220, {
+                        position: [wx, 0.14, wz]
+                    });
+                });
+            });
+            pathGroup.add(sojGroup);
+            artifactsGroup.add(pathGroup);
+
+            scene.add(artifactsGroup);
+        }
+
+        // --- CÚMULOS DE ROCAS MARCIANAS 3D CON CONTORNO DE TINTA ---
+        function buildForegroundRocks() {
+            rocksGroup = new THREE.Group();
+
+            const rockSketchCanvas = document.createElement('canvas');
+            rockSketchCanvas.width = 256;
+            rockSketchCanvas.height = 256;
+            const rctx = rockSketchCanvas.getContext('2d');
+            rctx.fillStyle = '#9c4e32';
+            rctx.fillRect(0, 0, 256, 256);
+            rctx.strokeStyle = 'rgba(38, 16, 10, 0.38)';
+            rctx.lineWidth = 1.5;
+            for (let i = -256; i < 512; i += 10) {
+                rctx.beginPath();
+                rctx.moveTo(i, 0);
+                rctx.lineTo(i - 120, 256);
+                rctx.stroke();
+            }
+            const rockSketchTex = new THREE.CanvasTexture(rockSketchCanvas);
+
+            function createInkedRock(x, z, scaleX, scaleY, scaleZ, rotY) {
+                const geo = new THREE.DodecahedronGeometry(1, 1);
+                const pos = geo.attributes.position;
+                for (let i = 0; i < pos.count; i++) {
+                    const vx = pos.getX(i);
+                    const vy = pos.getY(i);
+                    const vz = pos.getZ(i);
+                    const n = 0.82 + hash2D(vx * 12 + x, vz * 12 + z) * 0.34;
+                    pos.setXYZ(i, vx * scaleX * n, vy * scaleY * n, vz * scaleZ * n);
+                }
+                geo.computeVertexNormals();
+
+                const rockMat = new THREE.MeshToonMaterial({
+                    map: rockSketchTex,
+                    color: 0xb86240
+                });
+                const rockMesh = new THREE.Mesh(geo, rockMat);
+
+                const outlineMat = new THREE.MeshBasicMaterial({
+                    color: 0x1a0d08,
+                    side: THREE.BackSide
+                });
+                const outlineMesh = new THREE.Mesh(geo, outlineMat);
+                outlineMesh.scale.set(1.075, 1.075, 1.075);
+
+                const holder = new THREE.Group();
+                holder.add(rockMesh);
+                holder.add(outlineMesh);
+
+                const groundY = getTerrainHeight(x, z);
+                holder.position.set(x, groundY + scaleY * 0.42, z);
+                holder.rotation.set(
+                    (Math.random() - 0.5) * 0.25,
+                    rotY,
+                    (Math.random() - 0.5) * 0.25
+                );
+                rocksGroup.add(holder);
+            }
+
+            // Cúmulo de rocas en primer plano ("Barnacle Bill / Yogi")
+            const mainCluster = [
+                { dx: 0, dz: 0, sx: 3.6, sy: 2.6, sz: 3.0 },
+                { dx: -4.2, dz: 1.2, sx: 2.9, sy: 2.0, sz: 2.4 },
+                { dx: 3.9, dz: 1.4, sx: 2.7, sy: 1.9, sz: 2.3 },
+                { dx: -1.6, dz: -2.0, sx: 2.5, sy: 2.3, sz: 2.1 },
+                { dx: -7.5, dz: 2.2, sx: 1.7, sy: 1.1, sz: 1.5 }
+            ];
+            mainCluster.forEach((r, idx) => {
+                createInkedRock(-52 + r.dx, 64 + r.dz, r.sx, r.sy, r.sz, idx * 0.8);
+            });
+
+            // Cantos rodados basálticos dispersos por la superficie
+            for (let i = 0; i < 48; i++) {
+                const rx = (hash2D(i, 1.7) - 0.5) * (TERRAIN_WIDTH * 0.85);
+                const rz = (hash2D(3.1, i) - 0.5) * (TERRAIN_DEPTH * 0.85);
+                const s = 0.55 + hash2D(i, i) * 1.1;
+                createInkedRock(rx, rz, s * 1.2, s * 0.75, s, i * 1.4);
+            }
+
+            scene.add(rocksGroup);
+        }
+
+        // --- CIELO MARCIANO AMBARINO, POLVO ATMOSFÉRICO Y LUNAS FOBOS & DEIMOS ---
+        function buildMartianSkyAndMoons() {
+            skyFxGroup = new THREE.Group();
+
+            // Cúpula celeste marciana (gradiente acuarela de cielo crepuscular ocre/salmón a azul polvo superior)
+            const skyCanvas = document.createElement('canvas');
+            skyCanvas.width = 512;
+            skyCanvas.height = 512;
+            const sctx = skyCanvas.getContext('2d');
+            const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
+            skyGrad.addColorStop(0.0, '#1c1824');
+            skyGrad.addColorStop(0.32, '#4a2c2a');
+            skyGrad.addColorStop(0.54, '#9c563a');
+            skyGrad.addColorStop(0.68, '#d98a5b');
+            skyGrad.addColorStop(0.80, '#eab082');
+            skyGrad.addColorStop(1.0, '#6e3622');
+            sctx.fillStyle = skyGrad;
+            sctx.fillRect(0, 0, 512, 512);
+
+            const skyGeo = new THREE.SphereGeometry(540, 32, 24);
+            const skyMat = new THREE.MeshBasicMaterial({
+                map: new THREE.CanvasTexture(skyCanvas),
+                side: THREE.BackSide,
+                depthWrite: false
+            });
+            scene.add(new THREE.Mesh(skyGeo, skyMat));
+
+            // Sol pálido y halo azulado característico de los atardeceres en Marte
+            const sunCanvas = document.createElement('canvas');
+            sunCanvas.width = 128;
+            sunCanvas.height = 128;
+            const sunCtx = sunCanvas.getContext('2d');
+            const sunGlow = sunCtx.createRadialGradient(64, 64, 4, 64, 64, 60);
+            sunGlow.addColorStop(0, 'rgba(255, 252, 245, 1)');
+            sunGlow.addColorStop(0.22, 'rgba(186, 224, 248, 0.72)');
+            sunGlow.addColorStop(0.55, 'rgba(235, 168, 120, 0.25)');
+            sunGlow.addColorStop(1, 'rgba(235, 168, 120, 0)');
+            sunCtx.fillStyle = sunGlow;
+            sunCtx.fillRect(0, 0, 128, 128);
+
+            const sunSprite = new THREE.Sprite(new THREE.SpriteMaterial({
+                map: new THREE.CanvasTexture(sunCanvas),
+                transparent: true
+            }));
+            sunSprite.position.set(-48, 52, -210);
+            sunSprite.scale.set(42, 42, 1);
+            skyFxGroup.add(sunSprite);
+
+            // Luna Fobos (irregular con contorno de tinta)
+            const phobosGeo = new THREE.DodecahedronGeometry(3.4, 1);
+            phobosGeo.scale(1.35, 0.9, 1.0);
+            const phobosMat = new THREE.MeshToonMaterial({ color: 0xc9b2a3 });
+            const phobos = new THREE.Mesh(phobosGeo, phobosMat);
+            const phobosOut = new THREE.Mesh(phobosGeo, new THREE.MeshBasicMaterial({ color: 0x1a0d08, side: THREE.BackSide }));
+            phobosOut.scale.set(1.06, 1.06, 1.06);
+            phobos.add(phobosOut);
+            phobos.position.set(62, 74, -185);
+            skyFxGroup.add(phobos);
+
+            // Luna Deimos (más pequeña y lejana)
+            const deimosGeo = new THREE.DodecahedronGeometry(1.5, 1);
+            const deimos = new THREE.Mesh(deimosGeo, phobosMat);
+            deimos.position.set(105, 88, -200);
+            skyFxGroup.add(deimos);
+
+            // Partículas finas de polvo marciano flotando suavemente sobre la superficie
+            const dustCount = 450;
+            const dustPositions = new Float32Array(dustCount * 3);
+            for (let i = 0; i < dustCount; i++) {
+                dustPositions[i * 3] = (Math.random() - 0.5) * TERRAIN_WIDTH;
+                dustPositions[i * 3 + 1] = 2 + Math.random() * 38;
+                dustPositions[i * 3 + 2] = (Math.random() - 0.5) * TERRAIN_DEPTH;
+            }
+            const dustGeo = new THREE.BufferGeometry();
+            dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+            const dustMat = new THREE.PointsMaterial({
+                color: 0xf2b588,
+                size: 1.1,
+                transparent: true,
+                opacity: 0.45
+            });
+            dustParticles = new THREE.Points(dustGeo, dustMat);
+            skyFxGroup.add(dustParticles);
+
+            scene.add(skyFxGroup);
+        }
+
+        // --- ILUMINACIÓN CÁLIDA MARCIANA ---
+        function setupLighting() {
+            const ambient = new THREE.AmbientLight(0xf7dfd0, 0.88);
+            scene.add(ambient);
+
+            const dirLight = new THREE.DirectionalLight(0xffe8d6, 0.72);
+            dirLight.position.set(-110, 95, 60);
+            scene.add(dirLight);
+
+            const rimLight = new THREE.DirectionalLight(0xe09668, 0.28);
+            rimLight.position.set(100, 45, -110);
+            scene.add(rimLight);
+        }
+
+        // --- SISTEMA DE ETIQUETAS 3D PROYECTADAS SOBRE ARTEFACTOS ---
+        const labelsLayer = document.getElementById('labels-layer');
+        const poiDomElements = [];
+
+        function initArtifactMarkers() {
+            const sidebarList = document.getElementById('sidebar-content');
+            sidebarList.innerHTML = '';
+
+            MARS_ARTIFACTS.forEach(art => {
+                const markerEl = document.createElement('div');
+                markerEl.className = 'poi-marker';
+                markerEl.innerHTML = `
+                    <div class="poi-pill">
+                        <span class="poi-dot"></span>
+                        <span>${art.title}</span>
+                    </div>
+                    <div class="poi-stem"></div>
+                `;
+                markerEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    focusOnArtifact(art);
+                });
+                labelsLayer.appendChild(markerEl);
+                poiDomElements.push({ poi: art, el: markerEl, isBeacon: false });
+
+                const itemBtn = document.createElement('button');
+                itemBtn.className = 'w-full text-left px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center justify-between group';
+                itemBtn.innerHTML = `
+                    <div>
+                        <div class="text-xs font-medium text-[#fbe9dc] group-hover:text-[#f59e0b] transition">${art.title}</div>
+                        <div class="text-[10px] text-[#cfa992]">${art.category}</div>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-[#cfa992] group-hover:translate-x-0.5 transition-transform shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
+                `;
+                itemBtn.addEventListener('click', () => focusOnArtifact(art));
+                sidebarList.appendChild(itemBtn);
+            });
+        }
+
+        function focusOnArtifact(art) {
+            const target = art.pos.clone().add(new THREE.Vector3(0, 1.5, 0));
+            const camPos = target.clone().add(art.camOffset);
+            flyCameraTo(camPos, target);
+
+            document.getElementById('info-category').textContent = art.category;
+            document.getElementById('info-coords').textContent = art.coords;
+            document.getElementById('info-title').textContent = art.title;
+            document.getElementById('info-desc').textContent = art.desc;
+            document.getElementById('info-stat1').textContent = art.stat1;
+            document.getElementById('info-stat2').textContent = art.stat2;
+            document.getElementById('info-card').classList.remove('hidden');
+        }
+
+        function flyCameraTo(endPos, endTarget, duration = 1.35) {
+            cameraTransition.active = true;
+            cameraTransition.startPos.copy(camera.position);
+            cameraTransition.endPos.copy(endPos);
+            cameraTransition.startTarget.copy(controls.target);
+            cameraTransition.endTarget.copy(endTarget);
+            cameraTransition.progress = 0;
+            cameraTransition.duration = duration;
+        }
+
+        // --- COLOCACIÓN DE BALIZAS PERSONALIZADAS Y MEDICIÓN ---
+        function placeCustomBeacon(worldPoint) {
+            const index = customBeacons.length + 1;
+
+            const beaconObj = new THREE.Group();
+            const poleGeo = new THREE.CylinderGeometry(0.14, 0.14, 5.5, 8);
+            const poleMat = new THREE.MeshBasicMaterial({ color: 0x1a0d08 });
+            const pole = new THREE.Mesh(poleGeo, poleMat);
+            pole.position.y = 2.75;
+            beaconObj.add(pole);
+
+            const flagGeo = new THREE.ConeGeometry(1.1, 2.2, 4);
+            flagGeo.rotateZ(-Math.PI / 2);
+            const flagMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+            const flag = new THREE.Mesh(flagGeo, flagMat);
+            flag.position.set(1.0, 4.6, 0);
+            beaconObj.add(flag);
+
+            const ringGeo = new THREE.RingGeometry(0.8, 1.3, 24);
+            ringGeo.rotateX(-Math.PI / 2);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.75 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.position.y = 0.15;
+            beaconObj.add(ring);
+
+            beaconObj.position.copy(worldPoint);
+            beaconsGroup.add(beaconObj);
+
+            const labelEl = document.createElement('div');
+            labelEl.className = 'poi-marker beacon-marker';
+            labelEl.innerHTML = `
+                <div class="poi-pill">
+                    <span class="poi-dot"></span>
+                    <span>Baliza #${index}</span>
+                </div>
+                <div class="poi-stem"></div>
+            `;
+            labelsLayer.appendChild(labelEl);
+
+            const beaconData = {
+                id: index,
+                pos: worldPoint.clone(),
+                mesh: beaconObj,
+                el: labelEl
+            };
+            customBeacons.push(beaconData);
+            poiDomElements.push({ poi: { pos: beaconData.pos }, el: labelEl, isBeacon: true });
+
+            updateBeaconsUI();
+        }
+
+        function updateBeaconsUI() {
+            const countEl = document.getElementById('beacon-count');
+            const clearBtn = document.getElementById('clear-beacons-btn');
+
+            if (beaconLine) {
+                beaconsGroup.remove(beaconLine);
+                beaconLine = null;
+            }
+
+            if (customBeacons.length === 0) {
+                countEl.textContent = 'Doble clic para poner baliza';
+                clearBtn.classList.add('hidden');
+                return;
+            }
+
+            clearBtn.classList.remove('hidden');
+
+            if (customBeacons.length >= 2) {
+                const points = customBeacons.map(b => b.pos.clone().add(new THREE.Vector3(0, 0.8, 0)));
+                const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+                const lineMat = new THREE.LineDashedMaterial({
+                    color: 0x7dd3fc,
+                    dashSize: 2.2,
+                    gapSize: 1.4
+                });
+                beaconLine = new THREE.Line(lineGeo, lineMat);
+                beaconLine.computeLineDistances();
+                beaconsGroup.add(beaconLine);
+
+                let totalDist = 0;
+                for (let i = 1; i < customBeacons.length; i++) {
+                    totalDist += customBeacons[i].pos.distanceTo(customBeacons[i - 1].pos);
+                }
+                const km = (totalDist * 1.8).toFixed(1);
+                countEl.textContent = `${customBeacons.length} balizas • Ruta: ${km} km`;
+                showToast(`Baliza #${customBeacons.length} colocada • Distancia total: ${km} km`);
+            } else {
+                countEl.textContent = '1 baliza (añade otra para medir)';
+                showToast('Baliza #1 colocada. Haz doble clic en otro punto para medir distancia.');
+            }
+        }
+
+        function clearAllBeacons() {
+            customBeacons.forEach(b => {
+                beaconsGroup.remove(b.mesh);
+                if (b.el && b.el.parentNode) b.el.parentNode.removeChild(b.el);
+            });
+            for (let i = poiDomElements.length - 1; i >= 0; i--) {
+                if (poiDomElements[i].isBeacon) poiDomElements.splice(i, 1);
+            }
+            customBeacons = [];
+            updateBeaconsUI();
+            showToast('Balizas eliminadas');
+        }
+
+        let toastTimer = null;
+        function showToast(text) {
+            const toast = document.getElementById('toast-msg');
+            document.getElementById('toast-text').textContent = text;
+            toast.style.opacity = '1';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3200);
+        }
+
+        // --- ACTUALIZACIÓN DE ETIQUETAS 3D -> 2D EN PANTALLA ---
+        function updateProjectedLabels() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            poiDomElements.forEach(item => {
+                if (!showLabels) {
+                    item.el.style.display = 'none';
+                    return;
+                }
+
+                const worldPos = item.poi.pos.clone();
+                worldPos.y += 3.6;
+                const projected = worldPos.project(camera);
+
+                if (projected.z > 1) {
+                    item.el.style.display = 'none';
+                    return;
+                }
+
+                const screenX = (projected.x * 0.5 + 0.5) * width;
+                const screenY = (-projected.y * 0.5 + 0.5) * height;
+
+                if (screenX < -60 || screenX > width + 60 || screenY < -60 || screenY > height + 60) {
+                    item.el.style.display = 'none';
+                } else {
+                    item.el.style.display = 'block';
+                    item.el.style.left = `${screenX}px`;
+                    item.el.style.top = `${screenY}px`;
+                }
+            });
+        }
+
+        // --- EVENTOS DE RATÓN, TÁCTIL Y TECLADO ---
+        function setupInteractions() {
+            const container = document.getElementById('canvas-container');
+
+            // Telemetría de coordenadas marcianas
+            container.addEventListener('pointermove', (e) => {
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+
+                const artHits = raycaster.intersectObjects(clickableMeshes, false);
+                container.style.cursor = artHits.length > 0 ? 'pointer' : 'grab';
+
+                const hits = raycaster.intersectObject(terrainMesh);
+                if (hits.length > 0) {
+                    const pt = hits[0].point;
+                    const lat = (12.0 - (pt.z / TERRAIN_DEPTH) * 35.0).toFixed(1);
+                    const lon = (75.0 + (pt.x / TERRAIN_WIDTH) * 85.0).toFixed(1);
+                    const alt = Math.round(-2100 + pt.y * 160);
+                    const latDir = lat >= 0 ? 'N' : 'S';
+                    document.getElementById('cursor-coords').textContent =
+                        `LAT ${Math.abs(lat)}° ${latDir} • LON ${lon}° E`;
+                    document.getElementById('elevation-readout').textContent =
+                        `ALT ${alt >= 0 ? '+' : ''}${alt}m`;
+                }
+            });
+
+            // Clic simple sobre un artefacto 3D
+            let pointerDownPos = { x: 0, y: 0 };
+            container.addEventListener('pointerdown', (e) => {
+                pointerDownPos = { x: e.clientX, y: e.clientY };
+            });
+            container.addEventListener('pointerup', (e) => {
+                const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+                if (dist < 5) {
+                    mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                    raycaster.setFromCamera(mouse, camera);
+                    const artHits = raycaster.intersectObjects(clickableMeshes, false);
+                    if (artHits.length > 0 && artHits[0].object.userData.artifact) {
+                        focusOnArtifact(artHits[0].object.userData.artifact);
+                    }
+                }
+            });
+
+            // Doble clic para colocar balizas de exploración
+            container.addEventListener('dblclick', (e) => {
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                const hits = raycaster.intersectObject(terrainMesh);
+                if (hits.length > 0) {
+                    placeCustomBeacon(hits[0].point);
+                }
+            });
+
+            controls.addEventListener('start', () => {
+                cameraTransition.active = false;
+            });
+
+            window.addEventListener('keydown', (e) => {
+                keysPressed[e.key.toLowerCase()] = true;
+            });
+            window.addEventListener('keyup', (e) => {
+                keysPressed[e.key.toLowerCase()] = false;
+            });
+
+            // Botones de la barra de herramientas
+            document.getElementById('btn-view-default').addEventListener('click', () => {
+                flyCameraTo(new THREE.Vector3(0, 46, 148), new THREE.Vector3(0, 6, -10));
+            });
+
+            document.getElementById('btn-view-top').addEventListener('click', () => {
+                flyCameraTo(new THREE.Vector3(0, 225, 30), new THREE.Vector3(0, 0, 0));
+            });
+
+            document.getElementById('btn-view-surface').addEventListener('click', () => {
+                flyCameraTo(new THREE.Vector3(-12, 8.5, 58), new THREE.Vector3(12, 7, 10));
+            });
+
+            document.getElementById('btn-toggle-labels').addEventListener('click', (e) => {
+                showLabels = !showLabels;
+                e.currentTarget.classList.toggle('bg-white/10', showLabels);
+                e.currentTarget.classList.toggle('opacity-60', !showLabels);
+            });
+
+            document.getElementById('btn-toggle-skyfx').addEventListener('click', (e) => {
+                showSkyFx = !showSkyFx;
+                skyFxGroup.visible = showSkyFx;
+                e.currentTarget.classList.toggle('bg-white/10', showSkyFx);
+                e.currentTarget.classList.toggle('opacity-60', !showSkyFx);
+            });
+
+            const pencilSlider = document.getElementById('pencil-slider');
+            pencilSlider.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                if (terrainMaterial) {
+                    const shade = Math.min(1.05, Math.max(0.76, 1.25 - val * 0.25));
+                    terrainMaterial.color.setRGB(shade, shade * 0.96, shade * 0.93);
+                }
+            });
+
+            let sidebarOpen = false;
+            document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
+                sidebarOpen = !sidebarOpen;
+                document.getElementById('sidebar-content').classList.toggle('hidden', !sidebarOpen);
+                document.getElementById('beacons-footer').classList.toggle('hidden', !sidebarOpen);
+                document.getElementById('sidebar-chevron').style.transform = sidebarOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+            });
+
+            document.getElementById('clear-beacons-btn').addEventListener('click', clearAllBeacons);
+            document.getElementById('close-info-btn').addEventListener('click', () => {
+                document.getElementById('info-card').classList.add('hidden');
+            });
+
+            const helpModal = document.getElementById('help-modal');
+            document.getElementById('btn-help').addEventListener('click', () => {
+                helpModal.classList.remove('hidden');
+                helpModal.classList.add('flex');
+            });
+            document.getElementById('close-help-btn').addEventListener('click', () => {
+                helpModal.classList.add('hidden');
+                helpModal.classList.remove('flex');
+            });
+            helpModal.addEventListener('click', (e) => {
+                if (e.target === helpModal) {
+                    helpModal.classList.add('hidden');
+                    helpModal.classList.remove('flex');
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // --- MOVIMIENTO POR TECLADO (WASD / FLECHAS) ---
+        function handleKeyboardNavigation(delta) {
+            const moveSpeed = 62 * delta;
+            const forward = new THREE.Vector3();
+            camera.getWorldDirection(forward);
+            forward.y = 0;
+            forward.normalize();
+
+            const right = new THREE.Vector3();
+            right.crossVectors(forward, camera.up).normalize();
+
+            let moved = false;
+            const offset = new THREE.Vector3();
+
+            if (keysPressed['w'] || keysPressed['arrowup']) {
+                offset.addScaledVector(forward, moveSpeed);
+                moved = true;
+            }
+            if (keysPressed['s'] || keysPressed['arrowdown']) {
+                offset.addScaledVector(forward, -moveSpeed);
+                moved = true;
+            }
+            if (keysPressed['a'] || keysPressed['arrowleft']) {
+                offset.addScaledVector(right, -moveSpeed);
+                moved = true;
+            }
+            if (keysPressed['d'] || keysPressed['arrowright']) {
+                offset.addScaledVector(right, moveSpeed);
+                moved = true;
+            }
+
+            if (moved) {
+                cameraTransition.active = false;
+                camera.position.add(offset);
+                controls.target.add(offset);
+            }
+        }
+
+        // --- BUCLE PRINCIPAL DE ANIMACIÓN ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const delta = clock.getDelta();
+            const elapsed = clock.getElapsedTime();
+
+            if (cameraTransition.active) {
+                cameraTransition.progress += delta / cameraTransition.duration;
+                if (cameraTransition.progress >= 1) {
+                    cameraTransition.progress = 1;
+                    cameraTransition.active = false;
+                }
+                const t = cameraTransition.progress;
+                const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+                camera.position.lerpVectors(cameraTransition.startPos, cameraTransition.endPos, ease);
+                controls.target.lerpVectors(cameraTransition.startTarget, cameraTransition.endTarget, ease);
+            }
+
+            handleKeyboardNavigation(delta);
+
+            // Deriva sutil del polvo marciano arrastrado por la brisa
+            if (dustParticles && showSkyFx) {
+                dustParticles.position.x = Math.sin(elapsed * 0.15) * 6;
+                dustParticles.position.y = Math.cos(elapsed * 0.25) * 0.8;
+            }
+
+            // Oscilación leve por viento marciano en las palas de Ingenuity
+            if (rotorTopMesh && rotorBottomMesh) {
+                rotorTopMesh.rotation.y = Math.sin(elapsed * 1.4) * 0.06;
+                rotorBottomMesh.rotation.y = Math.PI / 2 - Math.sin(elapsed * 1.4) * 0.06;
+            }
+
+            controls.update();
+            updateProjectedLabels();
+            renderer.render(scene, camera);
+        }
+
+        // --- INICIALIZACIÓN GENERAL ---
+        window.onload = function() {
+            const container = document.getElementById('canvas-container');
+
+            scene = new THREE.Scene();
+            // Bruma polvorienta marciana cálida y sutil en la distancia
+            scene.fog = new THREE.FogExp2(0x3a1c12, 0.0011);
+
+            camera = new THREE.PerspectiveCamera(
+                44,
+                window.innerWidth / window.innerHeight,
+                0.5,
+                1200
+            );
+            camera.position.set(0, 46, 148);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.target.set(0, 6, -10);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.06;
+            controls.maxDistance = 320;
+            controls.minDistance = 8;
+            controls.maxPolarAngle = Math.PI * 0.495;
+
+            beaconsGroup = new THREE.Group();
+            scene.add(beaconsGroup);
+
+            setupLighting();
+            buildMartianSkyAndMoons();
+            buildTerrain();
+            buildForegroundRocks();
+            buildNASAArtifacts();
+            initArtifactMarkers();
+            setupInteractions();
+            updateBeaconsUI();
+
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 700);
+            }, 400);
+
+            animate();
+        };
+    })();
+    </script>
+</body>
+</html>

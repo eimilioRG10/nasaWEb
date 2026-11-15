@@ -50,6 +50,108 @@
             border: 1px solid rgba(235, 224, 204, 0.24);
             box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
+        #atlas-header {
+            width: min(21rem, calc(100vw - 2rem));
+        }
+        #atlas-header .parchment-panel {
+            padding: 0.6rem 0.75rem;
+        }
+        #atlas-header h1 {
+            font-size: clamp(0.85rem, 1.3vw, 1rem);
+        }
+        #atlas-header p {
+            font-size: 10px;
+            line-height: 1.3;
+        }
+        #atlas-header .atlas-telemetry {
+            flex-wrap: wrap;
+            gap: 0.2rem 0.6rem;
+            margin-top: 0.45rem;
+            padding-top: 0.4rem;
+            font-size: 9px;
+        }
+        #poi-sidebar {
+            width: min(17rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+        }
+        #sidebar-content {
+            max-height: min(34vh, 19rem);
+        }
+        #poi-sidebar #toggle-sidebar-btn {
+            padding: 0.5rem 0.75rem;
+        }
+        #sidebar-content > button {
+            padding: 0.35rem 0.5rem;
+            border-radius: 0.65rem;
+        }
+        #sidebar-content > button > div > div:first-child {
+            font-size: 11px;
+            line-height: 1.25;
+        }
+        #sidebar-content > button > div > div:last-child {
+            font-size: 9px;
+            line-height: 1.2;
+        }
+        #beacons-footer {
+            padding: 0.4rem 0.65rem;
+            font-size: 10px;
+        }
+        #info-card {
+            left: 1rem;
+            bottom: 5rem;
+            width: min(21rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 7rem);
+            overflow-y: auto;
+        }
+        #info-card > .parchment-panel {
+            padding: 0.75rem;
+        }
+        #info-card h3 {
+            font-size: 1rem;
+            line-height: 1.25;
+            margin-bottom: 0.4rem;
+        }
+        #info-card p {
+            font-size: 0.75rem;
+            line-height: 1.45;
+            margin-bottom: 0.6rem;
+        }
+        #info-card .grid {
+            grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+            gap: 0.4rem;
+        }
+        #controls-bar > div {
+            max-width: min(90vw, 64rem);
+            padding: 0.35rem;
+        }
+        #controls-bar .tool-btn {
+            padding: 0.35rem 0.5rem;
+        }
+        @media (max-width: 640px) {
+            #atlas-header {
+                top: 0.5rem;
+                left: 0.5rem;
+                width: min(19rem, calc(100vw - 1rem));
+            }
+            #atlas-header .atlas-telemetry {
+                font-size: 8px;
+            }
+            #poi-sidebar {
+                top: 6.5rem;
+                right: 0.5rem;
+                width: min(16rem, calc(100vw - 1rem));
+                max-height: calc(100vh - 9rem);
+            }
+            #sidebar-content {
+                max-height: 28vh;
+            }
+            #info-card {
+                left: 0.5rem;
+                bottom: 4.5rem;
+                width: min(19rem, calc(100vw - 1rem));
+                max-height: calc(100vh - 6rem);
+            }
+        }
         /* Etiquetas 3D proyectadas sobre los artefactos */
         .poi-marker {
             position: absolute;
@@ -67,19 +169,19 @@
             background: rgba(13, 23, 36, 0.90);
             border: 1.5px solid #e6dcc8;
             color: #f7f3eb;
-            padding: 4px 10px;
+            padding: 3px 7px;
             border-radius: 9999px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 500;
             white-space: nowrap;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.65);
         }
         .poi-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: #f5d08a;
             box-shadow: 0 0 8px #f5d08a;
@@ -87,7 +189,7 @@
         }
         .poi-stem {
             width: 1.5px;
-            height: 18px;
+            height: 14px;
             background: linear-gradient(to bottom, #e6dcc8, rgba(230, 220, 200, 0.1));
             margin: 0 auto;
         }
@@ -143,7 +245,7 @@
     </div>
 
     <!-- Encabezado Superior Izquierdo: Título y Coordenadas -->
-    <header class="fixed top-4 left-4 z-20 pointer-events-none max-w-[calc(100vw-2rem)] sm:max-w-md">
+    <header id="atlas-header" class="fixed top-4 left-4 z-20 pointer-events-none max-w-[calc(100vw-2rem)] sm:max-w-md">
         <div class="parchment-panel rounded-2xl px-4 py-3 pointer-events-auto">
             <div class="flex items-center gap-2.5">
                 <svg class="w-6 h-6 text-[#f5d08a] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -157,7 +259,7 @@
                 </div>
             </div>
             <!-- Telemetría del cursor en tiempo real -->
-            <div class="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-coord text-[#d6cfc4]">
+            <div class="atlas-telemetry mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-mono-coord text-[#d6cfc4]">
                 <span id="cursor-coords">LAT 00.0° N • LON 00.0° E</span>
                 <span id="elevation-readout" class="text-[#f5d08a]">ALT +0m</span>
             </div>
@@ -165,7 +267,7 @@
     </header>
 
     <!-- Panel Lateral Derecho: Explorador de Artefactos de la NASA -->
-    <aside id="poi-sidebar" class="fixed top-4 right-4 z-20 w-76 max-w-[calc(100vw-2rem)] transition-all duration-300">
+    <aside id="poi-sidebar" class="fixed top-4 right-4 z-20 max-w-[calc(100vw-2rem)] transition-all duration-300">
         <div class="parchment-panel rounded-2xl overflow-hidden">
             <div class="px-4 py-3 flex items-center justify-between border-b border-white/10 cursor-pointer" id="toggle-sidebar-btn">
                 <div class="flex items-center gap-2">
@@ -175,16 +277,16 @@
                     <span class="text-xs font-semibold uppercase tracking-wider text-[#f5ebd6]">Artefactos NASA (3D)</span>
                 </div>
                 <button class="text-[#cbd5e1] hover:text-white p-1 rounded-lg transition" aria-label="Alternar lista">
-                    <svg id="sidebar-chevron" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg id="sidebar-chevron" class="w-4 h-4 transition-transform duration-300" style="transform: rotate(180deg)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                     </svg>
                 </button>
             </div>
-            <div id="sidebar-content" class="max-h-[46vh] overflow-y-auto p-2 space-y-1.5">
+            <div id="sidebar-content" class="hidden max-h-[46vh] overflow-y-auto p-2 space-y-1.5">
                 <!-- Se llena dinámicamente con JS -->
             </div>
             <!-- Sección de Balizas Personalizadas -->
-            <div id="beacons-footer" class="px-3 py-2.5 bg-black/25 border-t border-white/10 flex items-center justify-between text-[11px] text-[#9fb1c4]">
+            <div id="beacons-footer" class="hidden px-3 py-2.5 bg-black/25 border-t border-white/10 flex items-center justify-between text-[11px] text-[#9fb1c4]">
                 <span id="beacon-count">Doble clic para poner baliza</span>
                 <button id="clear-beacons-btn" class="text-sky-300 hover:text-sky-200 underline hidden">Limpiar</button>
             </div>
@@ -230,8 +332,15 @@
     </div>
 
     <!-- Barra Inferior de Herramientas y Acciones 3D -->
-    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 max-w-[95vw]">
+    <nav id="controls-bar" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 max-w-[95vw]">
         <div class="parchment-panel rounded-2xl px-2.5 py-2 flex items-center gap-1.5 sm:gap-2 overflow-x-auto">
+            <a href="index.html" aria-label="Volver al inicio" title="Volver al inicio" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#f7f1e3] transition shrink-0">
+                <svg class="w-4 h-4 text-[#f5d08a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5m7 7-7-7 7-7"/>
+                </svg>
+                <span>Inicio</span>
+            </a>
+
             <!-- Vista Panorámica Inicial -->
             <button id="btn-view-default" class="tool-btn px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-[#f7f1e3] transition shrink-0" title="Restaurar vista ilustrada original">
                 <svg class="w-4 h-4 text-[#f5d08a]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -245,7 +354,7 @@
                 <svg class="w-4 h-4 text-sky-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>
                 </svg>
-                <span class="hidden sm:inline">Orbital</span>
+                <span class="optional-label hidden sm:inline">Orbital</span>
             </button>
 
             <!-- Vista Superficie / Rasante -->
@@ -253,7 +362,7 @@
                 <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 17h14M5 17l4-8 4 5 3-3 3 6"/>
                 </svg>
-                <span class="hidden sm:inline">Superficie</span>
+                <span class="optional-label hidden sm:inline">Superficie</span>
             </button>
 
             <div class="w-px h-6 bg-white/15 mx-0.5 shrink-0"></div>
@@ -263,7 +372,7 @@
                 <svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                 </svg>
-                <span class="hidden md:inline">Etiquetas</span>
+                <span class="optional-label hidden md:inline">Etiquetas</span>
             </button>
 
             <!-- Alternar Constelaciones -->
@@ -271,7 +380,7 @@
                 <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                 </svg>
-                <span class="hidden md:inline">Constelaciones</span>
+                <span class="optional-label hidden md:inline">Constelaciones</span>
             </button>
 
             <div class="w-px h-6 bg-white/15 mx-0.5 shrink-0"></div>
@@ -892,11 +1001,13 @@
             terrainGeometry.rotateX(-Math.PI / 2);
 
             const posAttr = terrainGeometry.attributes.position;
+            let minTerrainHeight = Infinity;
             for (let i = 0; i < posAttr.count; i++) {
                 const x = posAttr.getX(i);
                 const z = posAttr.getZ(i);
                 const y = getTerrainHeight(x, z);
                 posAttr.setY(i, y);
+                minTerrainHeight = Math.min(minTerrainHeight, y);
             }
             terrainGeometry.computeVertexNormals();
 
@@ -919,15 +1030,17 @@
                 color: 0x1a1816,
                 side: THREE.DoubleSide
             });
-            const skirtGeo = new THREE.BoxGeometry(TERRAIN_WIDTH, 22, TERRAIN_DEPTH);
+            const skirtHeight = 22;
+            const skirtY = minTerrainHeight - skirtHeight / 2 - 1;
+            const skirtGeo = new THREE.BoxGeometry(TERRAIN_WIDTH, skirtHeight, TERRAIN_DEPTH);
             const skirtMesh = new THREE.Mesh(skirtGeo, skirtMat);
-            skirtMesh.position.y = -11.5;
+            skirtMesh.position.y = skirtY;
             scene.add(skirtMesh);
 
             const edgesGeo = new THREE.EdgesGeometry(skirtGeo);
             const edgesMat = new THREE.LineBasicMaterial({ color: 0x6e685f, transparent: true, opacity: 0.55 });
             const borderLines = new THREE.LineSegments(edgesGeo, edgesMat);
-            borderLines.position.y = -11.5;
+            borderLines.position.y = skirtY;
             scene.add(borderLines);
         }
 
@@ -1851,7 +1964,7 @@
                 }
             });
 
-            let sidebarOpen = true;
+            let sidebarOpen = false;
             document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
                 sidebarOpen = !sidebarOpen;
                 document.getElementById('sidebar-content').classList.toggle('hidden', !sidebarOpen);
