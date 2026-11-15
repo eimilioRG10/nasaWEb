@@ -100,61 +100,6 @@
     margin-top: auto;
 }
 
-.historia-tarjeta[data-historia="eagle"] {
-    --imagen-normal: url("../imagenes/apollo noche.jpg");
-    --imagen-hover: url("../imagenes/apolo dia.jpg");
-}
-
-.historia-tarjeta[data-historia="falcon"] {
-    --imagen-normal: url("../imagenes/apolo dia.jpg");
-    --imagen-hover: url("../imagenes/apollo noche.jpg");
-}
-
-.historia-tarjeta[data-historia="intrepid"] {
-    --imagen-normal: url("../imagenes/apollo noche.jpg");
-    --imagen-hover: url("../imagenes/apolo dia.jpg");
-}
-
-.historia-tarjeta[data-historia="surveyor-3"] {
-    --imagen-normal: url("../imagenes/luna.jpeg");
-    --imagen-hover: url("../imagenes/apollo noche.jpg");
-}
-
-.historia-tarjeta[data-historia="pathfinder"] {
-    --imagen-normal: url("../imagenes/Marte.jpeg");
-    --imagen-hover: url("../imagenes/opportunity.jpg");
-}
-
-.historia-tarjeta[data-historia="spirit-opportunity"] {
-    --imagen-normal: url("../imagenes/opportunity2.jpg");
-    --imagen-hover: url("../imagenes/opportunity.jpg");
-}
-
-.historia-tarjeta[data-historia="viking-1"] {
-    --imagen-normal: url("../imagenes/Marte.jpeg");
-    --imagen-hover: url("../imagenes/opportunity2.jpg");
-}
-
-.historia-tarjeta[data-historia="ingenuity"] {
-    --imagen-normal: url("../imagenes/Marte.jpeg");
-    --imagen-hover: url("../imagenes/nave.jpg");
-}
-
-.historia-tarjeta[data-historia="dawn"] {
-    --imagen-normal: url("../imagenes/espacio.jpg");
-    --imagen-hover: url("../imagenes/nave.jpg");
-}
-
-.historia-tarjeta[data-historia="pioneer-10"] {
-    --imagen-normal: url("../imagenes/nave.jpg");
-    --imagen-hover: url("../imagenes/espacio.jpg");
-}
-
-.historia-tarjeta[data-historia="kepler"] {
-    --imagen-normal: url("../imagenes/satelite.jpg");
-    --imagen-hover: url("../imagenes/espacio.jpg");
-}
-
 .historia-lectura {
     max-width: 820px;
     margin: 0 auto;
@@ -177,6 +122,28 @@
     margin-bottom: 38px;
     color: #9fb3ca;
     font-size: 16px;
+}
+
+.historia-foto {
+    margin: 0 0 26px;
+    overflow: hidden;
+    border: 1px solid #ffffff25;
+    border-radius: 16px;
+    background: #070b18;
+}
+
+.historia-foto img {
+    display: block;
+    width: 100%;
+    max-height: 460px;
+    object-fit: contain;
+}
+
+.historia-foto figcaption {
+    padding: 10px 16px;
+    color: #aebbd0;
+    font-size: 14px;
+    border-top: 1px solid #ffffff20;
 }
 
 .historia-contenido {

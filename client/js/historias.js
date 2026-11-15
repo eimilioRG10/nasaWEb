@@ -23,6 +23,8 @@ const HISTORIAS = [
     titulo: "La gran aventura del pequeño módulo Eagle en la Luna",
     mision: "Apolo 11",
     anio: "1969",
+    imagen: "imagenes/historias/apollo11.jpg",
+    altImagen: "El módulo lunar del Apolo 11 sobre la superficie de la Luna.",
     parrafos: [
       "Había una vez una nave espacial muy especial llamada Eagle (Águila). No era una nave cualquiera con alas de avión; tenía cuatro patas largas con pies redondos, dos ventanas triangulares que parecían ojos curiosos y ni un solo asiento por dentro. Su misión en julio de 1969 era llevar a dos valientes astronautas, Neil Armstrong y Buzz Aldrin, hasta un lugar llamado el Mar de la Tranquilidad, en la Luna.",
       "Mientras su amigo Michael Collins esperaba dando vueltas allá arriba en la nave principal, Eagle se soltó y encendió su gran motor de descenso. ¡Fiuuu! Durante más de doce minutos frenó su caída hasta posar sus cuatro patas suavemente sobre el polvo gris de la Luna el 20 de julio. En cuanto tocó el suelo, Neil envió un mensaje a la Tierra: «Houston, aquí Base Tranquilidad. El Eagle ha alunizado».",
@@ -39,6 +41,8 @@ const HISTORIAS = [
     titulo: "El halcón espacial que llevó a la Luna el primer coche conducido por astronautas",
     mision: "Apolo 15",
     anio: "1971",
+    imagen: "imagenes/historias/apollo15.jpg",
+    altImagen: "Astronautas y vehículo lunar durante la misión Apolo 15.",
     parrafos: [
       "En julio de 1971, una nave espacial con nombre de ave veloz emprendió un viaje inolvidable: era el módulo lunar Falcon (Halcón) de la misión Apolo 15. Con sus cuatro patas de aterrizaje y su cabina sin asientos, Falcon se convirtió en la cuarta nave tripulada en posarse sobre la Luna, llevando a bordo a los astronautas David Scott y James Irwin.",
       "Su destino era un paisaje espectacular en la región de Mare Imbrium, justo al pie de unas enormes montañas lunares llamadas los Montes Apeninos. Dos horas después de tocar el suelo gris el 30 de julio, David abrió la escotilla superior y asomó la cabeza durante más de media hora para observar y fotografiar aquel mundo silencioso.",
@@ -54,6 +58,8 @@ const HISTORIAS = [
     titulo: "El valiente módulo Intrepid y el rescate del viejo robot lunar",
     mision: "Apolo 12",
     anio: "1969",
+    imagen: "imagenes/historias/apollo12.jpg",
+    altImagen: "Un astronauta junto a un vehículo lunar durante la misión Apolo 12.",
     parrafos: [
       "En noviembre de 1969, apenas cuatro meses después de la primera visita humana a la Luna, despegó una nueva nave llena de curiosidad: el módulo lunar Intrepid (Intrépido) de la misión Apolo 12. Con sus cuatro patas de aterrizaje, sus dos ventanas triangulares y su cabina sin sillas, Intrepid llevó a los astronautas Pete Conrad y Alan Bean hacia una enorme llanura llamada el Océano de las Tormentas.",
       "Pero Intrepid tenía un reto de puntería digno de un campeón. No iba a aterrizar en cualquier sitio; tenía que posarse muy cerca de un viejo amigo silencioso. El 19 de noviembre, ¡lo logró con una precisión asombrosa!, aterrizando a solo 180 metros de la sonda Surveyor 3, un pequeño robot explorador que llevaba más de dos años solito en la Luna.",
@@ -70,6 +76,8 @@ const HISTORIAS = [
     titulo: "El pequeño robot saltarín que probó el suelo de la Luna",
     mision: "Surveyor 3",
     anio: "1967",
+    imagen: "imagenes/historias/surveyor3.jpg",
+    altImagen: "La sonda Surveyor 3 en la superficie lunar.",
     parrafos: [
       "En abril de 1967, dos años antes de que los humanos pisaran la Luna, un valiente robot explorador llamado Surveyor 3 despegó desde la Tierra con una misión muy importante: averiguar si el suelo lunar era lo bastante firme para sostener una nave espacial o si los astronautas se hundirían como en arenas movedizas.",
       "Al acercarse a la Luna el 20 de abril, el brillo de unas rocas muy reflectantes confundió el radar de Surveyor 3 y su motor no se apagó a tiempo. ¡Boing, boing! El pequeño robot rebotó dos veces sobre la superficie lunar —la primera vez subió hasta 10 metros de altura y la segunda hasta 3 metros— antes de posarse suavemente en el Océano de las Tormentas.",
@@ -84,6 +92,8 @@ const HISTORIAS = [
     titulo: "La pelota gigante que rebotó en Marte y soltó al primer robot explorador",
     mision: "Mars Pathfinder y Sojourner",
     anio: "1997",
+    imagen: "imagenes/historias/pathfinder.jpg",
+    altImagen: "El rover Sojourner junto a las bolsas de aire de Mars Pathfinder.",
     parrafos: [
       "En 1997, una misión muy ingeniosa llamada Mars Pathfinder viajó hasta el Planeta Rojo con una idea que parecía sacada de un dibujo animado: ¡aterrizar rebotando como una pelota de playa gigante!",
       "Al entrar directamente en la delgada atmósfera de Marte, Pathfinder abrió un paracaídas para frenar su caída y luego infló un enorme capullo de bolsas de aire (airbags) de casi seis metros de diámetro para protegerse del golpe. ¡Bum, boing, boing! Al tocar el suelo a 50 kilómetros por hora, la nave rebotó unas 15 veces —llegando a saltar hasta 15 metros de altura— durante dos minutos y medio, hasta que finalmente se detuvo en un antiguo valle rocoso llamado Ares Vallis.",
@@ -98,6 +108,8 @@ const HISTORIAS = [
     titulo: "Los robots gemelos que descubrieron el agua antigua de Marte",
     mision: "Spirit y Opportunity",
     anio: "2004",
+    imagen: "imagenes/historias/spirit-opportunity.jpg",
+    altImagen: "Panorama de la superficie marciana captado durante las misiones Spirit y Opportunity.",
     parrafos: [
       "Había una vez dos robots exploradores idénticos, como hermanos gemelos hechos de metal y ciencia, llamados Spirit y Opportunity. Con un diseño que recordaba al cuerpo humano —tenían su propia «cabeza» con cámaras y un «cuerpo» lleno de instrumentos—, viajaron hasta Marte con una misión de detectives espaciales: buscar pistas sobre si alguna vez hubo agua líquida en el Planeta Rojo.",
       "Para cubrir más terreno, decidieron separarse y aterrizar en lados opuestos del planeta, justo en dos lugares que parecían haber estado mojados hace miles de millones de años. Spirit aterrizó en el Cráter Gusev, un gigantesco cráter de impacto que los científicos sospechaban que había sido un antiguo lago. Por su parte, Opportunity aterrizó al otro lado del planeta, en Meridiani Planum, una llanura llena de minerales especiales que gritaban que allí había corrido agua en el pasado.",
@@ -111,6 +123,8 @@ const HISTORIAS = [
     titulo: "El primer explorador en tomar fotos desde el suelo de Marte",
     mision: "Viking 1",
     anio: "1976",
+    imagen: "imagenes/historias/viking1.jpg",
+    altImagen: "Paisaje de la superficie de Marte fotografiado por Viking 1.",
     parrafos: [
       "Durante siglos, la humanidad miró hacia el cielo nocturno observando aquel punto brillante y rojizo llamado Marte, soñando con saber cómo sería de cerca. Ese sueño se hizo realidad en 1976 gracias a una valiente misión llamada Viking 1.",
       "Viking 1 viajaba en dos partes unidas como un equipo: un orbitador, que se quedaría volando en círculos alrededor del planeta, y un módulo de aterrizaje de casi mil kilos, que parecía una versión gigante del robot lunar Surveyor. Después de viajar casi un año por el espacio profundo tras despegar en agosto de 1975, llegaron a la órbita de Marte en junio de 1976.",
@@ -126,6 +140,8 @@ const HISTORIAS = [
     titulo: "El pequeño helicóptero valiente que aprendió a volar en Marte",
     mision: "Ingenuity",
     anio: "2021",
+    imagen: "imagenes/historias/ingenuity.jpg",
+    altImagen: "El helicóptero Ingenuity sobre el suelo marciano.",
     parrafos: [
       "Durante mucho tiempo, explorar Marte desde el suelo significaba quedarse quieto en un módulo de aterrizaje o rodar lentamente sobre las rocas. Pero en 2021 viajó escondido bajo la panza del robot Perseverance un pasajero muy especial: Ingenuity, un pequeño helicóptero espacial con cuatro finas patas que tenía el sueño de conquistar los cielos de otro planeta.",
       "El 3 de abril de 2021, Ingenuity posó sus cuatro patas sobre el polvo marciano y logró sobrevivir a su primera y helada noche fuera de casa. Volar allí no era nada fácil, porque la atmósfera de Marte es extremadamente delgada. Sin embargo, el 19 de abril de 2021, hizo girar sus aspas y se elevó en el aire, logrando el primer vuelo propulsado y controlado en otro mundo: una hazaña histórica comparable al primer vuelo de los hermanos Wright en la Tierra.",
@@ -140,6 +156,8 @@ const HISTORIAS = [
     titulo: "La nave viajera que visitó dos mundos misteriosos en el cinturón de asteroides",
     mision: "Dawn",
     anio: "2007",
+    imagen: "imagenes/historias/dawn.jpg",
+    altImagen: "La nave Dawn sobrevolando un asteroide.",
     parrafos: [
       "Casi todas las naves espaciales viajan para visitar un solo planeta o una sola luna, pero hubo una exploradora muy ambiciosa llamada Dawn (Amanecer) que rompió las reglas: se convirtió en la primera nave verdaderamente interplanetaria de la NASA capaz de visitar y quedarse a estudiar dos mundos extraterrestres completamente distintos en un mismo viaje.",
       "Su aventura la llevó hasta un vecindario espacial muy concurrido y lleno de rocas flotantes: el cinturón principal de asteroides, situado entre Marte y Júpiter. Allí vivían los dos protagonistas de su expedición.",
@@ -154,6 +172,8 @@ const HISTORIAS = [
     titulo: "La nave pionera que llevó una carta de la Tierra hacia las estrellas",
     mision: "Pioneer 10",
     anio: "1972",
+    imagen: "imagenes/historias/pioneer10.jpg",
+    altImagen: "Ilustración de la nave Pioneer 10 junto a Júpiter.",
     parrafos: [
       "En marzo de 1972, una valiente exploradora espacial llamada Pioneer 10 despegó de la Tierra a una velocidad récord de más de 51,000 kilómetros por hora, convirtiéndose en el objeto más rápido fabricado por el ser humano hasta ese momento. Su misión era viajar adonde ninguna nave había ido antes: más allá de Marte, hacia los gigantescos planetas exteriores del sistema solar. Como iba a alejarse tanto del Sol que sus rayos ya no le darían suficiente energía, Pioneer 10 llevó sus propios generadores nucleares para mantenerse despierta en la oscuridad del espacio.",
       "Apenas cuatro meses después de partir, se enfrentó a su primer gran desafío: atravesar el cinturón de asteroides. Durante un viaje de 435 millones de kilómetros esquivando rocas espaciales, Pioneer 10 logró cruzar aquella peligrosa región sin sufrir daños graves, abriendo el camino para futuras misiones.",
@@ -169,6 +189,8 @@ const HISTORIAS = [
     titulo: "El telescopio detective que descubrió que el cielo está lleno de planetas",
     mision: "Kepler",
     anio: "2009",
+    imagen: "imagenes/historias/kepler.jpg",
+    altImagen: "El telescopio espacial Kepler en una sala de ensamblaje.",
     parrafos: [
       "Durante muchísimo tiempo, cuando mirábamos las estrellas por la noche, apenas conocíamos unos cuantos planetas fuera de nuestro sistema solar, y nadie sabía si eran comunes o raros. Todo cambió en marzo de 2009, cuando despegó el telescopio espacial Kepler, el primer gran cazador de planetas de la NASA. Equipado con un enorme espejo y la cámara digital más grande enviada al espacio hasta entonces, Kepler fijó su mirada en un rincón de la constelación del Cisne para vigilar sin parpadear a 150,000 estrellas.",
       "¿Cómo lograba encontrar planetas tan lejanos y oscuros? ¡Usando un truco de detective luminoso! Kepler observaba si el brillo de una estrella disminuía un poquito cada cierto tiempo. Ese pequeño parpadeo —llamado tránsito— ocurría cuando un planeta pasaba justo por delante de su estrella, tapando una pizca de su luz.",
