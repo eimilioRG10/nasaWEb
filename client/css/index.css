@@ -312,8 +312,8 @@ h1 {
 }
 
 .tarjeta-juegos {
-    --imagen-normal: url("../imagenes/espacio.jpg");
-    --imagen-hover: url("../imagenes/nave.jpg");
+    --imagen-normal: url("../imagenes/nave noche.jpg");
+    --imagen-hover: url("../imagenes/nave dia.jpg");
 }
 
 .tarjeta-luna {
