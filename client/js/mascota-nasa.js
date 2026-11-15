@@ -1,3 +1,5 @@
+const rutaMascota = new URL("../../mascota/", document.currentScript.src);
+
 document.addEventListener("DOMContentLoaded", () => {
     // 1. SALUDOS INICIALES
     const saludosNasa = [
@@ -71,10 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Las imágenes están en la carpeta mascota, al nivel raíz del proyecto.
     const imagenes = {
-        saludo: "../mascota/perro-saludo.png",
-        curioso: "../mascota/perro-curioso.png",
-        serio: "../mascota/perro-serio.png",
-        nerd: "../mascota/perro-nerd.png"
+        saludo: new URL("perro-saludo.png", rutaMascota).href,
+        curioso: new URL("perro-curioso.png", rutaMascota).href,
+        serio: new URL("perro-serio.png", rutaMascota).href,
+        nerd: new URL("perro-nerd.png", rutaMascota).href
     };
 
     const saludoInicial = saludosNasa[Math.floor(Math.random() * saludosNasa.length)];
