@@ -180,6 +180,132 @@ h1 {
     margin-bottom: 45px;
 }
 
+/* CARRUSEL */
+
+.galeria {
+    padding: 45px 8% 20px;
+}
+
+.galeria + .seccion {
+    padding-top: 40px;
+}
+
+.galeria-encabezado {
+    margin-bottom: 25px;
+}
+
+.galeria-encabezado .etiqueta {
+    margin-bottom: 12px;
+}
+
+.carrusel {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.carrusel-ventana {
+    overflow: hidden;
+    border: 1px solid #ffffff25;
+    border-radius: 14px;
+}
+
+.carrusel-pista {
+    display: flex;
+    transition: transform 0.6s ease;
+}
+
+.carrusel-foto {
+    flex: 0 0 100%;
+    height: clamp(280px, 48vw, 560px);
+    position: relative;
+}
+
+.carrusel-foto::after {
+    content: "";
+    position: absolute;
+    inset: 40% 0 0;
+    background: linear-gradient(transparent, #050914d9);
+}
+
+.carrusel-foto img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.carrusel-texto {
+    position: absolute;
+    z-index: 1;
+    left: clamp(22px, 5vw, 60px);
+    bottom: clamp(22px, 5vw, 55px);
+}
+
+.carrusel-texto span {
+    color: #8bd5ff;
+    letter-spacing: 3px;
+    font-size: 12px;
+}
+
+.carrusel-texto h3 {
+    margin-top: 8px;
+    font-size: clamp(28px, 5vw, 48px);
+}
+
+.carrusel-flecha {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    border: 1px solid #ffffff70;
+    border-radius: 50%;
+    background: #050914a6;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.carrusel-flecha:hover {
+    background: #238bd1;
+    border-color: #55b9fa;
+}
+
+.carrusel-anterior {
+    left: 18px;
+}
+
+.carrusel-siguiente {
+    right: 18px;
+}
+
+.carrusel-puntos {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.carrusel-punto {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #8391a5;
+    cursor: pointer;
+    transition: width 0.2s, background 0.2s;
+}
+
+.carrusel-punto.activo {
+    width: 26px;
+    border-radius: 6px;
+    background: #55b9fa;
+}
+
 /* TARJETAS */
 
 .tarjetas {
@@ -312,5 +438,32 @@ footer {
 
     .tarjetas {
         grid-template-columns: 1fr;
+    }
+
+    .galeria {
+        padding: 30px 7% 15px;
+    }
+
+    .galeria + .seccion {
+        padding-top: 30px;
+    }
+
+    .carrusel-flecha {
+        width: 38px;
+        height: 38px;
+    }
+
+    .carrusel-anterior {
+        left: 12px;
+    }
+
+    .carrusel-siguiente {
+        right: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carrusel-pista {
+        transition: none;
     }
 }
