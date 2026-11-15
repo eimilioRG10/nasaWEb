@@ -51,6 +51,12 @@ body {
         url("../imagenes/Marte.jpeg") center / cover no-repeat;
 }
 
+.fondo.lejos::before {
+    background:
+        linear-gradient(#100b1240, #100b1240),
+        url("../imagenes/glaaa.jpg") center / cover no-repeat;
+}
+
 .fondo.luna {
     background:
         radial-gradient(circle at 75% 30%,
@@ -327,8 +333,8 @@ h1 {
 }
 
 .tarjeta-lejos {
-    --imagen-normal: url("../imagenes/espacio.jpg");
-    --imagen-hover: url("../imagenes/nave.jpg");
+    --imagen-normal: url("../imagenes/satelite.jpg");
+    --imagen-hover: url("../imagenes/satelite dia.jpg");
 }
 
 .tarjeta-tierra {
