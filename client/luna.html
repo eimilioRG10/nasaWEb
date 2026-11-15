@@ -272,10 +272,10 @@
        Muevan los números si quieren acomodarlos sobre su fondo.
        ========================================================= */
     const SITIOS = {
-      "espejo-apolo11": { x: 18, y: 30, sitio: "Mar de la Tranquilidad" },
-      "coche-apolo15":  { x: 40, y: 68, sitio: "Hadley-Apeninos" },
-      "surveyor3":      { x: 62, y: 28, sitio: "Océano de las Tormentas" },
-      "coche-apolo17":  { x: 82, y: 66, sitio: "Valle de Taurus-Littrow" }
+      "eagle":      { x: 18, y: 30, sitio: "Mar de la Tranquilidad" },
+      "falcon":     { x: 40, y: 68, sitio: "Montes Apeninos" },
+      "intrepid":   { x: 62, y: 28, sitio: "Océano de las Tormentas" },
+      "surveyor-3": { x: 82, y: 66, sitio: "Océano de las Tormentas" }
     };
 
     const objetosLuna = EXPLORADORES.filter(e => e.lugar === "luna");
@@ -283,7 +283,10 @@
     const fondoVentana = document.getElementById("fondo-ventana");
     const ventana = document.getElementById("ventana");
     let vistos = [];
-    try { vistos = JSON.parse(localStorage.getItem("luna-vistos")) || []; } catch (e) {}
+    try {
+      const guardados = JSON.parse(localStorage.getItem("luna-vistos")) || [];
+      vistos = guardados.filter(id => objetosLuna.some(objeto => objeto.id === id));
+    } catch (e) {}
 
     // Estrellitas en el cielo
     const estrellas = document.getElementById("estrellas");
