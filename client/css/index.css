@@ -74,7 +74,7 @@ body {
 .fondo.tierra::before {
     background:
         linear-gradient(#05091440, #05091440),
-        url("../imagenes/Tierra.jpeg") center / cover no-repeat;
+        url("../imagenes/galaxia.jpg") center / cover no-repeat;
 }
 
 /* NAVEGACION */
@@ -327,8 +327,8 @@ h1 {
 }
 
 .tarjeta-tierra {
-    --imagen-normal: url("../imagenes/Tierra.jpeg");
-    --imagen-hover: url("../imagenes/satelite.jpg");
+    --imagen-normal: url("../imagenes/satelite.jpg");
+    --imagen-hover: url("../imagenes/satelite dia.jpg");
 }
 
 .tarjeta {
