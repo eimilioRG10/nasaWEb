@@ -1,18 +1,51 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. BASE DE DATOS DE ARTEFACTOS OLVIDADOS DE LA NASA
-    // tipo: 'curioso' | 'serio' | 'tecnico'
-    const datosNasa = [
+    // 1. SALUDOS INICIALES
+    const saludosNasa = [
         {
-            tipo: "curioso",
-            texto: "¡Hola! Haz clic en mí para descubrir artefactos olvidados y secretos de la NASA."
+            tipo: "saludo",
+            texto: "¡Hola, terrícola! Haz clic en mí para descubrir artefactos olvidados y secretos ocultos de la NASA."
         },
+        {
+            tipo: "saludo",
+            texto: "¡Saludos, comandante! 🚀 ¿Listo para explorar la historia espacial más extraña?"
+        },
+        {
+            tipo: "saludo",
+            texto: "¡Guau! 🐾 Bienvenido al archivo secreto de los artefactos perdidos de la NASA. ¡Haz clic para investigar!"
+        },
+        {
+            tipo: "saludo",
+            texto: "¡Atención en la base! 🛰️ Hay mucha chatarra espacial y tecnología olvidada por descubrir por aquí."
+        },
+        {
+            tipo: "saludo",
+            texto: "¡Hola de nuevo! 🔭 Cada clic en mi traje espacial revelará una nueva curiosidad de la carrera espacial."
+        },
+        {
+            tipo: "saludo",
+            texto: "¡Misión en marcha! 🌟 Sigue haciendo clic para ver qué otros secretos te tengo preparados."
+        }
+    ];
+
+    // 2. DATOS DE ARTEFACTOS Y DATOS DE LA NASA
+    // tipos: 'saludo' | 'curioso' | 'serio' | 'nerd'
+    const datosNasa = [
+        ...saludosNasa,
         {
             tipo: "curioso",
             texto: "🥪 En 1965, John Young metió de contrabando un sándwich de carne en la nave Gemini 3. ¡Las migas flotando casi arruinan los instrumentos!"
         },
         {
+            tipo: "nerd",
+            texto: "💻 Las computadoras de guía del Apolo (AGC) que llevaron al hombre a la Luna tenían menos potencia de procesamiento que un reloj inteligente actual o una calculadora científica básica."
+        },
+        {
             tipo: "serio",
             texto: "📼 Las cintas originales de telemetría del alunizaje del Apolo 11 fueron borradas y reutilizadas por la NASA en los años 80 para ahorrar costos."
+        },
+        {
+            tipo: "nerd",
+            texto: "💾 El código fuente del software de navegación del Apolo fue escrito a mano por ingenieras como Margaret Hamilton y 'tejido' en núcleos de memoria magnética por tejedoras de textiles."
         },
         {
             tipo: "curioso",
@@ -21,6 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
         {
             tipo: "serio",
             texto: "⌚ El reloj Omega Speedmaster de Buzz Aldrin, el primero en pisar la Luna, fue robado mientras era enviado al Instituto Smithsoniano y nunca apareció."
+        },
+        {
+            tipo: "nerd",
+            texto: "📡 El satélite ECHO 1 (1960) era básicamente un enorme globo metalizado gigante que servía como espejo en el espacio para rebote de señales de radio antes de los satélites modernos."
         },
         {
             tipo: "serio",
@@ -32,14 +69,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     ];
 
-    // Mapeo de imágenes según el tipo de dato (Asegúrate de que las rutas coincidan con tus archivos)
+    // Las imágenes están en la carpeta mascota, al nivel raíz del proyecto.
     const imagenes = {
         saludo: "../mascota/perro-saludo.png",
         curioso: "../mascota/perro-curioso.png",
-        serio: "../mascota/perro-serio.png"
+        serio: "../mascota/perro-serio.png",
+        nerd: "../mascota/perro-nerd.png"
     };
 
-    let indiceActual = 0;
+    const saludoInicial = saludosNasa[Math.floor(Math.random() * saludosNasa.length)];
+    let indiceActual = datosNasa.indexOf(saludoInicial);
     let estaEscondido = false;
 
     // 2. INYECTAR ESTILOS CSS AUTOMÁTICAMENTE
@@ -70,7 +109,18 @@ document.addEventListener("DOMContentLoaded", () => {
             position: relative;
             font-size: 14px;
             line-height: 1.4;
-            transition: opacity 0.25s ease, transform 0.25s ease;
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s;
+        }
+
+        #nasa-speech-bubble.oculto {
+            opacity: 0;
+            transform: translateY(8px);
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
         }
 
         /* Estilo distinto cuando el dato es SERIO */
@@ -78,6 +128,12 @@ document.addEventListener("DOMContentLoaded", () => {
             background: #161b22;
             color: #f0f6fc;
             border-color: #fc3d21; /* Rojo NASA */
+        }
+
+        #nasa-speech-bubble.modo-nerd {
+            background: #0f172a;
+            color: #38bdf8;
+            border-color: #38bdf8;
         }
 
         /* Triangulito del globo */
@@ -92,6 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         #nasa-speech-bubble.modo-serio::after {
             border-color: #fc3d21 transparent transparent transparent;
+        }
+        #nasa-speech-bubble.modo-nerd::after {
+            border-color: #38bdf8 transparent transparent transparent;
         }
 
         /* Etiqueta de categoría */
@@ -108,6 +167,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         #nasa-speech-bubble.modo-serio #nasa-badge {
             background: #fc3d21;
+        }
+        #nasa-speech-bubble.modo-nerd #nasa-badge {
+            background: #38bdf8;
+            color: #0f172a;
         }
 
         /* Contenedor del perrito y botón de ocultar */
@@ -145,20 +208,66 @@ document.addEventListener("DOMContentLoaded", () => {
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.2s, width 0.2s;
         }
 
         #nasa-toggle-btn:hover {
             background: #fc3d21;
         }
 
+        #nasa-toggle-btn:focus-visible {
+            outline: 3px solid #55b9fa;
+            outline-offset: 3px;
+        }
+
         /* Estado escondido */
-        #nasa-mascot-widget.escondido #nasa-speech-bubble {
+        #nasa-mascot-widget.escondido #nasa-mascot-img {
             display: none;
         }
-        #nasa-mascot-widget.escondido #nasa-mascot-img {
-            width: 55px;
-            opacity: 0.85;
+
+        #nasa-mascot-widget.escondido #nasa-toggle-btn {
+            position: relative;
+            width: 56px;
+            height: 56px;
+            padding: 0;
+            border-radius: 50%;
+            background: #0b3d91;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            font-size: 0;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        #nasa-mascot-widget.escondido #nasa-toggle-btn::before {
+            content: "";
+            position: absolute;
+            width: 26px;
+            height: 24px;
+            left: 50%;
+            bottom: 6px;
+            border-radius: 50% 50% 45% 45%;
+            border: 3px solid #55b9fa;
+            box-sizing: border-box;
+            transform: translateX(-50%) rotate(-8deg);
+        }
+
+        #nasa-mascot-widget.escondido #nasa-toggle-btn::after {
+            content: "";
+            position: absolute;
+            top: 7px;
+            left: 50%;
+            width: 42px;
+            height: 24px;
+            transform: translateX(-50%);
+            background:
+                radial-gradient(ellipse 4.5px 5.5px at 4px 18px, transparent 48%, #55b9fa 62%, #55b9fa 100%, transparent 112%),
+                radial-gradient(ellipse 4.5px 5.5px at 13px 7px, transparent 48%, #55b9fa 62%, #55b9fa 100%, transparent 112%),
+                radial-gradient(ellipse 4.5px 5.5px at 29px 7px, transparent 48%, #55b9fa 62%, #55b9fa 100%, transparent 112%),
+                radial-gradient(ellipse 4.5px 5.5px at 38px 18px, transparent 48%, #55b9fa 62%, #55b9fa 100%, transparent 112%);
+        }
+
+        #nasa-mascot-widget.escondido #nasa-toggle-btn:hover {
+            background: #1556ad;
+            transform: scale(1.08);
         }
     `;
     document.head.appendChild(estilos);
@@ -167,13 +276,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const widget = document.createElement("div");
     widget.id = "nasa-mascot-widget";
     widget.innerHTML = `
-        <div id="nasa-speech-bubble">
-            <span id="nasa-badge">Dato Curioso</span>
-            <div id="nasa-fact-text">${datosNasa[0].texto}</div>
+        <div id="nasa-speech-bubble" class="oculto">
+            <span id="nasa-badge">Base Espacial</span>
+            <div id="nasa-fact-text">${saludoInicial.texto}</div>
             <small style="display:block; margin-top:8px; opacity:0.65; font-size:11px;">(Haz clic en mí para ver otro)</small>
         </div>
         <div id="nasa-mascot-controls">
-            <button id="nasa-toggle-btn" title="Esconder o mostrar mascota">Esconder</button>
+            <button id="nasa-toggle-btn" type="button" aria-label="Esconder mascota" title="Esconder mascota">Esconder</button>
             <img id="nasa-mascot-img" src="${imagenes.saludo}" alt="Mascota Astronauta NASA" title="¡Haz clic para otro dato!">
         </div>
     `;
@@ -185,6 +294,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const textoDato = document.getElementById("nasa-fact-text");
     const badge = document.getElementById("nasa-badge");
     const btnToggle = document.getElementById("nasa-toggle-btn");
+    let temporizadorGlobo;
+    let temporizadorAparicion;
+
+    function ocultarGlobo() {
+        window.clearTimeout(temporizadorGlobo);
+        globo.classList.add("oculto");
+    }
+
+    function mostrarGlobo() {
+        if (estaEscondido) {
+            return;
+        }
+
+        window.clearTimeout(temporizadorGlobo);
+        globo.classList.remove("oculto");
+        temporizadorGlobo = window.setTimeout(ocultarGlobo, 5000);
+        programarAparicionAutomatica();
+    }
+
+    function programarAparicionAutomatica() {
+        window.clearTimeout(temporizadorAparicion);
+        if (!estaEscondido) {
+            temporizadorAparicion = window.setTimeout(mostrarGlobo, 30000);
+        }
+    }
 
     // Cambiar de dato al hacer clic en el perrito
     imgMascota.addEventListener("click", () => {
@@ -210,19 +344,28 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             textoDato.textContent = datoSeleccionado.texto;
 
-            // Cambiar imagen y colores según si es SERIO o CURIOSO
+            // Cambiar imagen y colores según el tipo de dato.
+            globo.classList.remove("modo-serio", "modo-nerd");
+
             if (datoSeleccionado.tipo === "serio") {
                 imgMascota.src = imagenes.serio;
                 globo.classList.add("modo-serio");
                 badge.textContent = "⚠️ Archivo Histórico / Serio";
+            } else if (datoSeleccionado.tipo === "nerd") {
+                imgMascota.src = imagenes.nerd;
+                globo.classList.add("modo-nerd");
+                badge.textContent = "🤓 Dato Técnico / Ingeniería";
+            } else if (datoSeleccionado.tipo === "saludo") {
+                imgMascota.src = imagenes.saludo;
+                badge.textContent = "Base Espacial";
             } else {
                 imgMascota.src = imagenes.curioso;
-                globo.classList.remove("modo-serio");
                 badge.textContent = "✨ Dato Curioso";
             }
 
             globo.style.opacity = "1";
             globo.style.transform = "translateY(0)";
+            mostrarGlobo();
         }, 180);
     });
 
@@ -232,15 +375,32 @@ document.addEventListener("DOMContentLoaded", () => {
         if (estaEscondido) {
             widget.classList.add("escondido");
             btnToggle.textContent = "Mostrar";
-            imgMascota.src = imagenes.saludo; // Se pone saludando en pequeñito
+            btnToggle.setAttribute("aria-label", "Mostrar mascota");
+            btnToggle.title = "Mostrar mascota";
+            window.clearTimeout(temporizadorAparicion);
+            ocultarGlobo();
         } else {
             widget.classList.remove("escondido");
             btnToggle.textContent = "Esconder";
-            // Restaura la imagen correspondiente al dato actual
-            const tipoActual = datosNasa[indiceActual].tipo;
-            imgMascota.src = tipoActual === "serio" ? imagenes.serio : imagenes.curioso;
+            btnToggle.setAttribute("aria-label", "Esconder mascota");
+            btnToggle.title = "Esconder mascota";
+            const nuevoSaludo = saludosNasa[Math.floor(Math.random() * saludosNasa.length)];
+            indiceActual = datosNasa.indexOf(nuevoSaludo);
+            globo.classList.remove("modo-serio", "modo-nerd");
+            badge.textContent = "Base Espacial";
+            textoDato.textContent = nuevoSaludo.texto;
+            imgMascota.src = imagenes.saludo;
+            mostrarGlobo();
         }
     }
 
     btnToggle.addEventListener("click", alternarVisibilidad);
+    document.addEventListener("click", (evento) => {
+        const boton = evento.target.closest("button");
+        if (boton && boton !== btnToggle && !estaEscondido) {
+            mostrarGlobo();
+        }
+    });
+
+    programarAparicionAutomatica();
 });
