@@ -14,7 +14,20 @@
 <header>
     <div class="logo">NASA <span>/</span> ARCHIVE</div>
 
-    <nav>
+    <button
+        class="nav-toggle"
+        id="nav-toggle"
+        type="button"
+        aria-label="Abrir menú de navegación"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <nav id="primary-nav">
         <a href="#inicio">Inicio</a>
         <details class="nav-dropdown">
             <summary>Explorar</summary>
@@ -24,7 +37,7 @@
             </div>
         </details>
         <a href="#objetos">Objetos</a>
-        <a href="#contacto">Acerca de</a>
+        <a href="../VA%20Contenido/VA2.html">Acerca de</a>
     </nav>
 </header>
 
@@ -181,6 +194,70 @@
                 </div>
 
     </div>
+
+    <section class="archivo-videos" aria-labelledby="archivo-videos-titulo">
+        <div class="archivo-videos-encabezado">
+            <p class="etiqueta">ARCHIVO VISUAL INTERACTIVO</p>
+            <h2 class="titulo-seccion" id="archivo-videos-titulo">Crónicas de la exploración espacial</h2>
+            <p class="descripcion">Reproduce videos históricos de las misiones Apollo y de la exploración de Marte.</p>
+        </div>
+
+        <div class="archivo-videos-grid">
+            <article class="archivo-video">
+                <div class="archivo-video-reproductor">
+                    <iframe
+                        src="https://www.youtube.com/embed/hzApsIPHRwo?start=39&autoplay=1&mute=1&controls=1&rel=0"
+                        title="Apollo 11: Descenso Lunar"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="archivo-video-contenido">
+                    <p class="archivo-video-fecha">20 de Julio, 1969</p>
+                    <h3>Apollo 11: Descenso Lunar</h3>
+                    <p>Secuencia del descenso final y alunizaje del módulo lunar Eagle en el Mar de la Tranquilidad.</p>
+                </div>
+            </article>
+
+            <article class="archivo-video">
+                <div class="archivo-video-reproductor">
+                    <iframe
+                        src="https://www.youtube.com/embed/GUqsH5y1j1M?autoplay=1&mute=1&controls=1&rel=0"
+                        title="Rover Perseverance en Marte"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="archivo-video-contenido">
+                    <p class="archivo-video-fecha">18 de Febrero, 2021</p>
+                    <h3>Rover Perseverance en Marte</h3>
+                    <p>El despliegue del paracaídas supersónico y la maniobra Sky Crane en el cráter Jezero.</p>
+                </div>
+            </article>
+
+            <article class="archivo-video">
+                <div class="archivo-video-reproductor">
+                    <iframe
+                        src="https://www.youtube.com/embed/9HQfauGJaTs?autoplay=1&mute=1&controls=1&rel=0"
+                        title="Artefactos del Apollo 17"
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="archivo-video-contenido">
+                    <p class="archivo-video-fecha">14 de Diciembre, 1972</p>
+                    <h3>Artefactos del Apollo 17</h3>
+                    <p>El despegue de la etapa de ascenso del módulo Challenger desde el valle Taurus-Littrow.</p>
+                </div>
+            </article>
+        </div>
+    </section>
 
 </section>
 

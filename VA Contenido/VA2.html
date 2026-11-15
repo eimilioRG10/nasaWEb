@@ -72,6 +72,18 @@
             z-index: 10;
         }
 
+        .app-layer > header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .app-layer > nav {
+            position: sticky;
+            top: 4rem;
+            z-index: 30;
+        }
+
         .surface-panel {
             background-color: var(--bg-surface);
             border: 1px solid var(--border-subtle);
@@ -374,6 +386,14 @@
 
                 <!-- Derecha: Botón Modo Nocturno / Modo Claro -->
                 <div class="flex items-center justify-end gap-3 flex-1">
+                    <a
+                        href="../client/index.html"
+                        aria-label="Volver a la pantalla principal"
+                        title="Volver a la pantalla principal"
+                        class="flex shrink-0 items-center gap-2 px-3 py-1.5 rounded border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 text-xs font-bold text-neutral-200 transition-colors"
+                    >
+                        ← Inicio
+                    </a>
                     <button 
                         type="button" 
                         id="nightModeBtn" 
