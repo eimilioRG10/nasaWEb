@@ -248,6 +248,43 @@
     .ficha-robot.elegida { outline: 5px solid var(--amarillo); transform: scale(1.06); }
     .fila-botones { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
+
+    /* Juego 3: Viaje en el tiempo (mapa + línea del tiempo) */
+    .mapa-juego { position: relative; height: 380px; border-radius: 28px; overflow: hidden;
+      background-color: #16183A;
+      background-image: radial-gradient(#FFFFFF 1.2px, transparent 1.6px), radial-gradient(#FFD9F0 1px, transparent 1.4px);
+      background-size: 90px 90px, 140px 140px; }
+    .mapa-juego .planeta span { bottom: -30px; font-size: 16px; }
+    .mapa-juego .tierra { width: 90px; height: 90px; } .mapa-juego .luna { width: 80px; height: 80px; }
+    .mapa-juego .marte { width: 120px; height: 120px; } .mapa-juego .lejos { width: 110px; height: 110px; }
+    .pin-juego { position: absolute; transform: translate(-50%, -50%) scale(0); width: 50px; height: 50px; border-radius: 50%;
+      background: #FFF7E8; border: 3px solid #8C6BFF; padding: 5px; transition: transform .35s cubic-bezier(.3,1.8,.5,1); }
+    .pin-juego svg { width: 100%; height: 100%; }
+    .pin-juego.visible { transform: translate(-50%, -50%) scale(1); }
+    .pin-juego.objetivo { border-color: #FFC93C; box-shadow: 0 0 0 8px rgba(255,201,60,.45); z-index: 2;
+      transform: translate(-50%, -50%) scale(1.35); }
+    .mision { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .mision .foto { width: 110px; height: 90px; border-radius: 22px; background: #E9E3F7; display: flex; align-items: center; justify-content: center; }
+    .mision .foto svg { width: 80%; height: 80%; }
+    .mision p { font-size: 24px; font-weight: 600; text-align: center; }
+    .control-tiempo { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: #EFEAFB; border-radius: 24px; padding: 14px 18px; }
+    .control-tiempo input { flex: 1; min-width: 200px; height: 34px; accent-color: #8C6BFF; }
+    .control-tiempo .anio-grande { font-size: 32px; }
+    @media (max-width: 760px) {
+      .mapa-juego { height: 360px; }
+      .mapa-juego .lejos { width: 64px; height: 64px; border-radius: 18px; }
+      .mapa-juego .marte { width: 96px; height: 96px; }
+    }
+    @media (max-width: 600px) {
+      .mapa-juego { height: 330px; }
+      .mapa-juego .tierra { width: 54px; height: 54px; } .mapa-juego .luna { width: 50px; height: 50px; }
+      .mapa-juego .marte { width: 72px; height: 72px; } .mapa-juego .lejos { width: 60px; height: 60px; border-radius: 18px; }
+      .mapa-juego .planeta span { bottom: -26px; font-size: 13px; padding: 1px 8px; }
+      .pin-juego { width: 34px; height: 34px; padding: 3px; border-width: 2px; }
+    }
+    .termometro { font-size: 22px; font-weight: 700; text-align: center; min-height: 32px; }
+    .termometro.frio { color: #2E78C7; } .termometro.tibio { color: #C98A0A; } .termometro.caliente { color: #D0452E; } .termometro.bien { color: #1F8F6A; }
+
     /* Pantalla de "¡Ganaste!" */
     .final-juego { display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; padding: 20px 0; }
     .final-juego svg.argo { width: 160px; height: 190px; animation: baile 1s ease-in-out infinite; }
@@ -322,11 +359,21 @@
             <p>Acomoda los robots del más viejo al más nuevo. ¿Sabes quién salió primero?</p>
             <button class="gomita amarilla" id="jugar-orden"><svg class="ic" aria-hidden="true"><use href="#ic-play"/></svg>¡Jugar!</button>
           </article>
+          <article class="tarjeta-juego">
+            <div class="arte" style="background:#16183A;flex-direction:column;gap:14px">
+              <div style="display:flex;gap:14px;align-items:center">${PLANETAS_MINI.luna}${PLANETAS_MINI.marte}${PLANETAS_MINI.lejos}</div>
+              <div style="width:78%;height:10px;border-radius:5px;background:#8C6BFF;position:relative"><span style="position:absolute;left:62%;top:-9px;width:28px;height:28px;border-radius:50%;background:#FFC93C;border:3px solid #FFF7E8"></span></div>
+            </div>
+            <h3>Viaje en el tiempo</h3>
+            <p>Mueve la barra del tiempo hasta el año en que llegó cada robot y míralo aparecer en el mapa.</p>
+            <button class="gomita morada" id="jugar-viaje"><svg class="ic" aria-hidden="true"><use href="#ic-play"/></svg>¡Jugar!</button>
+          </article>
         </div>`;
       // tamaño de los planetitas de la tarjeta
       zona.querySelectorAll(".tarjeta-juego .arte .mini-planeta").forEach(p => { p.style.width = "70px"; p.style.height = "70px"; p.style.display = "block"; });
       document.getElementById("jugar-donde").onclick = juegoDonde;
       document.getElementById("jugar-orden").onclick = juegoOrden;
+      document.getElementById("jugar-viaje").onclick = juegoViaje;
     }
 
     // ----- Juego 1: ¿Dónde quedó? -----
@@ -475,6 +522,127 @@
       pintar();
     }
 
+
+    // ----- Juego 3: Viaje en el tiempo (mapa + línea del tiempo) -----
+    function juegoViaje() {
+      botonVolverLista.hidden = false;
+      document.getElementById("titulo-juegos").textContent = "Viaje en el tiempo";
+      // Dónde va cada lugar en el mapa (en %) y qué tanto se separan sus robots (px)
+      // En pantallas angostas los planetas se acomodan distinto para que quepan los robots
+      const angosta = zona.clientWidth < 720;
+      const CENTRO = angosta
+        ? { tierra: [12, 76], luna: [24, 46, 62], marte: [54, 72, 70], lejos: [80, 40, 56] }
+        : { tierra: [12, 72], luna: [30, 42, 70], marte: [60, 66, 90], lejos: [84, 40, 70] };
+      const anchoMapa = Math.max(zona.clientWidth - 52, 260);
+      const porLugar = {};
+      EXPLORADORES.forEach(e => (porLugar[e.lugar] = porLugar[e.lugar] || []).push(e));
+      const posicion = e => {
+        const lista = porLugar[e.lugar], i = lista.indexOf(e), [x, y, r0] = CENTRO[e.lugar];
+        const r = r0 * (zona.clientWidth < 520 ? .8 : 1.1);
+        // Solo en la mitad de arriba (de izquierda a derecha), para no tapar el nombre del planeta
+        const a = Math.PI + ((i + .5) / lista.length) * Math.PI;
+        // Sin salirse por las orillas del mapa
+        const izq = Math.min(Math.max(x / 100 * anchoMapa + Math.cos(a) * r, 26), anchoMapa - 26);
+        return `left:${izq}px;top:calc(${y}% + ${Math.sin(a) * r * .9}px)`;
+      };
+      const ronda = revolver(EXPLORADORES).slice(0, 6);
+      let turno = 0, aciertos = 0, intentos = 0;
+      const MIN = 1965, MAX = 2026;
+
+      function pintarTurno() {
+        const e = ronda[turno];
+        intentos = 0;
+        zona.innerHTML = `
+          <div class="caja-juego">
+            <div class="marcador">
+              <span>Misión ${turno + 1} de ${ronda.length}</span>
+              <div class="barra-progreso" aria-hidden="true"><div style="width:${turno / ronda.length * 100}%"></div></div>
+              <button class="gomita redonda amarilla" id="voz-viaje" aria-label="Escuchar la misión">${icono("bocina")}</button>
+            </div>
+            <div class="mision">
+              <div class="foto">${dibujoRobot(e)}</div>
+              <p>Viaja al año en que <strong>${e.nombre}</strong> ${e.lugar === "lejos" ? "despegó al espacio" : "llegó a " + LUGARES[e.lugar].nombre}.</p>
+            </div>
+            <div class="mapa-juego" aria-label="Mapa del espacio">
+              <div class="planeta tierra" style="left:${CENTRO.tierra[0]}%;top:${CENTRO.tierra[1]}%"><span>Tierra</span></div>
+              <div class="planeta luna" style="left:${CENTRO.luna[0]}%;top:${CENTRO.luna[1]}%"><span>Luna</span></div>
+              <div class="planeta marte" style="left:${CENTRO.marte[0]}%;top:${CENTRO.marte[1]}%"><span>Marte</span></div>
+              <div class="planeta lejos" style="left:${CENTRO.lejos[0]}%;top:${CENTRO.lejos[1]}%"><span>Muy lejos</span></div>
+              ${EXPLORADORES.map(x => `<div class="pin-juego" data-id="${x.id}" data-anio="${x.anio}" style="${posicion(x)}" title="${x.nombre}"><svg viewBox="0 0 120 100" aria-hidden="true"><use href="#dib-${x.dibujo}"/></svg></div>`).join("")}
+            </div>
+            <div class="control-tiempo">
+              <label for="barra-viaje" style="font-size:20px;font-weight:700;display:flex;gap:8px;align-items:center">${icono("ic-cohete")}Año:</label>
+              <input type="range" id="barra-viaje" min="${MIN}" max="${MAX}" value="${MIN}" step="1">
+              <span class="anio-grande" id="anio-viaje" aria-live="polite">${MIN}</span>
+            </div>
+            <p class="termometro" id="termometro" aria-live="polite">Mueve la barra y luego toca "¡Aquí es!"</p>
+            <div class="fila-botones">
+              <button class="gomita menta" id="confirmar">¡Aquí es!</button>
+              <button class="gomita azul" id="pista-viaje">Pista</button>
+            </div>
+          </div>`;
+
+        const barra = document.getElementById("barra-viaje");
+        const pins = zona.querySelectorAll(".pin-juego");
+        const termometro = document.getElementById("termometro");
+
+        // Al mover la barra, aparecen los robots que ya habían llegado ese año
+        barra.oninput = () => {
+          const anio = Number(barra.value);
+          document.getElementById("anio-viaje").textContent = anio;
+          pins.forEach(p => p.classList.toggle("visible", Number(p.dataset.anio) <= anio));
+        };
+        barra.oninput();
+
+        document.getElementById("voz-viaje").onclick = () => hablar(`Viaja al año en que ${e.nombre} ${e.lugar === "lejos" ? "despegó al espacio" : "llegó a " + LUGARES[e.lugar].nombre}.`);
+        document.getElementById("pista-viaje").onclick = () => {
+          const decada = Math.floor(e.anio / 10) * 10;
+          termometro.className = "termometro tibio";
+          termometro.textContent = `Pista: llegó en los años ${decada}.`;
+          hablar(termometro.textContent);
+        };
+        document.getElementById("confirmar").onclick = () => {
+          const anio = Number(barra.value);
+          const diferencia = Math.abs(anio - e.anio);
+          intentos++;
+          if (diferencia === 0) {
+            if (intentos === 1) aciertos++;
+            termometro.className = "termometro bien";
+            termometro.textContent = `¡Sí! ${e.nombre} ${e.lugar === "lejos" ? "despegó" : "llegó"} en ${e.anio}.`;
+            zona.querySelector(`.pin-juego[data-id="${e.id}"]`).classList.add("objetivo");
+            document.getElementById("confirmar").disabled = true;
+            barra.disabled = true;
+            hablar(termometro.textContent);
+            setTimeout(() => { turno++; turno < ronda.length ? pintarTurno() : finalViaje(); }, 2200);
+            return;
+          }
+          const direccion = anio < e.anio ? "Viaja más al futuro →" : "← Viaja más al pasado";
+          if (diferencia <= 3) { termometro.className = "termometro caliente"; termometro.textContent = `¡Muy caliente! ${direccion}`; }
+          else if (diferencia <= 10) { termometro.className = "termometro tibio"; termometro.textContent = `Tibio. ${direccion}`; }
+          else { termometro.className = "termometro frio"; termometro.textContent = `Frío, frío. ${direccion}`; }
+          hablar(termometro.textContent.replace("→", "").replace("←", ""));
+        };
+      }
+
+      function finalViaje() {
+        lluviaDeEstrellas();
+        const texto = `Acertaste ${aciertos} de ${ronda.length} misiones al primer intento.`;
+        zona.innerHTML = `
+          <div class="caja-juego final-juego">
+            <svg class="argo" viewBox="0 0 200 240" aria-hidden="true"><use href="#argo"/></svg>
+            <h3>¡Eres un viajero del tiempo!</h3>
+            <p>${texto}</p>
+            <div class="fila-botones">
+              <button class="gomita" id="otra-vez">Jugar otra vez</button>
+              <button class="gomita azul" id="a-lista">Otros juegos</button>
+            </div>
+          </div>`;
+        hablar("¡Eres un viajero del tiempo! " + texto);
+        document.getElementById("otra-vez").onclick = juegoViaje;
+        document.getElementById("a-lista").onclick = verListaJuegos;
+      }
+      pintarTurno();
+    }
 
     verListaJuegos();
   </script>
