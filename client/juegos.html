@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Juegos · Abandonados pero no olvidados</title>
+  <title>NASA | Juegos espaciales</title>
+  <link rel="stylesheet" href="css/index.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
   <!-- Página de JUEGOS: "¿Dónde quedó?" y "Ordena la línea del tiempo".
@@ -300,9 +301,94 @@
       .hueco { min-height: 90px; flex-direction: row; }
       .flechas-tiempo { display: none; }
     }
+
+    /* ---------- Identidad visual compartida con la página de inicio ---------- */
+    body {
+      font-family: Arial, sans-serif;
+      color: #FFFFFF;
+      background: #050914;
+    }
+    .fondo { position: fixed; }
+    .juegos {
+      min-height: calc(100vh - 100px);
+      background: transparent;
+      padding: 64px 8% 80px;
+    }
+    .juegos .cabeza { max-width: 1200px; margin-bottom: 36px; }
+    .juegos h2 { font-size: clamp(36px, 5vw, 58px); line-height: 1.1; }
+    .juegos .zona { max-width: 1200px; }
+    .juegos .etiqueta {
+      color: #62c6ff;
+      letter-spacing: 4px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .juegos .descripcion-juegos {
+      max-width: 600px;
+      margin-top: 14px;
+      color: #aebbd0;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+    .gomita, .destino, .hueco, .ficha-robot { font-family: Arial, sans-serif; }
+    .gomita {
+      --color: #238bd1;
+      --sombra: #155d90;
+      color: #FFFFFF;
+      font-size: 17px;
+      box-shadow: none;
+    }
+    .gomita::after { display: none; }
+    .gomita.amarilla { --color: #19345b; --sombra: #10233f; }
+    .gomita.azul { --color: #19345b; --sombra: #10233f; }
+    .gomita.menta { --color: #238bd1; --sombra: #155d90; }
+    .tarjeta-juego, .caja-juego {
+      color: #FFFFFF;
+      background: linear-gradient(145deg, #ffffff12, #ffffff04), #101c30;
+      border: 1px solid #ffffff25;
+      border-radius: 14px;
+      box-shadow: none;
+    }
+    .tarjeta-juego { padding: 30px; }
+    .tarjeta-juego:hover { transform: translateY(-6px); border-color: #55b9fa; }
+    .tarjeta-juego p, .instruccion { color: #c1cede; }
+    .tarjeta-juego .arte { border-radius: 10px; }
+    .caja-juego { padding: 30px; }
+    .barra-progreso { background: #ffffff25; }
+    .barra-progreso div { background: #55b9fa; }
+    .robot-actual .foto { background: #19345b; }
+    .destino {
+      color: #FFFFFF;
+      background: #19345b;
+      box-shadow: none;
+    }
+    .destino:hover { background: #238bd1; }
+    .destino.bien { color: #FFFFFF; background: #167451; box-shadow: none; }
+    .destino.mal { background: #873e46; }
+    .hueco { color: #c1cede; background: #101c30; border-color: #ffffff50; }
+    .hueco .numero { background: #19345b; }
+    .hueco.lleno { color: #FFFFFF; background: #19345b; border-color: #55b9fa; }
+    .hueco.bien { background: #167451; border-color: #35bd8e; }
+    .hueco.mal { background: #873e46; border-color: #e87979; }
+    .flechas-tiempo { color: #8bd5ff; }
+    .bandeja { background: #ffffff0d; }
+    .ficha-robot { color: #FFFFFF; background: #19345b; box-shadow: none; }
+    .ficha-robot.elegida { outline-color: #55b9fa; }
+    .aviso { color: #8bd5ff; }
+    footer { position: relative; }
     </style>
 </head>
 <body>
+  <div class="fondo" aria-hidden="true"></div>
+  <header>
+    <div class="logo">NASA <span>/</span> ARCHIVE</div>
+    <nav aria-label="Navegación principal">
+      <a href="index.html#inicio">Inicio</a>
+      <a href="index.html#objetos">Explorar</a>
+      <a href="#juegos">Juegos</a>
+      <a href="index.html#contacto">Acerca de</a>
+    </nav>
+  </header>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <symbol id="ic-mando" viewBox="0 0 24 24">
       <path d="M6 8h12a4 4 0 0 1 4 4v1a4 4 0 0 1-7 2.6L14 14h-4l-1 1.6A4 4 0 0 1 2 13v-1a4 4 0 0 1 4-4z" fill="currentColor"/>
@@ -312,7 +398,11 @@
   </svg>
   <main class="juegos abierto" id="juegos" aria-label="Juegos">
     <div class="cabeza">
-      <h2 id="titulo-juegos">Juegos</h2>
+      <div>
+        <p class="etiqueta">APRENDE JUGANDO</p>
+        <h2 id="titulo-juegos">Juegos espaciales</h2>
+        <p class="descripcion-juegos">Explora el espacio y descubre dónde están los robots que la humanidad ha enviado a otros mundos.</p>
+      </div>
       <div class="fila-botones">
         <button class="gomita azul" id="volver-lista" hidden><svg class="ic" aria-hidden="true"><use href="#ic-atras"/></svg>Otros juegos</button>
         <a class="gomita amarilla" href="index.html"><svg class="ic" aria-hidden="true"><use href="#ic-casa"/></svg>Volver al inicio</a>
@@ -320,6 +410,11 @@
     </div>
     <div class="zona" id="zona-juegos"></div>
   </main>
+
+  <footer>
+    <p>NASA ARCHIVE | Rastros de la humanidad en el espacio</p>
+    <p class="footer-subtitulo">Proyecto educativo de exploración espacial</p>
+  </footer>
 
 
   <script src="js/datos.js"></script>
@@ -344,7 +439,7 @@
     function verListaJuegos() {
       callar();
       botonVolverLista.hidden = true;
-      document.getElementById("titulo-juegos").textContent = "Juegos";
+      document.getElementById("titulo-juegos").textContent = "Juegos espaciales";
       zona.innerHTML = `
         <div class="lista-juegos">
           <article class="tarjeta-juego">
