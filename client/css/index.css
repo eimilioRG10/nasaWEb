@@ -80,7 +80,7 @@ body {
 .fondo.tierra::before {
     background:
         linear-gradient(#05091440, #05091440),
-        url("../imagenes/galaxia.jpg") center / cover no-repeat;
+        url("../imagenes/Tierra.jpeg") center / cover no-repeat;
 }
 
 /* NAVEGACION */
