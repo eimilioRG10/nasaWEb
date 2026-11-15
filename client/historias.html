@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explora historias de misiones de la NASA en la Luna, Marte y más allá.">
+    <title>Historias de misiones | NASA Archive</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/historias.css">
+</head>
+<body class="historias-body">
+    <div class="fondo" id="fondo" aria-hidden="true"></div>
+    <header class="historias-header">
+        <a class="logo" href="index.html">NASA <span>/</span> ARCHIVE</a>
+        <nav aria-label="Navegación principal">
+            <a href="index.html#inicio">Inicio</a>
+            <a href="index.html#objetos">Explorar</a>
+            <a href="index.html#objetos">Objetos</a>
+            <a href="index.html#contacto">Acerca de</a>
+        </nav>
+    </header>
+    <main class="historias-contenedor" id="lista-historias">
+        <p class="historias-etiqueta">Relatos de exploración</p>
+        <h1 id="titulo-destino">Historias de misiones NASA</h1>
+        <p class="historias-descripcion" id="descripcion-destino"></p>
+        <div class="historias-lista" id="contenido-destino" aria-live="polite"></div>
+    </main>
+    <script src="js/historias.js"></script>
+    <script src="js/historias-vista.js"></script>
+</body>
+</html>
