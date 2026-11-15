@@ -56,7 +56,7 @@ if (listaHistorias) {
     descripcion.textContent = "Vuelve a la página principal para elegir una sección.";
     const volver = document.createElement("a");
     volver.className = "tarjeta historia-tarjeta tarjeta-lejos";
-    volver.href = "index.html#objetos";
+    volver.href = "../index.html#objetos";
     const textoVolver = document.createElement("p");
     textoVolver.className = "card-title";
     textoVolver.textContent = "Volver a destinos →";
@@ -81,7 +81,7 @@ if (lecturaHistoria) {
     document.getElementById("mision-historia").textContent = "NASA Archive";
     document.getElementById("titulo-historia").textContent = "No encontramos esta historia";
     document.getElementById("anio-historia").textContent = "Elige un destino para explorar los relatos.";
-    enlaceVolver.href = "index.html#objetos";
+    enlaceVolver.href = "../index.html#objetos";
     enlaceVolver.textContent = "Volver al inicio";
   } else {
     const destino = DESTINOS_HISTORIAS.find(item => item.id === historia.destino);
