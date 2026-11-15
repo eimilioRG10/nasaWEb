@@ -14,7 +14,20 @@
 <header>
     <div class="logo">NASA <span>/</span> ARCHIVE</div>
 
-    <nav>
+    <button
+        class="nav-toggle"
+        id="nav-toggle"
+        type="button"
+        aria-label="Abrir menú de navegación"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <nav id="primary-nav">
         <a href="#inicio">Inicio</a>
         <details class="nav-dropdown">
             <summary>Explorar</summary>

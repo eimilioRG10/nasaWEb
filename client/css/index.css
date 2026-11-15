@@ -86,12 +86,17 @@ body {
 /* NAVEGACION */
 
 header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
     width: 100%;
     padding: 25px 7%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #ffffff20;
+    background: rgba(5, 9, 20, 0.92);
+    backdrop-filter: blur(12px);
 }
 
 .logo {
@@ -102,6 +107,30 @@ header {
 
 .logo span {
     color: #55b9fa;
+}
+
+.nav-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    border: 1px solid rgba(85, 185, 250, 0.35);
+    border-radius: 10px;
+    background: rgba(12, 30, 54, 0.85);
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    display: block;
+    height: 2px;
+    margin: 4px 0;
+    border-radius: 2px;
+    background: #dcecff;
+}
+
+.nav-toggle:focus-visible {
+    outline: 2px solid #55b9fa;
+    outline-offset: 3px;
 }
 
 nav {
@@ -646,14 +675,44 @@ footer {
 
 @media(max-width: 800px) {
     header {
-        flex-direction: column;
-        gap: 20px;
+        flex-wrap: wrap;
+        gap: 0 12px;
+    }
+
+    .logo {
+        margin-right: auto;
+    }
+
+    .nav-toggle {
+        display: block;
     }
 
     nav {
-        gap: 15px;
-        flex-wrap: wrap;
+        display: none;
+        flex: 0 0 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding-top: 16px;
+    }
+
+    nav.is-open {
+        display: flex;
+    }
+
+    nav > a,
+    .nav-dropdown > summary {
+        width: 100%;
         justify-content: center;
+    }
+
+    .nav-dropdown-menu {
+        position: static;
+        margin-top: 8px;
+    }
+
+    .nav-dropdown-menu a {
+        justify-content: flex-start;
     }
 
     .hero {

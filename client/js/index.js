@@ -5,6 +5,38 @@ const titulo = document.getElementById("modal-titulo");
 const texto = document.getElementById("modal-texto");
 let temporizadorFondo;
 
+const navToggle = document.getElementById("nav-toggle");
+const primaryNav = document.getElementById("primary-nav");
+
+const closeNavigation = () => {
+    navToggle.setAttribute("aria-expanded", "false");
+    navToggle.setAttribute("aria-label", "Abrir menú de navegación");
+    primaryNav.classList.remove("is-open");
+};
+
+navToggle.addEventListener("click", () => {
+    const isExpanded = navToggle.getAttribute("aria-expanded") === "true";
+    navToggle.setAttribute("aria-expanded", String(!isExpanded));
+    navToggle.setAttribute(
+        "aria-label",
+        isExpanded ? "Abrir menú de navegación" : "Cerrar menú de navegación"
+    );
+    primaryNav.classList.toggle("is-open", !isExpanded);
+});
+
+primaryNav.addEventListener("click", (evento) => {
+    if (evento.target.closest("a")) {
+        closeNavigation();
+    }
+});
+
+document.addEventListener("keydown", (evento) => {
+    if (evento.key === "Escape" && navToggle.getAttribute("aria-expanded") === "true") {
+        closeNavigation();
+        navToggle.focus();
+    }
+});
+
 const cambiarFondo = (escena) => {
     window.clearTimeout(temporizadorFondo);
 
