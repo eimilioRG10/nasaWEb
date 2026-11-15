@@ -251,7 +251,22 @@ const FOTOS_ARENA = [
         ctx.setTransform(escala, 0, 0, escala, 0, 0);
         pintarArena(ctx, r.width, r.height);
       }
-      if (img.complete && img.naturalWidth) prepararCanvas(); else img.addEventListener("load", prepararCanvas, { once: true });
+      function centrarFoto() {
+        requestAnimationFrame(() => {
+          const foto = caja.getBoundingClientRect();
+          const posicion = foto.top + window.scrollY - (window.innerHeight - foto.height) / 2;
+          window.scrollTo({ top: posicion, behavior: "smooth" });
+        });
+      }
+      if (img.complete && img.naturalWidth) {
+        prepararCanvas();
+        centrarFoto();
+      } else {
+        img.addEventListener("load", () => {
+          prepararCanvas();
+          centrarFoto();
+        }, { once: true });
+      }
 
       // Medir cuánta arena se ha quitado (revisando uno de cada varios pixeles)
       function medir() {
