@@ -309,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         window.clearTimeout(temporizadorGlobo);
         globo.classList.remove("oculto");
-        temporizadorGlobo = window.setTimeout(ocultarGlobo, 5000);
+        temporizadorGlobo = window.setTimeout(ocultarGlobo, 10000);
         programarAparicionAutomatica();
     }
 
